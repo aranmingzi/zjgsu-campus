@@ -7,8 +7,8 @@ test-results
 *.local
 .DS_Store
 release/
+.tools/
 商砖小站-Web高保真原型-*/
 商砖小站-Web高保真原型-*.zip
 商砖小站-Web高保真原型-*.zip.sha256
 *.bundle
-
