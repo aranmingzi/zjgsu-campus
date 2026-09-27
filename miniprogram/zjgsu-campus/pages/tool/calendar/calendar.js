@@ -8,9 +8,9 @@
 const userApi = require('../../../utils/user.js');
 
 const TYPES = [
-  { key: 'exam', label: '考试', icon: '📝' },
-  { key: 'term', label: '学期', icon: '🎓' },
-  { key: 'other', label: '其他', icon: '📌' }
+  { key: 'exam', label: '考试', icon: 'file-text' },
+  { key: 'term', label: '学期', icon: 'graduation-cap' },
+  { key: 'other', label: '其他', icon: 'pin' }
 ];
 
 // 倒计时天数：WXML 的 {{}} 里不能调方法，天数必须在这里算好
@@ -60,7 +60,7 @@ Page({
         days: daysNum(it.date),
         daysText: daysText(it.date),
         past: daysNum(it.date) < 0,
-        typeIcon: (TYPES.filter((t) => t.key === it.type)[0] || {}).icon || '📌'
+        typeIcon: (TYPES.filter((t) => t.key === it.type)[0] || {}).icon || 'pin'
       }))
       .sort((a, b) => a.days - b.days);
     // 最近一个还没到的节点，放在页面顶部当「今日提醒」

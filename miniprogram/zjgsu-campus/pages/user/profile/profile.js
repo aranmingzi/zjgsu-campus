@@ -24,7 +24,16 @@ Page({
     contactTypeIdx: 0,
     contactValue: '',
     contactPlaceholder: '填上微信号，同学才能找到你',
-    openidTip: ''
+    openidTip: '',
+    // UI 专用：隐私档位胶囊。值沿用原有 contactType 的 key，
+    // 没有新增任何字段，云函数 saveProfile 的参数结构完全没动
+    privacyItems: ['wechat', 'phone', 'qq', ''],
+    privacyLabels: {
+      wechat: '仅好友可见',
+      phone: '申请后可见',
+      qq: '仅好友可见（QQ）',
+      '': '暂不公开'
+    }
   },
 
   onLoad() {
@@ -136,6 +145,14 @@ Page({
     }
   },
 
+  // avatar-editor 的 change 给的是 { tempFilePath }，云上传整套逻辑在
+  // onChooseAvatar 里（它认的是 e.detail.avatarUrl），这里只转发一层，
+  // 不为换头像去动上传代码
+  onAvatarChange(e) {
+    const temp = e.detail && e.detail.tempFilePath;
+    if (temp) this.onChooseAvatar({ detail: { avatarUrl: temp } });
+  },
+
   // 静默保存当前资料：昵称没填时不再拦着——头像本来就该能单独先换。
   // 昵称为空时沿用 app.js 里的默认值，保证同学看见的不是空白。
   persist(okMsg) {
@@ -170,6 +187,18 @@ Page({
   },
   onContactValue(e) {
     this.setData({ contactValue: e.detail.value });
+  },
+
+  // 隐私档位 → 原有的 contactType 下标（0 微信号 / 1 手机号 / 2 QQ / 3 暂不公开）。
+  // 档位只是这 4 个下标换个说法，落回去的还是同一批 key，没引入新状态
+  onPrivacy(e) {
+    const idx = { wechat: 0, phone: 1, qq: 2, '': 3 }[e.detail.value];
+    if (idx === this.data.contactTypeIdx) return;
+    // 和 picker 那条路（onContactType）保持同样的两个字段
+    this.setData({
+      contactTypeIdx: idx,
+      contactPlaceholder: CONTACT_TYPES[idx].label + '（不填谁也看不到）'
+    });
   },
 
   onCollege(e) {

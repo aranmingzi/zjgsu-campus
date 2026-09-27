@@ -1,3 +1,10 @@
 {
-  "navigationBarTitleText": "我的资料"
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "我的资料",
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "avatar-editor": "/components/ui/avatar-editor/index",
+    "base-button": "/components/ui/base-button/index",
+    "pill-selector": "/components/ui/pill-selector/index"
+  }
 }

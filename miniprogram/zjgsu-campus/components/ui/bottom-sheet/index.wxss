@@ -1,0 +1,78 @@
+/* components/ui/bottom-sheet/index.wxss —— 半屏抽屉 */
+.ui-sheet__mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 90;
+  background: rgba(23, 32, 51, 0.35);
+  animation: sheetMaskIn 0.2s ease-out both;
+}
+.ui-sheet__mask--off { opacity: 0; animation: sheetMaskOut 0.15s ease-in both; }
+
+@keyframes sheetMaskIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheetMaskOut { from { opacity: 1; } to { opacity: 0; } }
+
+.ui-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 95;
+  max-height: 76vh;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 40rpx 40rpx 0 0;
+  box-shadow: 0 -12rpx 40rpx rgba(23, 32, 51, 0.14);
+  padding: 24rpx 40rpx calc(40rpx + env(safe-area-inset-bottom));
+  /* 位移动画：0.26s，缓动与 Web 版 transition duration-250 对齐 */
+  transform: translateY(105%);
+  transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ui-sheet--open { transform: translateY(0); }
+.ui-sheet--closed { transform: translateY(105%); }
+
+.ui-sheet__handle {
+  width: 80rpx;
+  height: 8rpx;
+  border-radius: 999rpx;
+  background: #e0e5ee;
+  margin: 0 auto 24rpx;
+}
+
+.ui-sheet__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.ui-sheet__head-text { flex: 1; min-width: 0; }
+
+.ui-sheet__title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #172033;
+}
+
+.ui-sheet__desc {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #6f7b91;
+  line-height: 1.6;
+}
+
+.ui-sheet__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx;
+  height: 88rpx;
+  margin: -16rpx -16rpx 0 0;
+}
+.ui-sheet__close-icon { width: 40rpx; height: 40rpx; }
+
+.ui-sheet__body { max-height: 52vh; overflow-y: auto; }

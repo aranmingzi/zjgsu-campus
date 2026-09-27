@@ -1,95 +1,160 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: #f4f5f7;
+/* pages/user/chat —— 私聊详情页。类名统一 ct-*。
+   硬性约束：.ct / .ct-body / .ct-bar 上都不允许出现 transform，
+   否则 position:fixed 的底部输入栏会退化成相对定位。 */
+/* 整页高度走百分比：vh 是视口单位，这里全部用 rpx/百分比闭环，尺寸一律 rpx */
+page {
+  height: 100%;
 }
 
-.body {
+.ct {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  background: #f5f7fa;
+}
+
+.ct-body {
   flex: 1;
+  min-height: 0;
   padding: 24rpx 24rpx 0;
   box-sizing: border-box;
 }
 
-.notice {
-  text-align: center;
-  color: #b0b6be;
-  font-size: 24rpx;
+/* 给 fixed 输入栏让位：高度 = 输入栏高度 + 一点呼吸空间 */
+.ct-bottom-space { height: 200rpx; }
+
+.ct-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
   padding: 60rpx 0;
+  font-size: 24rpx;
+  color: #98a3b8;
 }
+.ct-tip-icon { width: 28rpx; height: 28rpx; }
 
-.bottom-space { height: 30rpx; }
+.ct-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 60rpx 40rpx;
+  font-size: 24rpx;
+  color: #98a3b8;
+  text-align: center;
+}
+.ct-notice-icon { width: 32rpx; height: 32rpx; flex-shrink: 0; }
 
-.row {
+/* ---------- 消息 ---------- */
+.ct-row {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 28rpx;
+  margin-bottom: 32rpx;
 }
-.row-mine { justify-content: flex-end; }
+.ct-row--mine { justify-content: flex-end; }
 
-.msg { max-width: 76%; }
+.ct-msg {
+  max-width: 76%;
+  min-width: 0;
+}
 
-.bubble {
-  background: #fff;
-  color: #1f2329;
+.ct-bubble {
+  background: #ffffff;
+  color: #172033;
   font-size: 28rpx;
   line-height: 1.6;
   padding: 20rpx 26rpx;
-  border-radius: 20rpx;
-  border-top-left-radius: 6rpx;
+  border-radius: 28rpx;
+  border-top-left-radius: 8rpx;
   word-break: break-word;
 }
-.b-mine {
-  background: #1a5fb4;
-  color: #fff;
-  border-top-left-radius: 20rpx;
-  border-top-right-radius: 6rpx;
+/* 自己发的：个人资料青蓝 #2F9FD6 */
+.ct-bubble--mine {
+  background: #2f9fd6;
+  color: #ffffff;
+  border-top-left-radius: 28rpx;
+  border-top-right-radius: 8rpx;
 }
-.b-failed { background: #f3c9c9; color: #a32d2d; }
+.ct-bubble--failed {
+  background: #fff0f1;
+  color: #dd4b55;
+}
 
-.clock {
+.ct-clock {
   font-size: 20rpx;
-  color: #b0b6be;
+  color: #98a3b8;
   margin-top: 8rpx;
   text-align: left;
 }
-.row-mine .clock { text-align: right; }
+.ct-row--mine .ct-clock { text-align: right; }
 
-.sk-tip { text-align: center; color: #b0b6be; font-size: 24rpx; padding: 60rpx 0; }
-
-.contact-bar {
-  margin: 0 24rpx 12rpx;
-  background: #eef3fb;
-  color: #185fa5;
-  font-size: 24rpx;
-  border-radius: 12rpx;
-  padding: 16rpx 22rpx;
-}
-.contact-copy { color: #1a5fb4; margin-left: 6rpx; }
-
-.input-bar {
+/* ---------- 对方的联系方式条 ---------- */
+.ct-contact {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 12rpx;
+  margin: 0 24rpx 16rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #e7f5fd;
+  color: #2f9fd6;
+  font-size: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(47, 159, 214, 0.08);
+}
+.ct-contact-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+}
+.ct-contact-copy {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #2b5aed;
+}
+
+/* ---------- 固定输入栏 ---------- */
+.ct-bar {
+  display: flex;
+  align-items: center;
   gap: 16rpx;
   padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
-  background: #fff;
-  border-top: 1rpx solid #f0f1f3;
+  background: #ffffff;
+  border-top: 2rpx solid #e8edf5;
 }
-.input {
+
+.ct-input {
   flex: 1;
-  background: #f4f5f7;
-  border-radius: 999rpx;
-  /* 定高修复：聊天输入框单行显示，字不再被默认高度切一半 */
-  height: 76rpx;
-  padding: 0 28rpx;
-  font-size: 28rpx;
+  min-width: 0;
+  /* 定高修复：单行显示，字不会被默认行高切一半；88rpx 起保证点得到 */
+  height: 88rpx;
   max-height: 180rpx;
-}
-.send {
-  background: #1a5fb4;
-  color: #fff;
-  font-size: 26rpx;
+  padding: 0 28rpx;
   border-radius: 999rpx;
-  padding: 16rpx 34rpx;
+  background: #f6f8fb;
+  font-size: 28rpx;
+  color: #172033;
+}
+
+.ct-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  height: 88rpx;
+  min-width: 140rpx;
+  min-height: 88rpx;
+  padding: 0 28rpx;
   flex-shrink: 0;
+  border-radius: 999rpx;
+  background: #2f9fd6;
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(47, 159, 214, 0.24);
+}
+.ct-send-icon {
+  width: 28rpx;
+  height: 28rpx;
 }

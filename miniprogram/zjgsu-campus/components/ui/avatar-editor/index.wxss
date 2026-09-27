@@ -1,0 +1,56 @@
+/* components/ui/avatar-editor/index.wxss */
+.ui-avatar {
+  position: relative;
+  border-radius: 999rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #eef1f6;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+}
+
+.ui-avatar__img {
+  width: 100%;
+  height: 100%;
+}
+
+.ui-avatar__ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2f9fd6, #2b5aed);
+}
+
+.ui-avatar__mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(23, 32, 51, 0.55), rgba(23, 32, 51, 0));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 12rpx;
+}
+
+.ui-avatar__mask-icon { width: 36rpx; height: 36rpx; }
+
+.ui-avatar__loading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(23, 32, 51, 0.45);
+  animation: avatarPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes avatarPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}

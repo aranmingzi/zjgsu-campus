@@ -7,10 +7,10 @@ const eventApi = require('../../../utils/event.js');
 const userApi = require('../../../utils/user.js');
 
 const TYPES = [
-  { key: 'lecture', label: '讲座', icon: '🎟️' },
-  { key: 'contest', label: '比赛', icon: '🏆' },
-  { key: 'team', label: '组队', icon: '🤝' },
-  { key: 'other', label: '其他', icon: '📣' }
+  { key: 'lecture', label: '讲座', icon: 'megaphone️' },
+  { key: 'contest', label: '比赛', icon: 'award' },
+  { key: 'team', label: '组队', icon: 'users-round' },
+  { key: 'other', label: '其他', icon: 'sparkles' }
 ];
 
 Page({

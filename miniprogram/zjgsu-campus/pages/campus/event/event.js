@@ -57,7 +57,7 @@ Page({
     const count = Number(ev.joinedCount) || 0;
     this.setData({
       ev: Object.assign({}, ev, {
-        typeIcon: ev.official ? '🏛️' : eventApi.typeIcon(ev.type),
+        typeIcon: ev.official ? 'shield-check️' : eventApi.typeIcon(ev.type),
         typeLabel: ev.official ? '官方' : eventApi.typeLabel(ev.type),
         countText: cap > 0 ? (count + ' / ' + cap + ' 人已报名') : (count + ' 人已报名'),
         fullText: cap > 0 && count >= cap ? '人数已满' : '',

@@ -8,13 +8,13 @@ const userApi = require('./user.js');
 
 // 三种瓶子类型：和云函数 BOTTLE_KINDS 一一对应
 const KINDS = {
-  '吐槽': { icon: '💢', hint: '吐槽期末、吐槽食堂、吐槽早八' },
-  '分享': { icon: '🎁', hint: '好听的歌、好看的书、好用的东西' },
-  '提问': { icon: '❓', hint: '匿名问一个平时不好意思问的问题' }
+  '吐槽': { icon: 'flame', hint: '吐槽期末、吐槽食堂、吐槽早八' },
+  '分享': { icon: 'gift', hint: '好听的歌、好看的书、好用的东西' },
+  '提问': { icon: 'message-square', hint: '匿名问一个平时不好意思问的问题' }
 };
 
 function kindIcon(kind) {
-  return (KINDS[kind] && KINDS[kind].icon) || '🫙';
+  return (KINDS[kind] && KINDS[kind].icon) || 'inbox';
 }
 
 // 每日限捞次数：前端只用于展示（「今天还剩 X 次」），真正的闸在云函数

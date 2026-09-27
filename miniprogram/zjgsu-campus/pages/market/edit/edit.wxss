@@ -1,124 +1,164 @@
-.f-label {
+/* pages/market/edit/edit.wxss —— 发布表单
+   场景色：闲置橙 #F58A32 / 浅底 #FFF3E9 / 标签文字 #D9731F */
+
+.e-page { padding-top: 20rpx; }
+
+.e-label { margin-bottom: 16rpx; font-size: 26rpx; font-weight: 600; color: #172033; }
+
+/* ---------- 类型（我丢了 / 我捡到 / 闲置分享） ---------- */
+.e-types { display: flex; gap: 16rpx; flex-wrap: wrap; }
+.e-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  min-height: 88rpx;
+  padding: 0 28rpx;
+  border-radius: 999rpx;
+  background: #f6f8fb;
+  color: #6f7b91;
   font-size: 26rpx;
-  color: #5f6672;
-  font-weight: 500;
-  margin-bottom: 12rpx;
+  border: 2rpx solid #e8edf5;
+}
+.e-type--hover { opacity: 0.72; }
+.e-type__icon { width: 32rpx; height: 32rpx; flex-shrink: 0; }
+.e-type.on {
+  background: #fff3e9;
+  border-color: #f58a32;
+  color: #d9731f;
+  font-weight: 600;
 }
 
-.type-row {
-  display: flex;
-  gap: 12rpx;
-  flex-wrap: wrap;
-}
-.type {
-  font-size: 26rpx;
-  color: #5f6672;
-  background: #f4f5f7;
-  border-radius: 12rpx;
-  padding: 16rpx 20rpx;
-}
-.type.on {
-  color: #1a5fb4;
-  background: #e6f1fb;
-  font-weight: 500;
-}
-
-.f-input {
-  font-size: 28rpx;
+/* ---------- 输入 ---------- */
+.e-input,
+.e-area {
   width: 100%;
   box-sizing: border-box;
-  /* 定高修复：input 不给固定高度会被默认的 1.4rem 拦腰截字，
-     只留水平内边距，否则纵向 padding 会把文字压出可视区 */
+  font-size: 28rpx;
+  color: #172033;
+}
+.e-input {
+  /* 定高修复：input 不给固定高度会被默认的 1.4rem 拦腰截字 */
   height: 88rpx;
   padding: 0 4rpx;
 }
-.f-textarea {
-  font-size: 28rpx;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 160rpx;
-  margin-top: 10rpx;
+.e-area {
+  min-height: 180rpx;
+  padding: 8rpx 4rpx;
+  line-height: 1.7;
 }
-.f-counter {
-  text-align: right;
-  font-size: 22rpx;
-  color: #c4c9d0;
-  margin-top: 6rpx;
-}
+.e-placeholder { color: #98a3b8; }
+.e-counter { text-align: right; font-size: 22rpx; color: #98a3b8; margin-top: 8rpx; }
 
-.f-line {
+.e-line {
   display: flex;
   align-items: center;
-  border-top: 1rpx solid #eef0f2;
-  margin-top: 6rpx;
+  border-top: 2rpx solid #f0f1f3;
+  margin-top: 8rpx;
 }
-.f-prefix {
-  font-size: 30rpx;
-  color: #d85a30;
-  margin-right: 8rpx;
-}
-.f-price { flex: 1; }
+.e-prefix { margin-right: 8rpx; font-size: 32rpx; font-weight: 700; color: #f58a32; }
+.e-price { flex: 1; min-width: 0; }
 
-.ct-row {
-  display: flex;
-  gap: 12rpx;
-  margin-top: 16rpx;
-  flex-wrap: wrap;
-}
-/* 隐私说明贴着联系方式组：放在这里比扔在底部按钮旁更贴近语境 */
-.f-privacy {
-  font-size: 22rpx;
-  color: #b0b6be;
-  margin-top: 16rpx;
-}
-.ct {
-  font-size: 24rpx;
-  color: #6b7280;
-  background: #f4f5f7;
+/* ---------- 胶囊（联系方式类型 / 闲置分类） ---------- */
+.e-chips { display: flex; gap: 16rpx; flex-wrap: wrap; margin-top: 4rpx; }
+.e-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 88rpx;
+  padding: 0 32rpx;
   border-radius: 999rpx;
-  padding: 10rpx 24rpx;
+  background: #ffffff;
+  border: 2rpx solid #e8edf5;
+  color: #6f7b91;
+  font-size: 26rpx;
 }
-.ct.on {
-  color: #185fa5;
-  background: #e6f1fb;
+.e-chip--hover { opacity: 0.72; }
+.e-chip.on {
+  border-color: #f58a32;
+  background: #fff3e9;
+  color: #d9731f;
+  font-weight: 600;
 }
+.e-privacy { margin-top: 16rpx; font-size: 22rpx; color: #98a3b8; }
 
-.img-grid {
-  display: flex;
-  gap: 16rpx;
-  flex-wrap: wrap;
-}
-.img-cell {
+/* ---------- 图片 ---------- */
+.e-grid { display: flex; gap: 16rpx; flex-wrap: wrap; }
+.e-cell {
   position: relative;
   width: 160rpx;
   height: 160rpx;
-  border-radius: 12rpx;
+  border-radius: 24rpx;
   overflow: hidden;
+  background: #f6f8fb;
 }
-.img { width: 100%; height: 100%; }
-.img-cell.add {
-  background: #f4f5f7;
-  color: #b0b6be;
-  font-size: 56rpx;
-  text-align: center;
-  line-height: 160rpx;
-}
-.img-del {
+.e-img { width: 100%; height: 100%; }
+.e-del {
   position: absolute;
   right: 0;
   top: 0;
-  width: 44rpx;
-  height: 44rpx;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 24rpx;
-  text-align: center;
-  line-height: 44rpx;
-  border-radius: 0 0 0 12rpx;
+  width: 56rpx;
+  height: 56rpx;
+  background: rgba(23, 32, 51, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 0 24rpx;
+}
+.e-del image { width: 32rpx; height: 32rpx; }
+.e-del--hover { opacity: 0.72; }
+/* 视觉上是角标，热区靠伪元素补到 88rpx 以上（cell 有 overflow:hidden，不会溢出格子） */
+.e-del::after {
+  content: '';
+  position: absolute;
+  left: -16rpx;
+  top: -16rpx;
+  right: -32rpx;
+  bottom: -32rpx;
 }
 
-.f-foot { display: flex; flex-direction: column; }
-/* 存草稿（次）1 份 + 发布（主）2 份并排：主操作一眼可见，页面也不再被拉长 */
-.f-btns { display: flex; gap: 16rpx; align-items: center; }
-.f-draft { flex: 1; box-sizing: border-box; margin: 0; }
-.f-submit { flex: 2; box-sizing: border-box; margin: 0; }
+.e-cell--add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  background: #f6f8fb;
+  border: 2rpx dashed #e8edf5;
+}
+.e-cell--add image { width: 48rpx; height: 48rpx; }
+.e-cell__hint { font-size: 20rpx; color: #98a3b8; }
+.e-cell--add--hover { opacity: 0.72; }
+
+/* ---------- 底部按钮 ---------- */
+.e-foot { display: flex; align-items: center; gap: 16rpx; }
+.e-draft,
+.e-submit {
+  box-sizing: border-box;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96rpx;
+  padding: 0;
+  border: none;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.e-draft::after,
+.e-submit::after { border: none; }
+.e-draft {
+  flex: 1;
+  background: #ffffff;
+  color: #6f7b91;
+  border: 2rpx solid #e8edf5;
+}
+.e-draft--hover { opacity: 0.72; }
+.e-submit {
+  flex: 2;
+  background: #f58a32;
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(245, 138, 50, 0.24);
+}
+.e-submit--hover { opacity: 0.78; }
+.e-gap { height: 40rpx; }

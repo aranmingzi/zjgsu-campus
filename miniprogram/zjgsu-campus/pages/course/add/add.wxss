@@ -1,41 +1,73 @@
-.label {
+/* pages/course/add —— 添加课程。类名一律 cd-*，.card / .hint 来自 app.wxss。 */
+.cd-page {
+  padding-bottom: 120rpx;
+}
+
+.cd-label {
+  font-size: 28rpx;
   font-weight: 600;
   margin-bottom: 18rpx;
 }
-.req {
-  color: #e5484d;
+.cd-req {
   margin-left: 8rpx;
+  color: #dd4b55;
 }
-.field {
-  font-size: 30rpx;
-  /* 定高修复：input 只给 padding 不给高度会截字 */
+
+/* 输入框定高 88rpx：只给 padding 不给 height 的 input 会把字上下切掉一半 */
+.cd-field {
+  width: 100%;
   height: 88rpx;
-  padding: 0;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #172033;
+  background: #f6f8fb;
+  border-radius: 24rpx;
+  box-sizing: border-box;
 }
-.picker {
-  font-size: 30rpx;
-  padding: 8rpx 0;
-  color: #1f2329;
+
+.cd-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 88rpx;
+  padding: 0 24rpx;
+  background: #f6f8fb;
+  border-radius: 24rpx;
 }
-.hint {
-  font-size: 23rpx;
-  color: #8a9099;
-  margin-top: 10rpx;
+.cd-picker-text {
+  font-size: 28rpx;
+  color: #172033;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.tip-card {
-  background: #eef3fb;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
+.cd-picker-icon {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
+  transform: rotate(90deg);
 }
-.tip-title {
-  font-size: 27rpx;
-  font-weight: 600;
-  color: #1a5fb4;
-  margin-bottom: 10rpx;
+.cd-hint {
+  margin-top: 14rpx;
 }
-.tip-text {
-  font-size: 25rpx;
+
+.cd-tip {
+  background: #eff4ff;
+}
+.cd-tip-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.cd-tip-icon {
+  width: 40rpx;
+  height: 40rpx;
+  flex-shrink: 0;
+}
+.cd-tip-title { color: #2047c9; }
+.cd-tip-text {
+  margin-top: 12rpx;
+  font-size: 26rpx;
   color: #4b5159;
   line-height: 1.7;
 }

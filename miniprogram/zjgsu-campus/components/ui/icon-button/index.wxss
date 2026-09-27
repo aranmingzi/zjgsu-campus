@@ -1,0 +1,28 @@
+/* components/ui/icon-button/index.wxss —— 热区 88rpx 起步 */
+.ui-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.ui-icon-btn--sm { width: 76rpx; height: 76rpx; }
+.ui-icon-btn--lg { width: 100rpx; height: 100rpx; }
+
+.ui-icon-btn--light { background: #ffffff; box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); }
+.ui-icon-btn--glass { background: rgba(255, 255, 255, 0.12); }
+.ui-icon-btn--plain { background: transparent; }
+
+.ui-icon-btn--hover { opacity: 0.7; }
+.ui-icon-btn--disabled { opacity: 0.4; }
+
+.ui-icon-btn__img {
+  width: 44rpx;
+  height: 44rpx;
+}
+.ui-icon-btn--sm .ui-icon-btn__img { width: 36rpx; height: 36rpx; }
+.ui-icon-btn--lg .ui-icon-btn__img { width: 52rpx; height: 52rpx; }

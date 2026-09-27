@@ -4,11 +4,21 @@ const market = require('../../../utils/market.js');
 // 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置（论坛、闲置、活动三个板块共用）
 const bannerApi = require('../../../utils/banner.js');
 
+// 「全部」= TYPES 里没有的 key，getMarkets / searchMarkets 会原样返回全部类型
 const TABS = [
+  { key: 'all', label: '全部' },
   { key: 'lost', label: '寻物' },
   { key: 'found', label: '招领' },
   { key: 'sell', label: '闲置' }
 ];
+
+// 胶囊组件要的是「值数组 + 值->中文 的映射」，页面只负责把 TABS 摊成这两个
+const TAB_KEYS = TABS.map((t) => t.key);
+const TAB_LABELS = (function () {
+  const m = {};
+  TABS.forEach((t) => { m[t.key] = t.label; });
+  return m;
+})();
 
 // 选中态不能用 tab === 'lost' 这种判等来加 class（WXML 表达式能判等，但要写三遍），
 // 统一转成 map：tabMap.lost 就是 true/false
@@ -30,8 +40,10 @@ function catMap(current) {
 Page({
   data: {
     tabs: TABS,
-    tab: 'lost',
-    tabMap: tabMap('lost'),
+    tabKeys: TAB_KEYS,
+    tabLabels: TAB_LABELS,
+    tab: 'all',
+    tabMap: tabMap('all'),
     cats: CATS,
     category: 'all',
     catMap: catMap('all'),
@@ -46,7 +58,9 @@ Page({
     // 顶部 Banner 轮播：4 秒自动切；手指一碰立刻停，抬手恢复
     banner: [],
     bannerIdx: 0,
-    bannerAutoplay: true
+    bannerAutoplay: true,
+    // banner.wxml 里的图标取色：白底卡，图标用主色
+    bannerTone: 'brand'
   },
 
   onLoad() {
@@ -123,6 +137,11 @@ Page({
     if (t === this.data.tab) return;
     this.setData({ tab: t, tabMap: tabMap(t), keyword: '' });
     this.load();
+  },
+
+  // 胶囊组件回传的是 detail.value，包一层换成 onTab 认的 data-k，筛选逻辑就不必重写
+  onPillChange(e) {
+    this.onTab({ currentTarget: { dataset: { k: e.detail.value } } });
   },
 
   onCategory(e) {

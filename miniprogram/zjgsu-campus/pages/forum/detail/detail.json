@@ -1,4 +1,8 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "帖子详情",
-  "usingComponents": {}
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "vote-card": "/components/ui/vote-card/index"
+  }
 }

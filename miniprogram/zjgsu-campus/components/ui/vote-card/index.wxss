@@ -1,0 +1,171 @@
+/* components/ui/vote-card/index.wxss
+   进度条动画必须 500ms：Web 版是 transition-all duration-500 ease-out */
+.ui-vote {
+  background: #ffffff;
+  border-radius: 32rpx;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  padding: 28rpx;
+}
+
+.ui-vote__head {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.ui-vote__badge {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: #2b5aed;
+}
+.ui-vote__badge-icon { width: 26rpx; height: 26rpx; }
+.ui-vote__badge-text { font-size: 22rpx; font-weight: 600; color: #ffffff; }
+
+.ui-vote__status {
+  font-size: 22rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: #e9f8f1;
+  color: #128a56;
+}
+.ui-vote__status--end { background: #eef1f6; color: #98a3b8; }
+
+.ui-vote__multi {
+  font-size: 22rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: #f1edff;
+  color: #7357ff;
+}
+
+.ui-vote__body { padding: 0; }
+
+.ui-vote__title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #172033;
+  line-height: 1.5;
+  min-height: 88rpx;
+  display: flex;
+  align-items: flex-start;
+}
+
+.ui-vote__option { margin-top: 24rpx; }
+
+.ui-vote__option-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.ui-vote__option-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 26rpx;
+  color: #47536b;
+}
+.ui-vote__option-label--on { color: #2047c9; font-weight: 600; }
+
+.ui-vote__option-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.ui-vote__check {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 999rpx;
+  background: #2b5aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ui-vote__check-icon { width: 20rpx; height: 20rpx; }
+
+.ui-vote__pct {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #6f7b91;
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-vote__track {
+  height: 20rpx;
+  border-radius: 999rpx;
+  background: #eef1f6;
+  overflow: hidden;
+}
+
+.ui-vote__fill {
+  height: 100%;
+  border-radius: 999rpx;
+  /* 关键：500ms 过渡，与 Web 版 transition-all duration-500 对齐 */
+  transition: width 0.5s ease-out, background-color 0.5s ease-out;
+}
+.ui-vote__fill--top { background: linear-gradient(90deg, #2b5aed, #7357ff); }
+.ui-vote__fill--on { background: #5d8cff; }
+.ui-vote__fill--idle { background: #c9d3e2; }
+
+.ui-vote__option--locked .ui-vote__option-label { cursor: default; }
+.ui-vote__option--hover { opacity: 0.75; }
+
+.ui-vote__confirm {
+  margin-top: 32rpx;
+  min-height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 999rpx;
+  background: #2b5aed;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(43, 90, 237, 0.18);
+}
+.ui-vote__confirm::after { border: none; }
+.ui-vote__confirm--off { background: #eef1f6; color: #98a3b8; box-shadow: none; }
+.ui-vote__confirm--hover { opacity: 0.75; }
+
+.ui-vote__meta {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 28rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid #e8edf5;
+  font-size: 24rpx;
+  color: #6f7b91;
+}
+.ui-vote__meta-item { flex-shrink: 0; }
+.ui-vote__meta-item--right { margin-left: auto; color: #98a3b8; font-size: 22rpx; }
+
+.ui-vote__actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.ui-vote__action {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  min-height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: #f6f8fb;
+  color: #6f7b91;
+  font-size: 24rpx;
+}
+.ui-vote__action--hover { opacity: 0.72; }
+.ui-vote__action--on { background: #eff4ff; color: #2047c9; }
+.ui-vote__action--right { margin-left: auto; }
+.ui-vote__action-icon { width: 30rpx; height: 30rpx; }

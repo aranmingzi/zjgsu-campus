@@ -1,0 +1,4 @@
+<!-- components/ui/sticky-filter/index.wxml -->
+<view class="ui-sticky-filter {{blur ? 'ui-sticky-filter--blur' : ''}}">
+  <slot />
+</view>

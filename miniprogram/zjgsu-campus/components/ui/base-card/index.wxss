@@ -1,0 +1,29 @@
+/* components/ui/base-card/index.wxss —— 外层卡片 32rpx 圆角 + 统一阴影 */
+.ui-card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 24rpx;
+}
+
+.ui-card--padded { padding: 28rpx; }
+
+.ui-card--flat {
+  box-shadow: none;
+  border: 2rpx solid #e8edf5;
+}
+
+.ui-card--flush {
+  padding: 0;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+}
+
+.ui-card--clickable {
+  transition: opacity 0.15s ease, transform 0.12s ease;
+}
+
+.ui-card--hover {
+  opacity: 0.72;
+  transform: scale(0.988);
+}

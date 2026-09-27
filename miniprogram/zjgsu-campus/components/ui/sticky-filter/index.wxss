@@ -1,0 +1,14 @@
+/* components/ui/sticky-filter/index.wxss */
+.ui-sticky-filter {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  padding: 16rpx 0;
+  background: #f5f7fa;
+}
+
+/* 毛玻璃降级方案：不用 backdrop-filter，靠高不透明度 + 描边近似 */
+.ui-sticky-filter--blur {
+  background: rgba(245, 247, 250, 0.94);
+  border-bottom: 2rpx solid rgba(255, 255, 255, 0.8);
+}

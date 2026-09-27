@@ -1,0 +1,50 @@
+/* components/ui/base-button/index.wxss —— 胶囊 999rpx，热区 ≥88rpx */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  min-height: 88rpx;
+  padding: 0 40rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1.4;
+  border: none;
+  background: transparent;
+}
+
+.ui-btn::after { border: none; }
+
+.ui-btn--sm { padding: 0 32rpx; font-size: 26rpx; }
+.ui-btn--lg { padding: 0 48rpx; font-size: 32rpx; min-height: 96rpx; }
+.ui-btn--block { display: flex; width: 100%; }
+
+.ui-btn--primary { background: #2b5aed; color: #ffffff; box-shadow: 0 8rpx 24rpx rgba(43, 90, 237, 0.18); }
+.ui-btn--secondary { background: #eff4ff; color: #2047c9; border: 2rpx solid #dce7ff; }
+.ui-btn--ghost { background: transparent; color: #6f7b91; }
+.ui-btn--danger { background: #fff0f1; color: #dd4b55; }
+.ui-btn--dark { background: #172033; color: #ffffff; }
+
+.ui-btn--hover { opacity: 0.72; }
+
+.ui-btn--disabled {
+  background: #eef1f6 !important;
+  color: #98a3b8 !important;
+  box-shadow: none !important;
+}
+
+/* 加载态：纯 CSS 旋转，不用浏览器 API */
+.ui-btn__spinner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: btnSpin 0.8s linear infinite;
+}
+.ui-btn--secondary .ui-btn__spinner { border-color: #dce7ff; border-top-color: #2047c9; }
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}

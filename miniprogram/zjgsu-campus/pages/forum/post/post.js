@@ -35,7 +35,17 @@ Page({
     kind: 'normal',
     // 切到主题帖时的说明。放在数据里而不是写死在 wxml，
     // 是因为这句话会随板块变（社团板块说「拉群」，别的板块说法不一样）
-    topicTip: ''
+    topicTip: '',
+    // 第三种发帖模式「发起投票」的面板状态：选项 / 单选多选 / 截止时间 / 匿名
+    voteOptions: [
+      { id: 'vote-option-1', label: '' },
+      { id: 'vote-option-2', label: '' }
+    ],
+    voteMultiple: false,
+    voteDeadline: 72,
+    voteAnonymous: true,
+    voteFilled: 0,
+    optionSeq: 3
   },
 
   onLoad(options) {
@@ -220,6 +230,62 @@ Page({
     });
   },
 
+  /* ---------------- 发起投票模式（UI 面板） ---------------- */
+
+  onVoteOption(e) {
+    const i = Number(e.currentTarget.dataset.i || 0);
+    const label = e.detail.value;
+    const options = this.data.voteOptions.slice();
+    if (!options[i]) return;
+    options[i] = Object.assign({}, options[i], { label });
+    this.setData({
+      voteOptions: options,
+      // 有效选项数：至少填 2 个才发得出去
+      voteFilled: options.filter((o) => String(o.label || '').trim()).length
+    });
+  },
+
+  addVoteOption() {
+    if (this.data.voteOptions.length >= 8) {
+      wx.showToast({ title: '最多 8 个选项', icon: 'none' });
+      return;
+    }
+    const id = 'vote-option-' + this.data.optionSeq;
+    this.setData({
+      voteOptions: this.data.voteOptions.concat([{ id, label: '' }]),
+      optionSeq: this.data.optionSeq + 1
+    });
+  },
+
+  removeVoteOption(e) {
+    if (this.data.voteOptions.length <= 2) return;
+    const i = Number(e.currentTarget.dataset.i || 0);
+    this.setData({ voteOptions: this.data.voteOptions.filter((o, idx) => idx !== i) });
+  },
+
+  moveVoteOption(e) {
+    const i = Number(e.currentTarget.dataset.i || 0);
+    const offset = Number(e.currentTarget.dataset.d || 0);
+    const to = i + offset;
+    const list = this.data.voteOptions.slice();
+    if (to < 0 || to >= list.length) return;
+    const moved = list.splice(i, 1)[0];
+    list.splice(to, 0, moved);
+    this.setData({ voteOptions: list });
+  },
+
+  onVoteMode(e) {
+    this.setData({ voteMultiple: e.currentTarget.dataset.m === 'true' });
+  },
+
+  onVoteDeadline(e) {
+    this.setData({ voteDeadline: Number(e.currentTarget.dataset.h || 72) });
+  },
+
+  onVoteAnonymous() {
+    this.setData({ voteAnonymous: !this.data.voteAnonymous });
+  },
+
   // 匿名开关：只是「对同学隐藏」，不是「对平台隐身」——
   // 违规内容照样能追到人，这句话必须让用户看见
   toggleAnonymous() {
@@ -308,19 +374,20 @@ Page({
     }
     const title = this.data.title.trim();
     const content = this.data.content.trim();
-    const kind = this.data.kind === 'topic' ? 'topic' : 'normal';
+    // 投票帖不带正文，和主题帖一样放行（store.addPost 仍按自己的字段落库）
+    const kind = this.data.kind === 'topic' || this.data.kind === 'vote' ? this.data.kind : 'normal';
     if (!title) {
       wx.showToast({ title: kind === 'topic' ? '给这个主题起个名字' : '写个标题', icon: 'none' });
       return;
     }
-    // 主题帖的定义就是「不带正文」，所以这里反过来：正文有内容才要拦。
+    // 主题帖和投票帖的定义就是「不带正文」，所以这里反过来：正文有内容才要拦。
     // 普通帖仍然坚持「正文不能空」—— 发个光秃秃的标题占个位置，对看的人没有意义
     if (kind === 'topic') {
       if (content) {
         wx.showToast({ title: '主题帖不写正文', icon: 'none' });
         return;
       }
-    } else if (!content) {
+    } else if (kind === 'normal' && !content) {
       wx.showToast({ title: '写点内容', icon: 'none' });
       return;
     }

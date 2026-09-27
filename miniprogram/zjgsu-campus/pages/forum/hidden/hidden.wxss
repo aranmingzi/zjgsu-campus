@@ -1,55 +1,86 @@
+/* pages/forum/hidden/hidden.wxss —— 被举报暂停展示的内容 */
+
 .tip-card {
-  background: #fff8e6;
-  border: 2rpx solid #ffe1a6;
-  border-radius: 20rpx;
-  padding: 24rpx 26rpx;
+  display: block;
+  padding: 28rpx;
   margin-bottom: 24rpx;
+  border-radius: 32rpx;
+  background: #fff3e9;
+  border: 2rpx solid #ffe1a6;
 }
-.tip-title {
-  color: #8a6310;
-  font-size: 27rpx;
-  font-weight: 600;
-}
-.tip-body {
-  color: #9c7430;
-  font-size: 23rpx;
-  line-height: 1.6;
-  margin-top: 8rpx;
-}
-
-.lock-badge {
-  font-size: 21rpx;
-  color: #b08a3e;
-  background: #fdefd2;
-  padding: 4rpx 14rpx;
-  border-radius: 999rpx;
-}
-
-.post-head {
+.tip-card__head { display: flex; align-items: flex-start; gap: 16rpx; }
+.tip-card__icon {
+  flex-shrink: 0;
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: #ffffff;
+}
+.tip-card__icon-img { width: 36rpx; height: 36rpx; }
+.tip-card__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #a86a1c;
+  line-height: 1.5;
+}
+.tip-card__body {
+  margin-top: 16rpx;
+  padding-left: 80rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: #b08a3e;
+}
+
+.post__head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 44rpx;
   margin-bottom: 12rpx;
 }
-.lock-badge {
+.post__mini-icon { width: 24rpx; height: 24rpx; }
+.post__lock {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
   margin-left: auto;
+  flex-shrink: 0;
+  padding: 4rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: #d9731f;
+  background: #fff3e9;
 }
-.post-content {
-  color: #555;
+
+.post__title { margin-bottom: 8rpx; }
+.post__content {
   font-size: 26rpx;
-  line-height: 1.6;
-  margin-top: 8rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.65;
+  color: #6f7b91;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-.post-foot {
+.post__foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 16rpx;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid #e8edf5;
 }
-.stat {
-  font-size: 22rpx;
+.post__author {
+  flex: 1;
+  min-width: 0;
+  font-size: 24rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
+.post__stat { flex-shrink: 0; font-size: 22rpx; }

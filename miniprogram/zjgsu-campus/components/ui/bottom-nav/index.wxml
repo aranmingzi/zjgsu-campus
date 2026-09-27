@@ -1,0 +1,59 @@
+<!-- components/ui/bottom-nav/index.wxml
+     五个主 Tab：课程 / 论坛 / 闲置 / 校园 / 我的
+     图标名写死，不拿 tab key 当图标名（course.svg 这类资源并不存在） -->
+<view class="bottom-nav">
+  <view
+    class="bottom-nav__item {{active === 'course' ? 'bottom-nav__item--on' : ''}}"
+    data-url="/pages/course/list/list"
+    bindtap="onTap"
+  >
+    <view class="bottom-nav__icon-wrap">
+      <image class="bottom-nav__icon" src="/assets/icons/book-open-check--{{active === 'course' ? 'brand' : 'faint'}}.svg" mode="aspectFit" />
+    </view>
+    <text class="bottom-nav__label">课程</text>
+  </view>
+
+  <view
+    class="bottom-nav__item {{active === 'forum' ? 'bottom-nav__item--on' : ''}}"
+    data-url="/pages/forum/list/list"
+    bindtap="onTap"
+  >
+    <view class="bottom-nav__icon-wrap">
+      <image class="bottom-nav__icon" src="/assets/icons/message-circle--{{active === 'forum' ? 'brand' : 'faint'}}.svg" mode="aspectFit" />
+    </view>
+    <text class="bottom-nav__label">论坛</text>
+  </view>
+
+  <view
+    class="bottom-nav__item {{active === 'market' ? 'bottom-nav__item--on' : ''}}"
+    data-url="/pages/market/list/list"
+    bindtap="onTap"
+  >
+    <view class="bottom-nav__icon-wrap">
+      <image class="bottom-nav__icon" src="/assets/icons/shopping-bag--{{active === 'market' ? 'brand' : 'faint'}}.svg" mode="aspectFit" />
+    </view>
+    <text class="bottom-nav__label">闲置</text>
+  </view>
+
+  <view
+    class="bottom-nav__item {{active === 'campus' ? 'bottom-nav__item--on' : ''}}"
+    data-url="/pages/campus/campus"
+    bindtap="onTap"
+  >
+    <view class="bottom-nav__icon-wrap">
+      <image class="bottom-nav__icon" src="/assets/icons/megaphone--{{active === 'campus' ? 'brand' : 'faint'}}.svg" mode="aspectFit" />
+    </view>
+    <text class="bottom-nav__label">校园</text>
+  </view>
+
+  <view
+    class="bottom-nav__item {{active === 'mine' ? 'bottom-nav__item--on' : ''}}"
+    data-url="/pages/mine/mine"
+    bindtap="onTap"
+  >
+    <view class="bottom-nav__icon-wrap">
+      <image class="bottom-nav__icon" src="/assets/icons/user--{{active === 'mine' ? 'brand' : 'faint'}}.svg" mode="aspectFit" />
+    </view>
+    <text class="bottom-nav__label">我的</text>
+  </view>
+</view>

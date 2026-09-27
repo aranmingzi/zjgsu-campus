@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "我的",
-  "usingComponents": {}
+  "usingComponents": {
+    "treehole-entry": "/components/ui/treehole-entry/index"
+  }
 }

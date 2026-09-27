@@ -1,9 +1,17 @@
-<view class="container">
-  <view class="search-bar">
-    <text class="search-icon">🔍</text>
+<!-- pages/tool/resources/resources.wxml —— 学习资料
+     自定义导航 + app-header；搜索 / 分类 / 上传卡 / 资料列表全部走设计令牌。
+     emoji 全部换成线性 outline 图标；卡片图标按 category 从已有图标里挑。
+     数据字段沿用 resources.js：list / catMap / catFormMap / form / uploading。 -->
+<app-header title="学习资料" showBack />
+
+<view class="container rs-page">
+
+  <view class="search-bar rs-search">
+    <image class="rs-search__icon" src="/assets/icons/search--muted.svg" mode="aspectFit" />
     <input
-      class="search-input"
+      class="rs-search__input"
       placeholder="搜课程名 / 资料名"
+      placeholder-class="rs-search__ph"
       value="{{keyword}}"
       confirm-type="search"
       bindinput="onSearch"
@@ -11,37 +19,53 @@
     />
   </view>
 
-  <view class="cat-row">
+  <view class="chip-row rs-cats">
     <view
       wx:for="{{cats}}"
       wx:for-item="c"
       wx:key="*this"
-      class="cat-chip {{catMap[c] ? 'on' : ''}} tap"
+      class="chip {{catMap[c] ? 'chip-on' : ''}} tap"
       data-c="{{c}}"
       bindtap="onCategory"
     >{{c}}</view>
   </view>
 
-  <view class="card share-entry tap" bindtap="onToggleForm">
-    <text class="share-icon">📤</text>
-    <view class="share-main">
-      <view class="share-title">{{showForm ? '收起上传' : '我也有资料要分享'}}</view>
-      <view class="muted share-sub">笔记、真题、讲义都行，帮同学省一次打印钱</view>
+  <view
+    class="card rs-share pressable"
+    hover-class="rs-share--hover"
+    hover-stay-time="80"
+    bindtap="onToggleForm"
+  >
+    <view class="rs-share__ico">
+      <image class="rs-share__ico-img" src="/assets/icons/file-text--brand.svg" mode="aspectFit" />
     </view>
-    <text class="share-go">{{showForm ? '▲' : '▼'}}</text>
+    <view class="rs-share__main">
+      <view class="rs-share__title">{{showForm ? '收起上传' : '我也有资料要分享'}}</view>
+      <view class="muted rs-share__sub">笔记、真题、讲义都行，帮同学省一次打印钱</view>
+    </view>
+    <image class="rs-share__go" src="{{showForm ? '/assets/icons/arrow-up--faint.svg' : '/assets/icons/arrow-down--faint.svg'}}" mode="aspectFit" />
   </view>
 
-  <view wx:if="{{showForm}}" class="card form-card">
-    <view class="file-row tap" bindtap="chooseFile">
-      <text class="file-icon">📎</text>
-      <view class="file-main">
-        <view wx:if="{{form.fileID}}" class="file-name">{{form.fileName || '已选好文件'}}</view>
-        <view wx:else class="file-name">从聊天记录里选文件（PDF / Word / PPT）</view>
-        <view class="muted file-sub">{{uploading ? '上传中…' : '单个文件 20MB 以内'}}</view>
+  <view wx:if="{{showForm}}" class="card rs-form">
+    <view
+      class="rs-file pressable"
+      hover-class="rs-file--hover"
+      hover-stay-time="80"
+      bindtap="chooseFile"
+    >
+      <view class="rs-file__ico">
+        <image class="rs-file__ico-img" src="/assets/icons/file-text--brand.svg" mode="aspectFit" />
       </view>
+      <view class="rs-file__main">
+        <view wx:if="{{form.fileID}}" class="rs-file__name truncate">{{form.fileName || '已选好文件'}}</view>
+        <view wx:else class="rs-file__name">从聊天记录里选文件（PDF / Word / PPT）</view>
+        <view class="muted rs-file__sub">{{uploading ? '上传中…' : '单个文件 20MB 以内'}}</view>
+      </view>
+      <image class="rs-file__go" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
     </view>
+
     <input
-      class="field"
+      class="rs-field"
       placeholder="如「中级财务会计期末重点」"
       value="{{form.title}}"
       data-k="title"
@@ -49,7 +73,7 @@
       maxlength="40"
     />
     <input
-      class="field"
+      class="rs-field"
       placeholder="对应课程名（选填）"
       value="{{form.courseName}}"
       data-k="courseName"
@@ -57,58 +81,97 @@
       maxlength="30"
     />
     <input
-      class="field"
+      class="rs-field"
       placeholder="选填，如「含近三年真题」"
       value="{{form.desc}}"
       data-k="desc"
       bindinput="onInput"
       maxlength="200"
     />
-    <view class="type-row">
+    <view class="chip-row rs-types">
       <view
         wx:for="{{['笔记','真题','讲义','其他']}}"
         wx:for-item="t"
         wx:key="*this"
-        class="type {{catFormMap[t] ? 'on' : ''}} tap"
+        class="chip {{catFormMap[t] ? 'chip-on' : ''}} tap"
         data-c="{{t}}"
         bindtap="onFormCategory"
       >{{t}}</view>
     </view>
-    <button class="btn-primary tap" bindtap="onSubmit" disabled="{{uploading}}">发布资料</button>
+    <button class="btn-primary tap rs-submit" hover-stay-time="80" bindtap="onSubmit" disabled="{{uploading}}">发布资料</button>
   </view>
 
-  <view wx:if="{{loading}}" class="empty">加载中…</view>
+  <view wx:if="{{loading}}" class="rs-loading">加载中…</view>
 
-  <view wx:elif="{{list.length === 0}}" class="empty">
-    <view class="empty-icon">📚</view>
-    <view>还没有人分享资料</view>
-    <view class="empty-hint">你手里的笔记或真题，可能正是别人在找的</view>
-  </view>
+  <empty-state
+    wx:elif="{{list.length === 0}}"
+    icon="book-open"
+    iconColor="faint"
+    title="还没有人分享资料"
+    description="你手里的笔记或真题，可能正是别人在找的"
+  />
 
-  <view wx:else>
+  <block wx:else>
     <view
       wx:for="{{list}}"
       wx:key="id"
-      class="card res-item"
+      class="card rs-item"
     >
-      <view class="res-head">
-        <text class="res-icon">{{item.catIcon}}</text>
-        <view class="res-main">
-          <view class="res-title">{{item.title}}</view>
-          <view class="muted res-meta">{{item.courseName ? '📖 ' + item.courseName + ' · ' : ''}}{{item.ext}} · {{item.sizeText}}</view>
-          <view wx:if="{{item.desc}}" class="muted res-desc">{{item.desc}}</view>
+      <view class="rs-head">
+        <view class="rs-head__ico">
+          <image
+            class="rs-head__ico-img"
+            src="{{item.category === '笔记' ? '/assets/icons/notebook-pen--brand.svg' : (item.category === '真题' ? '/assets/icons/file-text--market.svg' : (item.category === '讲义' ? '/assets/icons/book-open--campus.svg' : '/assets/icons/tag--muted.svg'))}}"
+            mode="aspectFit"
+          ></image>
+        </view>
+        <view class="rs-main">
+          <view class="rs-title">{{item.title}}</view>
+          <view class="muted rs-meta">{{item.courseName ? item.courseName + ' · ' : ''}}{{item.ext}} · {{item.sizeText}}</view>
+          <view wx:if="{{item.desc}}" class="muted rs-desc clamp2">{{item.desc}}</view>
         </view>
       </view>
-      <view class="res-foot">
-        <text class="muted res-by">{{item.author}} · {{item.time}}</text>
-        <view class="res-ops">
-          <view class="res-op {{item.thanked ? 'on' : ''}} tap" data-i="{{index}}" catchtap="onThanks">
-            🙏 {{item.thanksCount > 0 ? item.thanksCount : '感谢'}}
+
+      <view class="rs-foot">
+        <text class="faint rs-by truncate">{{item.author}} · {{item.time}}</text>
+        <view class="rs-ops">
+          <view
+            class="rs-op {{item.thanked ? 'rs-op--on' : ''}} pressable"
+            hover-class="rs-op--hover"
+            hover-stay-time="80"
+            data-i="{{index}}"
+            catchtap="onThanks"
+          >
+            <image
+              class="rs-op__icon"
+              src="{{item.thanked ? '/assets/icons/thumbs-up--campus.svg' : '/assets/icons/thumbs-up--muted.svg'}}"
+              mode="aspectFit"
+            ></image>
+            <text>{{item.thanked ? '已感谢' : (item.thanksCount > 0 ? item.thanksCount : '感谢')}}</text>
           </view>
-          <view class="res-op primary tap" data-i="{{index}}" catchtap="onOpen">打开</view>
-          <view wx:if="{{item.isMine}}" class="res-op del tap" data-id="{{item.id}}" catchtap="onRemove">删除</view>
+          <view
+            class="rs-op rs-op--primary pressable"
+            hover-class="rs-op--hover"
+            hover-stay-time="80"
+            data-i="{{index}}"
+            catchtap="onOpen"
+          >
+            <image class="rs-op__icon" src="/assets/icons/eye--brand.svg" mode="aspectFit" />
+            <text>打开</text>
+          </view>
+          <view
+            wx:if="{{item.isMine}}"
+            class="rs-op rs-op--danger pressable"
+            hover-class="rs-op--hover"
+            hover-stay-time="80"
+            data-id="{{item.id}}"
+            catchtap="onRemove"
+          >
+            <image class="rs-op__icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+            <text>删除</text>
+          </view>
         </view>
       </view>
     </view>
-  </view>
+  </block>
 </view>

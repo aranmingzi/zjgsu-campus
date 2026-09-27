@@ -28,8 +28,8 @@ function tabMap(cur) {
 const PLACE_CATS = ['教学楼', '食堂', '宿舍', '快递', '运动', '其他'];
 
 function placeCatIcon(c) {
-  return c === '教学楼' ? '🏫' : (c === '食堂' ? '🍚' : (c === '宿舍' ? '🛏️'
-    : (c === '快递' ? '📦' : (c === '运动' ? '⚽' : '📍'))));
+  return c === '教学楼' ? 'graduation-cap' : (c === '食堂' ? 'utensils' : (c === '宿舍' ? 'home️'
+    : (c === '快递' ? 'inbox' : (c === '运动' ? 'dumbbell' : 'pin'))));
 }
 
 // 倒计时天数：WXML 的 {{}} 里不能调方法，天数必须在这里算好
@@ -165,7 +165,7 @@ Page({
       if (n) list = eventApi.getEvents();
     } catch (e) {}
     const decorated = list.map((e) => Object.assign({}, e, {
-      typeIcon: e.official ? '🏛️' : eventApi.typeIcon(e.type),
+      typeIcon: e.official ? 'shield-check️' : eventApi.typeIcon(e.type),
       typeLabel: e.official ? '官方' : eventApi.typeLabel(e.type),
       // 人数上限：写了就显示「已报名 3/20」，没写就不显示，免得看着像限制人数
       countText: e.capacity > 0 ? ('已报名 ' + (e.joinedCount || 0) + '/' + e.capacity) : ('' + (e.joinedCount || 0) + ' 人已报名')
@@ -300,7 +300,7 @@ Page({
       days: daysNum(it.date),
       daysText: daysText(it.date),
       past: daysNum(it.date) < 0,
-      typeIcon: it.type === 'exam' ? '📝' : (it.type === 'term' ? '🎓' : '📌')
+      typeIcon: it.type === 'exam' ? 'file-text' : (it.type === 'term' ? 'graduation-cap' : 'pin')
     })).sort((a, b) => a.days - b.days);
     const next = decorated.filter((d) => d.days >= 0)[0];
     this.setData({

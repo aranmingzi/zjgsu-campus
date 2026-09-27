@@ -1,364 +1,426 @@
-.mod-head {
+/* pages/admin/moderation/moderation.wxss —— 内容审核
+   规格来源：docs/native-ui-contract.md + src/views/mine/MineHomeView.vue 的「内容审核」入口行。
+   复用 app.wxss 的 .card / .inner / .tag / .pressable / .hit / .segmented，
+   这里只写本页特有的语义类，不重复声明上面的令牌。
+   两条硬约束：
+     1) 本页面任何祖先节点都不出现 transform（.container 只跑 opacity 动画），
+        否则下面 position:fixed 的批量条会退化成相对定位；
+     2) 全 rpx，不碰 window / document / backdrop-filter / clamp。 */
+
+/* ---------- 页面骨架 ---------- */
+.mod-page {
+  /* 底部批量条 + 安全区留位，别让最后一张卡被压住 */
+  padding-bottom: 300rpx;
+  padding-bottom: calc(300rpx + env(safe-area-inset-bottom));
+}
+
+.sec-title {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  gap: 16rpx;
+  flex-wrap: wrap;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #172033;
   margin: 4rpx 4rpx 20rpx;
 }
-.head-title {
-  font-size: 34rpx;
-  font-weight: 600;
+.sec-sub {
+  font-size: 22rpx;
+  font-weight: 400;
+  color: #98a3b8;
 }
-.head-sub {
-  font-size: 26rpx;
-  color: #8a9099;
+
+/* 分段标签：32rpx 以下宽度也不溢出，短文案优先 */
+.seg-label { font-size: 26rpx; }
+.seg-item--hover { opacity: 0.72; }
+
+/* ---------- 审核员在场 / 引导卡 ---------- */
+.mod-brief {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
 }
-.setup-done {
-  font-size: 25rpx;
-  color: #1f7a3d;
-  background: #eefaf1;
-  border-radius: 12rpx;
-  padding: 18rpx 22rpx;
-  line-height: 1.7;
-  margin-bottom: 18rpx;
+/* 图标方块：浅灰底 + 线性 outline 图标，沿用「内容审核」入口行的约定 */
+.mod-brief__icon {
+  flex: none;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: #eef1f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-/* 自动处置说明：审核员最该知道的就是「哪些不用我来判」 */
+.mod-brief__icon-img { width: 44rpx; height: 44rpx; }
+.mod-brief__body { flex: 1; min-width: 0; }
+
 .auto-note {
-  margin-top: 12rpx;
-  padding-top: 12rpx;
-  border-top: 1rpx dashed #c7e6cf;
+  background: #f1faf5;
+  border: 2rpx solid #cdebdc;
+}
+.auto-note__title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #128a56;
+  margin-bottom: 10rpx;
+}
+.auto-note__row {
+  font-size: 24rpx;
   color: #2b6b45;
-  font-size: 23rpx;
   line-height: 1.75;
 }
-/* 条件本身要跳出来，不然一长段说明没人读得下去 */
-.auto-note .hl {
-  color: #1c5233;
-  font-weight: 600;
+.auto-note__hl { color: #128a56; font-weight: 600; }
+.auto-note__note {
+  margin-top: 12rpx;
+  padding-left: 16rpx;
+  border-left: 6rpx solid #a9dfc4;
+  font-size: 23rpx;
+  color: #5f7a6c;
+  line-height: 1.7;
 }
-.setup-card {
-  background: #f7f9fc;
-  border: 2rpx solid #e3eaf5;
-  border-radius: 14rpx;
-  padding: 24rpx;
-  margin-bottom: 18rpx;
-}
-.setup-title {
-  font-size: 28rpx;
-  font-weight: 600;
-  margin-bottom: 14rpx;
-}
+
+.setup-card .title-sm { margin-bottom: 16rpx; }
 .setup-step {
   display: flex;
   align-items: flex-start;
+  gap: 16rpx;
   margin-bottom: 12rpx;
 }
 .step-no {
   flex: none;
-  width: 34rpx;
-  height: 34rpx;
-  line-height: 34rpx;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
   text-align: center;
-  border-radius: 50%;
-  background: #1a5fb4;
-  color: #fff;
-  font-size: 22rpx;
-  margin-right: 14rpx;
+  border-radius: 999rpx;
+  background: #2b5aed;
+  color: #ffffff;
+  font-size: 20rpx;
 }
 .step-txt {
   flex: 1;
+  min-width: 0;
   font-size: 25rpx;
   color: #4b525a;
   line-height: 1.6;
 }
-.setup-btn {
-  margin-top: 18rpx;
-  background: #1a5fb4;
-  color: #fff;
-  font-size: 30rpx;
-  font-weight: 600;
-  text-align: center;
-  border-radius: 12rpx;
-  padding: 22rpx 0;
-}
+.setup-btn { margin-top: 20rpx; }
 .setup-id {
   margin-top: 16rpx;
   font-size: 22rpx;
-  color: #8a9099;
+  color: #98a3b8;
   word-break: break-all;
   text-align: center;
 }
-/* 前端名单 / 云函数 两侧判定对比：哪个 ✗ 一眼看到，别再让人对着「还不是审核员」猜 */
-.setup-diag {
-  margin-top: 20rpx;
-  padding: 18rpx 22rpx;
-  background: #f4f6f9;
-  border-radius: 12rpx;
-}
+
+.diag-card { background: #f6f8fb; padding: 20rpx 24rpx; }
 .diag-line {
   font-size: 24rpx;
   color: #4a5057;
   line-height: 1.8;
+  word-break: break-all;
 }
 .diag-hint {
   margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 2rpx dashed #e0e5ee;
   font-size: 22rpx;
-  color: #8a6d1a;
+  color: #b07a12;
   line-height: 1.7;
 }
-.guide {
-  background: #fdf6e6;
-  border-radius: 12rpx;
-  padding: 20rpx 24rpx;
-  margin-bottom: 18rpx;
+
+.guide-card {
+  background: #fff8ec;
+  border: 2rpx solid #f6e3bd;
 }
-.guide-title {
+.guide-card__title {
   font-size: 26rpx;
   font-weight: 600;
   color: #a86a1c;
   margin-bottom: 10rpx;
 }
-.guide-row {
+.guide-card__row {
   font-size: 24rpx;
   color: #7a5a1c;
   line-height: 1.8;
 }
-.guide-row-dim {
-  color: #a08a5a;
-  margin-top: 6rpx;
+.guide-card__row--dim { color: #a08a5a; margin-top: 6rpx; }
+
+.guide-more {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 88rpx;
+  padding: 0 8rpx;
+  margin-bottom: 24rpx;
 }
+.guide-more--hover { opacity: 0.72; }
+.guide-more__icon { width: 32rpx; height: 32rpx; flex: none; }
+
 .tip {
   font-size: 24rpx;
   color: #a86a1c;
-  background: #fdf6e6;
-  border-radius: 10rpx;
-  padding: 16rpx 20rpx;
+  background: #fff8ec;
+  border: 2rpx solid #f6e3bd;
+  border-radius: 24rpx;
+  padding: 20rpx 24rpx;
   line-height: 1.7;
-  margin-bottom: 18rpx;
+  margin-bottom: 24rpx;
 }
-.batch-bar {
+
+/* ---------- 举报队列卡片 ---------- */
+.rep-card { overflow: hidden; }
+
+.rep-card__head {
   display: flex;
   align-items: center;
-  background: #1a5fb4;
-  border-radius: 14rpx;
-  padding: 22rpx 28rpx;
-  margin-bottom: 20rpx;
+  gap: 4rpx;
+  margin-bottom: 16rpx;
 }
-.batch-main {
-  flex: 1;
-  color: #fff;
-  font-size: 30rpx;
-  font-weight: 600;
-}
-.batch-sub {
-  font-size: 24rpx;
-  color: #cfe0f7;
-  margin-left: 20rpx;
-}
-.empty {
-  color: #8a9099;
-  font-size: 28rpx;
-  text-align: center;
-  padding: 60rpx 0;
-}
-.rep-card {
-  margin-bottom: 18rpx;
-}
-.rep-top {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12rpx;
-}
+
+/* 复选框：88rpx 热区 + 44rpx 视觉方框 */
 .rep-check {
-  width: 40rpx;
-  height: 40rpx;
-  border: 2rpx solid #d5d8dd;
-  border-radius: 10rpx;
-  color: #1a5fb4;
-  font-size: 26rpx;
-  text-align: center;
-  line-height: 38rpx;
-  margin-right: 14rpx;
+  flex: none;
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -12rpx;
 }
-.rep-reason {
-  font-size: 26rpx;
-  color: #d9534f;
-  background: #fdecec;
-  border-radius: 8rpx;
-  padding: 4rpx 14rpx;
-  margin-right: 14rpx;
+.rep-check__box {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 14rpx;
+  border: 2rpx solid #cfd6e2;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
 }
-/* 观察期标签：跟举报原因的红色区分开，表示的是「这条票系统没动过」 */
-.rep-tag {
-  font-size: 22rpx;
-  color: #8a6d1f;
-  background: #fdf6e0;
-  border-radius: 8rpx;
-  padding: 3rpx 12rpx;
-  margin-right: 14rpx;
+.rep-check--on .rep-check__box {
+  background: #2b5aed;
+  border-color: #2b5aed;
 }
-.rep-time {
-  font-size: 22rpx;
-  color: #a8adb4;
+.rep-check--hover { opacity: 0.7; }
+.rep-check__icon { width: 28rpx; height: 28rpx; }
+
+.rep-card__tags {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.rep-card__time {
   margin-left: auto;
+  font-size: 22rpx;
+  color: #98a3b8;
 }
-/* 说明里的补充条件：跟上面的规则混在一起就没人看了，单独拎出来加个左竖线 */
-.hl-note {
-  margin-top: 12rpx;
-  padding-left: 16rpx;
-  border-left: 5rpx solid #f0d8a0;
-  color: #7a6a3f;
-}
-.rep-body {
-  font-size: 27rpx;
-  color: #2b3138;
-  line-height: 1.7;
-}
-.rep-who {
+
+.rep-card__body { font-size: 27rpx; color: #172033; line-height: 1.7; }
+.rep-card__who {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  min-width: 0;
   font-size: 23rpx;
-  color: #8a9099;
+  color: #6f7b91;
 }
-.rep-title {
-  font-weight: 600;
-  margin-top: 6rpx;
-}
-.rep-desc {
-  color: #4b525a;
-  margin: 6rpx 0;
-}
-.rep-detail {
+.rep-card__who-icon { width: 28rpx; height: 28rpx; flex: none; }
+.rep-card__title { margin-top: 8rpx; }
+.rep-card__desc { color: #4b525a; margin-top: 6rpx; }
+.rep-card__detail {
+  margin-top: 12rpx;
+  padding: 16rpx 20rpx;
+  background: #f6f8fb;
   font-size: 24rpx;
-  color: #8a9099;
-  background: #f7f8fa;
-  border-radius: 8rpx;
-  padding: 10rpx 14rpx;
-  margin-top: 8rpx;
-  line-height: 1.6;
+  color: #6f7b91;
+  line-height: 1.65;
 }
+
+/* 证据图片：一行最多 3 张，lazy-load 沿用 JS 的分屏加载 */
+.rep-evidence {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 16rpx;
+  flex-wrap: wrap;
+}
+.rep-evidence__img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 20rpx;
+  background: #f6f8fb;
+}
+
 .rep-ops {
   display: flex;
   align-items: center;
-  margin-top: 16rpx;
-  padding-top: 14rpx;
-  border-top: 1rpx solid #f0f1f3;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding-top: 8rpx;
 }
 .op {
-  font-size: 25rpx;
-  color: #6b7280;
-  padding: 8rpx 20rpx;
-  border: 1rpx solid #e3e6ea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88rpx;
+  padding: 0 28rpx;
   border-radius: 999rpx;
-  margin-right: 14rpx;
+  border: 2rpx solid #e3e6ea;
+  background: #ffffff;
+  font-size: 25rpx;
+  color: #6f7b91;
 }
-.op.danger {
-  color: #d9534f;
-  border-color: #f0c9c9;
+.op--hover { opacity: 0.72; }
+/* 通过 = 校园绿 #19A66A */
+.op--pass {
+  background: #e9f8f1;
+  border-color: #bfe6d3;
+  color: #128a56;
+  font-weight: 600;
 }
-.op.restore {
-  color: #1a5fb4;
-  border-color: #cfe0f7;
-}
-.bottom-note {
-  font-size: 23rpx;
-  color: #a8adb4;
-  line-height: 1.7;
-  padding: 10rpx 6rpx 40rpx;
+/* 驳回 = 危险色 #DD4B55 */
+.op--danger {
+  background: #fff0f1;
+  border-color: #f6ccd0;
+  color: #dd4b55;
+  font-weight: 600;
 }
 
-/* ---------- 三个分区的切换 ---------- */
-.tab-bar {
-  display: flex;
-  background: #eceef1;
-  border-radius: 999rpx;
-  padding: 6rpx;
-  margin: 0 4rpx 20rpx;
+.bottom-note {
+  font-size: 23rpx;
+  color: #98a3b8;
+  line-height: 1.7;
+  padding: 8rpx 6rpx 20rpx;
 }
-.tab {
-  flex: 1;
-  text-align: center;
-  font-size: 25rpx;
-  color: #5a6068;
-  padding: 14rpx 0;
-  border-radius: 999rpx;
-}
-.tab.on {
-  background: #fff;
-  color: #1a5fb4;
-  font-weight: 600;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
-}
-.sec-title {
-  font-size: 28rpx;
-  font-weight: 600;
-  margin: 8rpx 4rpx 16rpx;
-}
-.sec-sub {
-  font-size: 22rpx;
-  color: #a8adb4;
-  font-weight: normal;
+.bottom-note__hl {
+  margin-top: 12rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 24rpx;
+  background: #fff8ec;
+  color: #7a5a1c;
+  border-left: 6rpx solid #f0d8a0;
 }
 
 /* ---------- 置顶管理 ---------- */
-.pin-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 18rpx;
-}
-.pin-main {
-  flex: 1;
-  min-width: 0;
-}
+.pin-card { margin-bottom: 0; }
+.pin-main { flex: 1; min-width: 0; }
 .pin-title {
   font-size: 27rpx;
+  font-weight: 600;
+  color: #172033;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .pin-meta {
-  font-size: 22rpx;
-  margin-top: 6rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 8rpx;
+  min-width: 0;
 }
-.pin-btn {
+.pin-meta__icon { width: 26rpx; height: 26rpx; flex: none; }
+.pin-flag {
   flex: none;
-  margin-left: 18rpx;
-  padding: 12rpx 30rpx;
-  font-size: 25rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
+  min-width: 120rpx;
+  height: 56rpx;
+  padding: 0 24rpx;
   border-radius: 999rpx;
+  background: #eef1f6;
+  color: #6f7b91;
+  font-size: 24rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.pin-btn.on {
-  color: #fff;
-  background: #e64340;
+.pin-flag--on {
+  background: #2b5aed;
+  color: #ffffff;
 }
+.row--hover { background: #f7f9fc; }
 
-/* ---------- 通知设置 ---------- */
-.cfg-card {
-  background: #f7f9fc;
-  border: 2rpx solid #e3eaf5;
-  border-radius: 14rpx;
-  padding: 24rpx;
-  margin-bottom: 18rpx;
-}
+/* ---------- 通知与数据 ---------- */
+.setup-btn-wrap { margin-bottom: 24rpx; }
+.cfg-card { background: #ffffff; }
 .cfg-label {
   font-size: 26rpx;
   color: #4b525a;
-  margin-bottom: 12rpx;
-}
-.cfg-label + .cfg-label {
-  margin-top: 22rpx;
+  margin-bottom: 14rpx;
 }
 .cfg-input {
   width: 100%;
   box-sizing: border-box;
   font-size: 26rpx;
-  height: 84rpx;
-  padding: 0 20rpx;
-  background: #fff;
-  border: 1rpx solid #dde1e6;
-  border-radius: 10rpx;
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: #f6f8fb;
+  border: 2rpx solid #e8edf5;
+  border-radius: 24rpx;
 }
 .cfg-hint {
   font-size: 22rpx;
-  color: #1f7a3d;
-  margin-top: 10rpx;
+  color: #128a56;
+  margin-top: 12rpx;
+}
+
+/* ---------- 底部批量操作条（position:fixed） ---------- */
+.batch-bar {
+  bottom: 0;
+  padding: 0 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, rgba(245, 247, 250, 0), #f5f7fa 40%);
+}
+.batch-bar__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 32rpx;
+  background: #ffffff;
+  border: 2rpx solid #e8edf5;
+  box-shadow: 0 8rpx 24rpx rgba(23, 32, 51, 0.12);
+}
+.batch-bar__count {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  color: #6f7b91;
+}
+.batch-bar__icon { width: 30rpx; height: 30rpx; }
+.batch-bar__ops {
+  display: flex;
+  gap: 16rpx;
+}
+.batch-btn {
+  flex: 1;
+  min-width: 0;
+  min-height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.batch-btn--hover { opacity: 0.72; }
+.batch-btn--off { opacity: 0.45; }
+/* 驳回 = 危险色 #DD4B55（主按钮实心 / 次按钮描边） */
+.batch-btn--danger {
+  background: #dd4b55;
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(221, 75, 85, 0.24);
+}
+.batch-btn--danger-ghost {
+  background: #ffffff;
+  color: #dd4b55;
+  border: 2rpx solid #f6ccd0;
 }

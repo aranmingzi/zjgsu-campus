@@ -1,4 +1,7 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "发布帖子",
-  "usingComponents": {}
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index"
+  }
 }

@@ -1,0 +1,40 @@
+<!-- components/course/course-card/index.wxml
+     迁移自 src/components/course/CourseCard.vue。
+     「有分数 + 有评价」才展示评分区，否则走「暂无评分 / 还没有评价」两条空态，
+     顺序和 Web 版一致：标题 → 分数 → 好评率 → 标签。 -->
+<view class="cc pressable" bindtap="onTap">
+  <view class="cc__avatar cc__avatar--{{colorIdx}}">{{initial}}</view>
+
+  <view class="cc__main">
+    <view class="cc__row">
+      <view class="cc__title">
+        <text class="cc__name">{{courseName}}</text>
+        <text wx:if="{{detailText}}" class="cc__detail">{{detailText}}</text>
+      </view>
+
+      <view wx:if="{{hasReviewData}}" class="cc__score">
+        <text class="cc__score-num">{{scoreText}}</text>
+        <text class="cc__score-unit">分</text>
+      </view>
+      <text wx:else class="cc__score-none">暂无评分</text>
+    </view>
+
+    <view wx:if="{{hasReviewData}}" class="cc__meta">
+      <image class="cc__meta-icon" src="/assets/icons/star--amber.svg" mode="aspectFit" />
+      <text class="cc__meta-text">好评率 {{goodRateText}}%</text>
+      <text class="cc__meta-diag">·</text>
+      <text class="cc__meta-text cc__meta-text--muted">{{reviewsCount}} 条评价</text>
+    </view>
+    <view wx:else class="cc__cta">
+      <image class="cc__cta-icon" src="/assets/icons/circle-dashed--faint.svg" mode="aspectFit" />
+      <text class="cc__cta-text">还没有评价，来做第一个分享体验的人</text>
+    </view>
+
+    <view class="cc__tags">
+      <text wx:for="{{tagLabels}}" wx:key="*this" class="tag cc__tag">{{item}}</text>
+      <text wx:if="{{!tagLabels.length}}" class="cc__tag-none">暂无评价标签</text>
+    </view>
+  </view>
+
+  <image class="cc__arrow" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
+</view>

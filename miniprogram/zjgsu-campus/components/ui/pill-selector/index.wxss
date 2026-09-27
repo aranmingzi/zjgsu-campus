@@ -1,0 +1,59 @@
+/* components/ui/pill-selector/index.wxss —— 胶囊 999rpx，热区 88rpx */
+.ui-pill { width: 100%; }
+
+.ui-pill__row {
+  display: flex;
+  gap: 16rpx;
+  white-space: nowrap;
+  padding-bottom: 4rpx;
+}
+
+.ui-pill__item {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 88rpx;
+  padding: 0 32rpx;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  background: #ffffff;
+  color: #6f7b91;
+  border: 2rpx solid #e8edf5;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.16s ease;
+}
+
+.ui-pill__item--hover { opacity: 0.72; }
+
+.ui-pill__item--on {
+  border-width: 0;
+  color: #ffffff;
+  font-weight: 600;
+  animation: pillPop 0.24s ease-out;
+}
+
+.ui-pill__item--brand {
+  background: #2b5aed;
+  border-color: #2b5aed;
+  box-shadow: 0 4rpx 16rpx rgba(43, 90, 237, 0.2);
+}
+.ui-pill__item--forum {
+  background: #7357ff;
+  border-color: #7357ff;
+  box-shadow: 0 4rpx 16rpx rgba(115, 87, 255, 0.22);
+}
+.ui-pill__item--market {
+  background: #f58a32;
+  border-color: #f58a32;
+  box-shadow: 0 4rpx 16rpx rgba(245, 138, 50, 0.22);
+}
+.ui-pill__item--campus {
+  background: #19a66a;
+  border-color: #19a66a;
+  box-shadow: 0 4rpx 16rpx rgba(25, 166, 106, 0.22);
+}
+
+@keyframes pillPop {
+  0% { transform: scale(0.94); }
+  70% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}

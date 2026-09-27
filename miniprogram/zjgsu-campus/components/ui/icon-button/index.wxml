@@ -1,0 +1,9 @@
+<!-- components/ui/icon-button/index.wxml -->
+<view
+  class="ui-icon-btn ui-icon-btn--{{variant}} ui-icon-btn--{{size}} {{disabled ? 'ui-icon-btn--disabled' : ''}}"
+  hover-class="ui-icon-btn--hover"
+  hover-stay-time="80"
+  bindtap="onTap"
+>
+  <image class="ui-icon-btn__img" src="/assets/icons/{{icon}}--{{color}}.svg" mode="aspectFit" />
+</view>

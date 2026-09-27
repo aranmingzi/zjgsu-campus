@@ -1,35 +1,87 @@
-<view class="container">
-  <view class="cat-row">
+<!-- pages/tool/places/places.wxml —— 校园地点 / 地图
+     Web 参考：src/components/campus/CampusPlaces.vue + src/components/ui/MapPreview.vue
+     顶部是真地图 + 地点标记（markers 由 places.js 从 list 的经纬度算出）；
+     点卡片或点标记都先弹半屏 bottom-sheet，再选「步行路线 / 呼叫校车」。
+     数据字段沿用 places.js：list / catMap / catFormMap / form / picked / navOpen / sheetPlace。 -->
+<app-header title="校园地点" showBack />
+
+<view class="container pl-page">
+
+  <!-- ---------------- 顶部地图 ---------------- -->
+  <view class="pl-map-wrap">
+    <map
+      wx:if="{{list.length}}"
+      class="pl-map"
+      latitude="{{list[0].latitude}}"
+      longitude="{{list[0].longitude}}"
+      scale="16"
+      min-scale="14"
+      max-scale="19"
+      markers="{{markers}}"
+      show-location
+      bindmarkertap="onMarkerTap"
+    ></map>
+
+    <view wx:else class="pl-map pl-map--empty">
+      <image class="pl-map__icon" src="/assets/icons/compass--faint.svg" mode="aspectFit" />
+      <text class="pl-map__hint">地图会在有人添加第一个地点后出现</text>
+    </view>
+
+    <view class="pl-map__foot">
+      <image class="pl-map__foot-icon" src="/assets/icons/compass--brand.svg" mode="aspectFit" />
+      <text class="truncate">点击标记查看地点，再选择到达方式</text>
+    </view>
+  </view>
+
+  <!-- ---------------- 分类筛选 ---------------- -->
+  <view class="chip-row pl-cats">
     <view
       wx:for="{{cats}}"
       wx:for-item="c"
       wx:key="*this"
-      class="cat-chip {{catMap[c] ? 'on' : ''}} tap"
+      class="chip {{catMap[c] ? 'chip-on' : ''}} tap"
       data-c="{{c}}"
       bindtap="onCategory"
     >{{c}}</view>
   </view>
 
-  <view class="card add-entry tap" bindtap="onToggleForm">
-    <text class="add-icon">📍</text>
-    <view class="add-main">
-      <view class="add-title">{{showForm ? '收起' : '补充一个地点'}}</view>
-      <view class="muted add-sub">快递点在哪、哪个教室在哪栋楼，你加一个全校都能用</view>
+  <!-- ---------------- 补充地点入口 ---------------- -->
+  <view
+    class="card pl-add pressable"
+    hover-class="pl-add--hover"
+    hover-stay-time="80"
+    bindtap="onToggleForm"
+  >
+    <view class="pl-add__ico">
+      <image class="pl-add__ico-img" src="/assets/icons/plus--campus.svg" mode="aspectFit" />
     </view>
-    <text class="add-go">{{showForm ? '▲' : '▼'}}</text>
+    <view class="pl-add__main">
+      <view class="pl-add__title">{{showForm ? '收起' : '补充一个地点'}}</view>
+      <view class="muted pl-add__sub">快递点在哪、哪个教室在哪栋楼，你加一个全校都能用</view>
+    </view>
+    <image class="pl-add__go" src="{{showForm ? '/assets/icons/arrow-up--faint.svg' : '/assets/icons/arrow-down--faint.svg'}}" mode="aspectFit" />
   </view>
 
-  <view wx:if="{{showForm}}" class="card form-card">
-    <view class="loc-row tap" bindtap="pickLocation">
-      <text class="loc-icon">🗺️</text>
-      <view class="loc-main">
-        <view wx:if="{{picked}}" class="loc-name">已选位置：{{form.address || '（地图上已定位）'}}</view>
-        <view wx:else class="loc-name">点这里，在地图上选一下位置</view>
-        <view class="muted loc-sub">经纬度由地图给出，不用手填，也不会偏</view>
+  <view wx:if="{{showForm}}" class="card pl-form">
+    <view
+      class="pl-loc pressable"
+      hover-class="pl-loc--hover"
+      hover-stay-time="80"
+      bindtap="pickLocation"
+    >
+      <view class="pl-loc__ico">
+        <image class="pl-loc__ico-img" src="{{picked ? '/assets/icons/map-pinned--campus.svg' : '/assets/icons/map-pin--muted.svg'}}" mode="aspectFit" />
       </view>
+      <view class="pl-loc__main">
+        <view wx:if="{{picked}}" class="pl-loc__name truncate">已选位置：{{form.address || '（地图上已定位）'}}</view>
+        <view wx:else class="pl-loc__name">点这里，在地图上选一下位置</view>
+        <view class="muted pl-loc__sub">经纬度由地图给出，不用手填，也不会偏</view>
+      </view>
+      <image class="pl-loc__go" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
     </view>
+
     <input
-      class="field"
+      class="pl-field"
       placeholder="如「2 号教学楼」「菜鸟驿站」"
       value="{{form.name}}"
       data-k="name"
@@ -37,52 +89,126 @@
       maxlength="30"
     />
     <input
-      class="field"
+      class="pl-field"
       placeholder="选填，如「一楼有自助打印」"
       value="{{form.desc}}"
       data-k="desc"
       bindinput="onInput"
       maxlength="80"
     />
-    <view class="type-row">
+    <view class="chip-row pl-types">
       <view
         wx:for="{{['教学楼','食堂','宿舍','快递','运动','其他']}}"
         wx:for-item="t"
         wx:key="*this"
-        class="type {{catFormMap[t] ? 'on' : ''}} tap"
+        class="chip {{catFormMap[t] ? 'chip-on' : ''}} tap"
         data-c="{{t}}"
         bindtap="onFormCategory"
       >{{t}}</view>
     </view>
-    <button class="btn-primary tap" bindtap="onSubmit">添加地点</button>
+    <button class="btn-primary tap pl-submit" hover-stay-time="80" bindtap="onSubmit">添加地点</button>
   </view>
 
-  <view wx:if="{{loading}}" class="empty">加载中…</view>
+  <!-- ---------------- 地点列表 ---------------- -->
+  <view wx:if="{{loading}}" class="pl-loading">加载中…</view>
 
-  <view wx:elif="{{list.length === 0}}" class="empty">
-    <view class="empty-icon">🗺️</view>
-    <view>还没有人添加地点</view>
-    <view class="empty-hint">第一个添加的通常是最常用的那个快递点</view>
-  </view>
+  <empty-state
+    wx:elif="{{list.length === 0}}"
+    icon="map-pin"
+    iconColor="faint"
+    title="还没有人添加地点"
+    description="第一个添加的通常是最常用的那个快递点"
+  />
 
-  <view wx:else>
+  <block wx:else>
+    <view class="pl-head">
+      <view class="pl-head__main">
+        <view class="title-md">常用地点</view>
+        <view class="muted pl-head__sub">点击导航会选择到达方式</view>
+      </view>
+      <text class="faint pl-head__count">{{list.length}} 个地点</text>
+    </view>
+
     <view
       wx:for="{{list}}"
       wx:key="id"
-      class="card pl-item"
+      class="card pl-item pressable"
+      hover-class="pl-item--hover"
+      hover-stay-time="80"
+      data-i="{{index}}"
+      bindtap="onOpen"
     >
-      <view class="pl-head">
-        <text class="pl-icon">{{item.catIcon}}</text>
-        <view class="pl-main">
-          <view class="pl-name">{{item.name}}</view>
-          <view wx:if="{{item.desc}}" class="muted pl-desc">{{item.desc}}</view>
-          <view wx:if="{{item.address}}" class="muted pl-addr">{{item.address}}</view>
-        </view>
+      <view class="pl-item__ico">
+        <image class="pl-item__ico-img" src="/assets/icons/map-pin--campus.svg" mode="aspectFit" />
       </view>
-      <view class="pl-ops">
-        <view class="pl-op primary tap" data-i="{{index}}" catchtap="onOpen">在地图里看</view>
-        <view wx:if="{{item.isMine}}" class="pl-op del tap" data-id="{{item.id}}" catchtap="onRemove">删除</view>
+
+      <view class="pl-item__main">
+        <view class="pl-item__name-row">
+          <text class="pl-item__name truncate">{{item.name}}</text>
+          <text wx:if="{{item.category}}" class="tag pl-item__tag">{{item.category}}</text>
+        </view>
+        <view wx:if="{{item.desc}}" class="muted pl-item__desc truncate">{{item.desc}}</view>
+        <view wx:if="{{item.address}}" class="faint pl-item__addr truncate">{{item.address}}</view>
+      </view>
+
+      <view class="pl-item__nav">
+        <text>导航</text>
+        <image class="pl-item__nav-icon" src="/assets/icons/chevron-right--brand.svg" mode="aspectFit" />
+      </view>
+
+      <view
+        wx:if="{{item.isMine}}"
+        class="pl-del pressable"
+        hover-class="pl-del--hover"
+        hover-stay-time="80"
+        data-id="{{item.id}}"
+        catchtap="onRemove"
+      >
+        <image class="pl-del__icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+        <text>删除</text>
       </view>
     </view>
-  </view>
+  </block>
 </view>
+
+<!-- ---------------- 到达方式：半屏抽屉 ---------------- -->
+<bottom-sheet
+  open="{{navOpen}}"
+  title="{{sheetPlace ? '前往 ' + sheetPlace.name : ''}}"
+  description="{{sheetPlace ? (sheetPlace.desc || sheetPlace.address || '') : ''}}"
+  bind:close="onSheetClose"
+>
+  <view class="pl-sheet__opts">
+    <view
+      class="pl-opt pressable"
+      hover-class="pl-opt--hover"
+      hover-stay-time="80"
+      bindtap="onWalkRoute"
+    >
+      <view class="pl-opt__ico pl-opt__ico--brand">
+        <image class="pl-opt__ico-img" src="/assets/icons/compass--brand.svg" mode="aspectFit" />
+      </view>
+      <view class="pl-opt__main">
+        <view class="pl-opt__title">步行路线</view>
+        <view class="muted pl-opt__desc">打开微信内置地图查看步行路径</view>
+      </view>
+      <image class="pl-opt__go" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
+    </view>
+
+    <view
+      class="pl-opt pressable"
+      hover-class="pl-opt--hover"
+      hover-stay-time="80"
+      bindtap="onCallBus"
+    >
+      <view class="pl-opt__ico pl-opt__ico--campus">
+        <image class="pl-opt__ico-img" src="/assets/icons/megaphone--campus.svg" mode="aspectFit" />
+      </view>
+      <view class="pl-opt__main">
+        <view class="pl-opt__title">呼叫校车</view>
+        <view class="muted pl-opt__desc">校车热线待配置</view>
+      </view>
+      <image class="pl-opt__go" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
+    </view>
+  </view>
+</bottom-sheet>

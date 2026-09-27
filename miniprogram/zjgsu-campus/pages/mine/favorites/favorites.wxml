@@ -1,34 +1,75 @@
-<view class="container">
-  <view class="tabs">
-    <view class="tab {{tabMap.all ? 'on' : ''}} tap" data-k="all" bindtap="onTab">全部</view>
-    <view class="tab {{tabMap.course ? 'on' : ''}} tap" data-k="course" bindtap="onTab">课程</view>
-    <view class="tab {{tabMap.post ? 'on' : ''}} tap" data-k="post" bindtap="onTab">帖子</view>
-    <view class="tab {{tabMap.market ? 'on' : ''}} tap" data-k="market" bindtap="onTab">失物闲置</view>
+<!-- pages/mine/favorites/favorites.wxml —— 我的收藏
+     自定义导航 + app-header；筛选用 app.wxss 的 .segmented；
+     卡片圆角 32rpx、场景色标签、空态走 empty-state 组件。
+     数据字段沿用 favorites.js：items / tabMap / countText / loading。 -->
+<app-header title="我的收藏" showBack />
+
+<view class="container fv-page">
+  <view class="segmented fv-tabs">
+    <view
+      class="segmented-item {{tabMap.all ? 'segmented-item-on' : ''}} tap"
+      data-k="all"
+      bindtap="onTab"
+    >全部</view>
+    <view
+      class="segmented-item {{tabMap.course ? 'segmented-item-on' : ''}} tap"
+      data-k="course"
+      bindtap="onTab"
+    >课程</view>
+    <view
+      class="segmented-item {{tabMap.post ? 'segmented-item-on' : ''}} tap"
+      data-k="post"
+      bindtap="onTab"
+    >帖子</view>
+    <view
+      class="segmented-item {{tabMap.market ? 'segmented-item-on' : ''}} tap"
+      data-k="market"
+      bindtap="onTab"
+    >失物闲置</view>
   </view>
 
-  <view wx:if="{{loading}}" class="empty">加载中…</view>
+  <view wx:if="{{loading}}" class="fv-loading">加载中…</view>
 
-  <view wx:elif="{{items.length === 0}}" class="empty">
-    <view class="empty-icon">⭐</view>
-    <view>{{countText ? '这一类还没有收藏' : '还没有收藏任何内容'}}</view>
-    <view class="empty-hint">看到有用的课、贴子、闲置，点一下星星就能收进来</view>
-  </view>
+  <empty-state
+    wx:elif="{{items.length === 0}}"
+    icon="bookmark"
+    iconColor="faint"
+    title="{{countText ? '这一类还没有收藏' : '还没有收藏任何内容'}}"
+    description="看到有用的课、贴子、闲置，点一下星星就能收进来"
+  />
 
-  <view wx:else>
-    <view class="count">{{countText}}</view>
+  <block wx:else>
+    <view wx:if="{{countText}}" class="faint fv-count">{{countText}}</view>
+
     <view
       wx:for="{{items}}"
       wx:key="key"
-      class="card f-item tap"
+      class="card fv-item pressable"
+      hover-class="fv-item--hover"
+      hover-stay-time="80"
       data-url="{{item.url}}"
       bindtap="open"
     >
-      <view class="f-top">
-        <text class="f-tag t-{{item.type}}">{{item.type === 'market' ? '失物闲置' : (item.type === 'post' ? '帖子' : (item.type === 'review' ? '评价' : '课程'))}}</text>
-        <text class="f-unstar tap" catchtap="unfavorite" data-type="{{item.type}}" data-id="{{item.key}}">取消收藏</text>
+      <view class="fv-item__top">
+        <text class="tag fv-tag t-{{item.type}}">
+          {{item.type === 'market' ? '失物闲置' : (item.type === 'post' ? '帖子' : (item.type === 'review' ? '评价' : '课程'))}}
+        </text>
+
+        <view
+          class="fv-item__unfavorite pressable"
+          hover-class="fv-item__unfavorite--hover"
+          hover-stay-time="80"
+          data-type="{{item.type}}"
+          data-id="{{item.key}}"
+          catchtap="unfavorite"
+        >
+          <image class="fv-item__unfavorite-icon" src="/assets/icons/bookmark--muted.svg" mode="aspectFit" />
+          <text>取消收藏</text>
+        </view>
       </view>
-      <view class="f-title">{{item.title}}</view>
-      <view wx:if="{{item.desc}}" class="f-desc">{{item.desc}}</view>
+
+      <view class="fv-item__title">{{item.title}}</view>
+      <view wx:if="{{item.desc}}" class="fv-item__desc clamp2">{{item.desc}}</view>
     </view>
-  </view>
+  </block>
 </view>

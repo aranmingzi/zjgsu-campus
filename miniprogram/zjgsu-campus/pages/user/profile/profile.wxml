@@ -1,58 +1,105 @@
-<view class="container">
+<!-- pages/user/profile —— 我的资料（别人能看到的全部内容都在这页改）
+     头像走 avatar-editor（选完仍走原来 onChooseAvatar 的上传逻辑），
+     隐私档位走 pill-selector，选中态是校园绿。
+     云函数参数 / storage key 一个字没动，只换了呈现方式。 -->
+<app-header title="我的资料" showBack />
+
+<view class="container pf">
+  <!-- 顶部渐变：个人资料青蓝 #2F9FD6 → 主色 #2B5AED -->
+  <view class="pf-hero">
+    <avatar-editor class="pf-avatar" src="{{avatarUrl}}" size="176rpx" bindchange="onAvatarChange" />
+
+    <!-- type="nickname" 让微信在键盘上方直接给「使用微信昵称」 -->
+    <input
+      class="pf-nick"
+      type="nickname"
+      placeholder="取个昵称，也可直接用微信昵称"
+      placeholder-class="pf-nick-ph"
+      value="{{nickName}}"
+      bindinput="onNick"
+      maxlength="20"
+    />
+    <view class="pf-hero-tip">点一下头像就能换，换完立刻生效</view>
+  </view>
+
   <view class="card">
-    <view class="section-title">头像与昵称</view>
-    <view class="row">
-      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-        <image wx:if="{{avatarUrl}}" class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
-        <view wx:else class="avatar">{{avatarText}}</view>
-      </button>
-      <view class="grow">
-        <!-- type="nickname" 让微信在键盘上方直接给一个「使用微信昵称」，
-             一键拉取平台昵称，不用用户自己想名字 -->
-        <input
-          class="nick"
-          type="nickname"
-          placeholder="取个昵称，也可直接用微信昵称"
-          value="{{nickName}}"
-          bindinput="onNick"
-          maxlength="20"
-        />
-        <view class="muted">全校同学按昵称找人，别写班级名这类隐私信息</view>
+    <view class="pf-sec">我的身份</view>
+
+    <picker mode="selector" range="{{colleges}}" value="{{collegeIdx}}" bindchange="onCollege">
+      <view class="pf-row tap">
+        <text class="pf-row-label">所在学院</text>
+        <text class="pf-row-value">{{colleges[collegeIdx] || '未填写'}}</text>
+        <image class="pf-arrow" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
       </view>
+    </picker>
+
+    <view class="pf-field">
+      <text class="pf-field-label">一句话介绍</text>
+      <!-- input 不给固定高度会被默认行高拦腰截字，必须定高、只留水平内边距 -->
+      <input
+        class="pf-input"
+        placeholder="一句话介绍自己（可不填）"
+        value="{{motto}}"
+        bindinput="onMotto"
+        maxlength="40"
+      />
+    </view>
+
+    <!-- 身份 ID 不打码：添加审核员就得靠每个人把自己这串完整 ID 交上来。
+         user-select 让这行字长按能选中手动复制，点一下走弹窗复制，两条路都通 -->
+    <view class="pf-id tap" bindtap="onCopyOpenid">
+      <image class="pf-id-icon" src="/assets/icons/shield-check--brand.svg" mode="aspectFit" />
+      <text class="pf-id-text" user-select="{{true}}">{{openidTip || '身份 ID 加载中…（点一下复制）'}}</text>
     </view>
   </view>
 
   <view class="card">
-    <view class="section-title">我的身份</view>
-    <picker mode="selector" range="{{colleges}}" value="{{collegeIdx}}" bindchange="onCollege">
-      <view class="picker-row">
-        <text class="picker-label">所在学院</text>
-        <text class="picker-value">{{colleges[collegeIdx] || '未填写'}}</text>
-        <text class="arrow">›</text>
+    <view class="pf-sec">联系方式</view>
+
+    <view class="pf-current bg-profile-soft">
+      <image class="pf-current-icon" src="/assets/icons/shield-check--campus.svg" mode="aspectFit" />
+      <view class="pf-current-text">
+        <text class="title-sm">{{contactTypes[contactTypeIdx].label}}</text>
+        <text class="muted">
+          {{contactTypes[contactTypeIdx].key === 'wechat' ? '只有已经互加的同学能看到'
+            : (contactTypes[contactTypeIdx].key === 'phone' ? '对方先发起申请，你同意之后才可见'
+            : (contactTypes[contactTypeIdx].key === 'qq' ? '仅互加好友可见'
+            : '任何同学都看不到你的联系方式'))}}
+        </text>
       </view>
-    </picker>
-    <input class="motto" placeholder="一句话介绍自己（可不填）" value="{{motto}}" bindinput="onMotto" maxlength="40" />
-    <!-- user-select 让这行字长按也能选中复制（微信 text 组件的能力）；
-         点一下走 onCopyOpenid 弹窗复制，两条路都通 -->
-    <text class="muted openid-tip tap" user-select="{{true}}" bindtap="onCopyOpenid">{{openidTip}}</text>
+    </view>
+
+    <!-- 隐私档位：档位只改 contactTypeIdx，落到原来的 contactType key 上 -->
+    <pill-selector
+      class="pf-privacy"
+      items="{{privacyItems}}"
+      labels="{{privacyLabels}}"
+      value="{{contactTypes[contactTypeIdx].key}}"
+      accent="campus"
+      bindchange="onPrivacy"
+    />
+
+    <input
+      wx:if="{{contactTypes[contactTypeIdx].key}}"
+      class="pf-input pf-input--mt"
+      placeholder="{{contactPlaceholder}}"
+      value="{{contactValue}}"
+      bindinput="onContactValue"
+      maxlength="40"
+    />
+    <view wx:else class="muted pf-none">当前设置：谁都看不到你的联系方式</view>
+
+    <view class="pf-tip">
+      <image class="pf-tip-icon" src="/assets/icons/lock--muted.svg" mode="aspectFit" />
+      <text>只有对方「同意添加你」之后，联系方式才会对他显示，别人翻不到你的主页也看不到。</text>
+    </view>
   </view>
 
-  <view class="card">
-    <view class="section-title">我的联系方式</view>
-    <!-- range 是对象数组时必须写 range-key，否则选项会显示成 [object Object] -->
-    <picker mode="selector" range="{{contactTypes}}" range-key="label" value="{{contactTypeIdx}}" bindchange="onContactType">
-      <view class="picker-row">
-        <text class="picker-label">公开方式</text>
-        <text class="picker-value">{{contactTypes[contactTypeIdx].label}}</text>
-        <text class="arrow">›</text>
-      </view>
-    </picker>
-    <input wx:if="{{contactTypes[contactTypeIdx].key}}" class="motto" placeholder="{{contactPlaceholder}}"
-           value="{{contactValue}}" bindinput="onContactValue" maxlength="40" />
-    <view wx:else class="muted">当前设置：谁都看不到你的联系方式</view>
-    <view class=" tip">联系方式只在对方「同意添加你」之后才会对他显示，别人翻不到你的主页也看不到。</view>
+  <view class="pf-actions">
+    <base-button block bindtap="onSave">保存资料</base-button>
+    <navigator class="pf-cancel tap" open-type="navigateBack" hover-class="pf-cancel--hover">
+      取消
+    </navigator>
+    <view class="pf-reset tap" bindtap="onReset">恢复默认</view>
   </view>
-
-  <view class="btn-primary tap" bindtap="onSave">保存资料</view>
-  <view class="reset tap" bindtap="onReset">恢复默认</view>
 </view>

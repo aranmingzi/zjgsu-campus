@@ -1,33 +1,55 @@
-<view class="container">
-  <view wx:if="{{loading}}" class="empty">加载中…</view>
+<!-- pages/mine/drafts/drafts.wxml —— 草稿箱
+     自定义导航 + app-header；卡片圆角 32rpx；删除 / 清空走线性图标，热区 88rpx。
+     数据字段沿用 drafts.js：items / loading（typeName / time 由页面算好）。 -->
+<app-header title="草稿箱" showBack />
 
-  <view wx:elif="{{items.length === 0}}" class="empty">
-    <view class="empty-icon">📝</view>
-    <view>没有未写完的内容</view>
-    <view class="empty-hint">发帖或写评价时点「存草稿」，写到一半退出来也不会丢</view>
-  </view>
+<view class="container dt-page">
+  <view wx:if="{{loading}}" class="dt-loading">加载中…</view>
 
-  <view wx:else>
-    <view class="head">
-      <text class="count">共 {{items.length}} 篇</text>
-      <text class="clear tap" bindtap="clear">清空</text>
+  <empty-state
+    wx:elif="{{items.length === 0}}"
+    icon="file-text"
+    iconColor="faint"
+    title="没有未写完的内容"
+    description="发帖或写评价时点「存草稿」，写到一半退出来也不会丢"
+  />
+
+  <block wx:else>
+    <view class="dt-head">
+      <text class="faint">共 {{items.length}} 篇</text>
+      <view class="dt-clear pressable" hover-class="dt-clear--hover" hover-stay-time="80" bindtap="clear">
+        <image class="dt-clear__icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+        <text>清空</text>
+      </view>
     </view>
 
     <view
       wx:for="{{items}}"
       wx:key="id"
-      class="card d-item tap"
+      class="card dt-item pressable"
+      hover-class="dt-item--hover"
+      hover-stay-time="80"
       data-id="{{item.id}}"
       data-type="{{item.type}}"
       bindtap="open"
     >
-      <view class="d-top">
-        <text class="d-type">{{item.typeName}}</text>
-        <text class="muted d-time">{{item.time}}</text>
+      <view class="dt-item__top">
+        <text class="tag dt-tag">{{item.typeName}}</text>
+        <text class="muted dt-time">{{item.time}}</text>
+        <view
+          class="dt-del pressable"
+          hover-class="dt-del--hover"
+          hover-stay-time="80"
+          data-id="{{item.id}}"
+          catchtap="remove"
+        >
+          <image class="dt-del__icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+          <text>删除</text>
+        </view>
       </view>
-      <view class="d-title">{{item.title}}</view>
-      <view class="d-preview">{{item.preview}}</view>
-      <view class="d-del tap" catchtap="remove" data-id="{{item.id}}">删除</view>
+
+      <view class="dt-item__title">{{item.title}}</view>
+      <view class="dt-item__preview clamp2">{{item.preview}}</view>
     </view>
-  </view>
+  </block>
 </view>

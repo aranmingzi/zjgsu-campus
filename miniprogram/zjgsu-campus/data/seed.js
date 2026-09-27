@@ -226,20 +226,20 @@ const reviews = [
 
 // 论坛板块
 const boards = [
-  { key: 'course', name: '课程评价', icon: '📖' },
-  { key: 'complain', name: '校园吐槽', icon: '💢' },
-  { key: 'trade', name: '闲置分享', icon: '🛍️' },
-  { key: 'lost', name: '失物招领', icon: '🔍' },
-  { key: 'team', name: '活动组队', icon: '🤝' },
+  { key: 'course', name: '课程评价', icon: 'book-open' },
+  { key: 'complain', name: '校园吐槽', icon: 'flame' },
+  { key: 'trade', name: '闲置分享', icon: 'shopping-bag️' },
+  { key: 'lost', name: '失物招领', icon: 'search' },
+  { key: 'team', name: '活动组队', icon: 'users-round' },
   // 社团和同好群的聚集地。这个板块是**唯一的起步内容来源** ——
   // 一个校园社区冷启动时最缺的就是「有人在这儿」的证据，社团招新和同好群
   // 天然自带一群人，而且他们本来就在到处宣群，不用你去求。
   // 代价是这个板块不可避免地会带联系方式和群号（见 JOIN_WORDS_EXEMPT）
-  { key: 'club', name: '社团同好', icon: '🎪' },
-  { key: 'study', name: '学习交流', icon: '📚' },
-  { key: 'confess', name: '表白墙', icon: '💌' },
+  { key: 'club', name: '社团同好', icon: 'users-round' },
+  { key: 'study', name: '学习交流', icon: 'book-open' },
+  { key: 'confess', name: '表白墙', icon: 'heart' },
   // 「闲聊」是发帖页的默认板块：不想纠结发哪儿的同学，直接发就是了
-  { key: 'chat', name: '闲聊', icon: '💬' }
+  { key: 'chat', name: '闲聊', icon: 'message-circle' }
 ];
 
 // 论坛帖子（board 字段对应上面的 name）
@@ -291,7 +291,7 @@ const posts = [
   {
     // 「只发主题」的样板：没有正文，信息收在评论区。
     // 这就是 Lee 要的那类产品 —— 标题写清「要找什么」，群号留给评论区的人补。
-    // 评论区故意留了三条，是为了让列表页「📌 N 条信息」这个形一上线就有内容可看
+    // 评论区故意留了三条，是为了让列表页「pin N 条信息」这个形一上线就有内容可看
     id: 'p_c4',
     board: '社团同好',
     kind: 'topic',

@@ -1,167 +1,266 @@
-.post-board {
-  display: inline-block;
+/* pages/forum/detail/detail.wxss —— 帖子详情（投票 + 留言） */
+
+.detail-page {
+  /* 给固定输入栏留位；自定义导航条不占位，靠 app-header 自己撑开 */
+  padding-bottom: 200rpx;
+}
+
+/* --------------------------------------------------------------------------
+   正文
+   -------------------------------------------------------------------------- */
+.detail__head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 44rpx;
+  margin-bottom: 16rpx;
+}
+.detail__mini-icon { width: 24rpx; height: 24rpx; }
+.detail__time {
+  margin-left: auto;
+  flex-shrink: 0;
   font-size: 22rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 8rpx;
-  padding: 4rpx 14rpx;
-  margin-bottom: 14rpx;
+  color: #98a3b8;
 }
-.post-course {
-  display: inline-block;
+
+.detail__course {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  min-height: 64rpx;
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
+  border-radius: 999rpx;
+  background: #eff4ff;
+  color: #2047c9;
   font-size: 26rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 10rpx;
-  padding: 12rpx 22rpx;
-  margin-bottom: 16rpx;
 }
-.post-title {
-  margin-bottom: 16rpx;
-}
-.post-body {
-  color: #2b3138;
-  font-size: 30rpx;
+.detail__course-text { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.detail__course-go { flex-shrink: 0; font-size: 24rpx; }
+
+.detail__title { margin-bottom: 20rpx; }
+.detail__topic-intro {
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #e9f8f1;
+  color: #128a56;
+  font-size: 26rpx;
   line-height: 1.7;
 }
-.post-meta {
-  color: #8a9099;
-  font-size: 24rpx;
-  margin: 18rpx 0 8rpx;
+.detail__body {
+  color: #47536b;
+  font-size: 30rpx;
+  line-height: 1.75;
 }
-.author-link {
-  color: #1a5fb4;
-  margin-left: 2rpx;
-}
-.like-row {
-  display: flex;
-}
-.hidden-tip {
-  margin-top: 14rpx;
-  font-size: 24rpx;
-  color: #a86a1c;
-  background: #fdf6e6;
-  border-radius: 10rpx;
-  padding: 12rpx 20rpx;
-  line-height: 1.6;
-}
-.like-btn {
-  font-size: 26rpx;
-  color: #6b7280;
-  background: #f0f1f3;
-  border-radius: 999rpx;
-  padding: 10rpx 28rpx;
-}
-.like-btn.liked {
-  color: #1a5fb4;
-  background: #eef3fb;
-  font-weight: 600;
-}
-/* 点踩走另一套颜色：一绿一蓝摆在一条上，扫一眼就知道踩的人是什么态度 */
-.like-btn.dislike {
-  margin-left: 16rpx;
-}
-.like-btn.disliked {
-  color: #1f9d55;
-  background: #eaf7ef;
-  font-weight: 600;
-}
-/* 微信 button 默认带灰底和边框，这里改造成和其他操作按钮一致的胶囊样式 */
-.share-btn {
-  background: #f0f1f3;
-  color: #6b7280;
-  font-size: 26rpx;
-  line-height: normal;
-  padding: 10rpx 28rpx;
-  border-radius: 999rpx;
-  margin-left: 20rpx;
-  align-self: center;
-}
-.share-btn::after {
-  border: none;
-}
-.my-post-op {
-  margin-left: 20rpx;
-  font-size: 26rpx;
-  color: #9aa0a6;
-  align-self: center;
-}
-.fav-op.fav-on { color: #a86a1c; }
-.detail-images {
+
+.detail__images {
   display: flex;
   flex-wrap: wrap;
-  margin: 14rpx 0 6rpx;
+  gap: 16rpx;
+  margin: 20rpx 0 8rpx;
 }
-.detail-img {
-  width: 180rpx;
-  height: 180rpx;
-  border-radius: 10rpx;
-  margin: 0 14rpx 14rpx 0;
-  background: #f0f1f3;
+.detail__img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 24rpx;
+  background: #eff1f6;
 }
-.section-title {
+
+.detail__meta {
+  margin: 20rpx 0 4rpx;
+  font-size: 24rpx;
+  color: #98a3b8;
+}
+.detail__author { color: #2047c9; }
+
+/* --------------------------------------------------------------------------
+   互动操作：一行放不下就换行，320 宽度也不挤压
+   -------------------------------------------------------------------------- */
+.detail__ops {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8rpx 4rpx;
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid #e8edf5;
+}
+.detail__op {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  min-height: 72rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  background: #f6f8fb;
+  color: #6f7b91;
+  font-size: 24rpx;
+}
+.detail__op-icon { width: 30rpx; height: 30rpx; }
+.detail__op--on { background: #eff4ff; color: #2047c9; font-weight: 600; }
+.detail__op--no { background: #e9f8f1; color: #128a56; font-weight: 600; }
+.detail__op--fav-on { background: #fff3e9; color: #d9731f; font-weight: 600; }
+.detail__op--warn { background: #fff0f1; color: #dd4b55; font-weight: 600; }
+/* 微信 button 默认灰底边框，改成和其他操作一致的胶囊 */
+.detail__op--btn {
+  background: #f6f8fb;
+  border: none;
+  padding: 0 20rpx;
+  line-height: 72rpx;
+  box-shadow: none;
+}
+.detail__op--btn::after { border: none; }
+
+.detail__tip {
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #fffaf0;
+  border: 2rpx solid #ffe1a6;
+  color: #a86a1c;
+  font-size: 24rpx;
+  line-height: 1.7;
+}
+
+.detail__back {
+  margin-top: 24rpx;
+  text-align: center;
+  min-height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 999rpx;
+  background: #eff4ff;
+  color: #2047c9;
+  font-size: 28rpx;
+}
+
+/* --------------------------------------------------------------------------
+   投票概览（vote-card 下面那张）
+   -------------------------------------------------------------------------- */
+.poll-hero {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  margin-bottom: 24rpx;
+  padding: 32rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(120deg, #2b5aed 0%, #4f4ff0 52%, #7357ff 100%);
+  box-shadow: 0 8rpx 24rpx rgba(43, 90, 237, 0.22);
+}
+.poll-hero__ring {
+  flex-shrink: 0;
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.poll-hero__core {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 999rpx;
+  background: rgba(23, 32, 51, 0.32);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.poll-hero__count { font-size: 44rpx; font-weight: 700; color: #ffffff; line-height: 1.2; }
+.poll-hero__unit { font-size: 20rpx; color: rgba(255, 255, 255, 0.78); }
+.poll-hero__text { flex: 1; min-width: 0; }
+.poll-hero__mode {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+.poll-hero__deadline {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.86);
+}
+.poll-hero__clock { width: 28rpx; height: 28rpx; }
+
+/* --------------------------------------------------------------------------
+   留言区
+   -------------------------------------------------------------------------- */
+.detail__section {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin: 8rpx 8rpx 20rpx;
   font-size: 30rpx;
   font-weight: 600;
-  margin: 12rpx 4rpx 16rpx;
+  color: #172033;
 }
-.comment-head {
+.detail__section-icon { width: 34rpx; height: 34rpx; }
+
+.comment__head {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8rpx;
+  gap: 12rpx;
+  margin-bottom: 10rpx;
 }
-.rv-name {
-  font-weight: 600;
-}
-.comment-del {
+.comment__name { font-size: 26rpx; font-weight: 600; color: #172033; }
+.comment__time { flex-shrink: 0; font-size: 22rpx; }
+.comment__del {
   margin-left: auto;
-  padding-left: 20rpx;
+  padding-left: 16rpx;
   font-size: 22rpx;
-  color: #c0392b;
+  color: #d9534f;
 }
-.comment-report {
+.comment__report {
   margin-left: auto;
-  padding-left: 20rpx;
+  padding-left: 16rpx;
   font-size: 22rpx;
-  color: #888780;
+  color: #6f7b91;
 }
-.comment-reported {
+.comment__reported {
   margin-left: auto;
-  padding-left: 20rpx;
+  padding-left: 16rpx;
   font-size: 22rpx;
   color: #b4b2a9;
 }
-.comment-content {
-  color: #2b3138;
-}
-.detail-page {
-  padding-bottom: 140rpx;
-}
+.comment__content { color: #47536b; font-size: 28rpx; line-height: 1.7; }
+
+/* --------------------------------------------------------------------------
+   固定输入栏
+   -------------------------------------------------------------------------- */
 .input-bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
+  z-index: 60;
   display: flex;
   align-items: center;
-  padding: 16rpx 24rpx;
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+  gap: 16rpx;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: #ffffff;
+  box-shadow: 0 -4rpx 20rpx rgba(23, 32, 51, 0.06);
 }
-.input {
+.input-bar__input {
   flex: 1;
-  background: #f4f5f7;
-  border-radius: 999rpx;
-  /* 定高修复：input 只给 padding 不给高度会截字 */
-  height: 76rpx;
+  min-width: 0;
+  height: 80rpx;
   padding: 0 28rpx;
-  font-size: 28rpx;
-  margin-right: 16rpx;
-}
-.send-btn {
-  background: #1a5fb4;
-  color: #fff;
   border-radius: 999rpx;
-  padding: 14rpx 32rpx;
+  background: #f5f7fa;
   font-size: 28rpx;
 }
+.input-bar__send {
+  flex-shrink: 0;
+  min-width: 132rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  background: #2b5aed;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.input-bar__send--off { background: #eef1f6; color: #98a3b8; }

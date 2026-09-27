@@ -1,76 +1,196 @@
-.grow { flex: 1; min-width: 0; }
+/* pages/user/profile —— 我的资料。类名统一 pf-*，
+   .card / .title-sm / .muted / .tap 这些语义类来自 app.wxss，这里不重复定义。 */
 
-.row { display: flex; align-items: center; gap: 24rpx; }
-
-.avatar-btn {
-  padding: 0;
-  background: transparent;
-  border: none;
-  line-height: 1;
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 50%;
-  overflow: hidden;
+/* ---------- 顶部渐变：个人资料青蓝 #2F9FD6 → 主色 #2B5AED ---------- */
+.pf-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 32rpx 44rpx;
+  margin-bottom: 24rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(160deg, #2f9fd6 0%, #2b5aed 100%);
+  box-shadow: 0 12rpx 32rpx rgba(47, 159, 214, 0.24);
 }
-.avatar-btn::after { border: none; }
 
-.avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #1a5fb4, #4a86d6);
-  color: #fff;
-  font-size: 44rpx;
-  line-height: 120rpx;
+.pf-avatar {
+  margin-bottom: 24rpx;
+}
+
+.pf-nick {
+  width: 100%;
+  max-width: 480rpx;
+  height: 88rpx;
+  padding: 0 32rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 600;
   text-align: center;
 }
+/* placeholder 伪类在 input 上要单独给，沿用上一版的白色半透明 */
+.pf-nick-ph { color: rgba(255, 255, 255, 0.7); }
 
-/* 定高修复：nickname input 不给固定高度会被默认 1.4rem 拦腰截字 */
-.nick { font-size: 32rpx; height: 88rpx; padding: 0 4rpx; }
+.pf-hero-tip {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
 
-.section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
+/* ---------- 分区标题 ---------- */
+.pf-sec {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #172033;
+  margin-bottom: 8rpx;
+}
 
-.picker-row {
+.pf-row {
   display: flex;
   align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #f0f1f3;
+  min-height: 112rpx;
+  padding: 0 4rpx;
 }
-.picker-label { font-size: 28rpx; width: 180rpx; color: #4a5057; }
-.picker-value { flex: 1; color: #1a5fb4; font-size: 28rpx; }
-.arrow { color: #b0b6be; font-size: 32rpx; }
+.pf-row + .pf-field { margin-top: 8rpx; }
 
-.motto {
+.pf-row-label {
+  font-size: 28rpx;
+  color: #6f7b91;
+  width: 180rpx;
+  flex-shrink: 0;
+}
+.pf-row-value {
+  flex: 1;
+  min-width: 0;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2047c9;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pf-arrow {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+/* ---------- 输入块 / 圆角输入 ---------- */
+.pf-field { margin-top: 8rpx; }
+.pf-field-label {
+  display: block;
+  font-size: 24rpx;
+  color: #6f7b91;
+  margin-bottom: 8rpx;
+}
+
+.pf-input {
   width: 100%;
   box-sizing: border-box;
   font-size: 28rpx;
-  /* input 不给固定高度会被默认 1.4rem 拦腰截字，必须定高 + 只留水平内边距 */
+  /* input 不给固定高度会被默认行高拦腰截字，必须定高 + 只留水平内边距 */
   height: 88rpx;
-  padding: 0 20rpx;
-  background: #f7f8fa;
-  border-radius: 12rpx;
-  margin-top: 20rpx;
+  padding: 0 24rpx;
+  border-radius: 24rpx;
+  background: #f6f8fb;
+  color: #172033;
 }
+.pf-input--mt { margin-top: 24rpx; }
 
-.openid-tip {
-  display: block; /* text 默认行内，margin-top 不生效，撑成块级 */
-  margin-top: 16rpx;
-  font-size: 22rpx;
+/* ---------- 身份 ID ---------- */
+.pf-id {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 24rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #eff4ff;
 }
-
-.tip {
-  margin-top: 16rpx;
-  font-size: 22rpx;
-  color: #8a9099;
-  background: #f7f8fa;
-  border-radius: 12rpx;
-  padding: 16rpx 20rpx;
+.pf-id-icon {
+  width: 36rpx;
+  height: 36rpx;
+  flex-shrink: 0;
+}
+.pf-id-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 24rpx;
+  color: #2047c9;
   line-height: 1.6;
+  word-break: break-all;
 }
 
-.reset {
-  text-align: center;
-  color: #8a9099;
-  font-size: 26rpx;
+/* ---------- 隐私档位 ---------- */
+.pf-current {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
   padding: 24rpx;
+  border-radius: 24rpx;
+}
+.pf-current-icon {
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+}
+.pf-current-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pf-current-text .muted { margin-top: 4rpx; }
+
+.pf-privacy { margin-top: 20rpx; }
+
+.pf-none { margin-top: 20rpx; }
+
+.pf-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #f6f8fb;
+  font-size: 22rpx;
+  color: #6f7b91;
+  line-height: 1.7;
+}
+.pf-tip-icon {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+}
+
+/* ---------- 底部操作 ---------- */
+.pf-actions {
+  margin-top: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pf-cancel {
+  width: 100%;
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: #6f7b91;
+}
+.pf-cancel--hover { opacity: 0.72; }
+.pf-reset {
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #98a3b8;
 }

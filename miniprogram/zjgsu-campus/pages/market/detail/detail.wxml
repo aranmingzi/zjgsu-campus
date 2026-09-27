@@ -1,51 +1,114 @@
-<view class="container">
-  <view wx:if="{{loading}}" class="empty">{{loadingText}}</view>
+<!-- pages/market/detail/detail.wxml —— 闲置 / 失物招领 详情 -->
+<app-header title="信息详情" showBack />
+
+<view class="container d-page">
+  <view wx:if="{{loading}}" class="d-loading">
+    <image class="d-loading__icon" src="/assets/icons/loader--muted.svg" mode="aspectFit" />
+    <text class="muted">{{loadingText}}</text>
+  </view>
 
   <block wx:else>
-    <view class="card">
-      <view class="d-kind k-{{item.type}}">{{item.type === 'sell' ? '🛍️ 闲置' : (item.type === 'found' ? '📦 招领' : '🔍 寻物')}}</view>
-      <view class="d-title">{{item.title}}</view>
-      <view wx:if="{{item.desc}}" class="d-desc">{{item.desc}}</view>
+    <view wx:if="{{!item}}" class="d-missing">
+      <image class="d-missing__icon" src="/assets/icons/inbox--faint.svg" mode="aspectFit" />
+      <view class="d-missing__title">这条记录不见了</view>
+      <view class="d-missing__desc">可能已经被发布者删除，或者还没同步到你的设备上。</view>
+    </view>
 
-      <view wx:if="{{item.images.length}}" class="d-imgs">
+    <block wx:else>
+      <!-- 图片：卡片铺满，点开是大图预览 -->
+      <view wx:if="{{item.images && item.images.length}}" class="d-imgs">
         <image
           wx:for="{{item.images}}"
           wx:for-item="src"
           wx:key="*this"
-          class="d-img tap"
+          class="d-img pressable"
           src="{{src}}"
           mode="aspectFill"
+          lazy-load
           data-imgs="{{item.images}}"
           bindtap="previewImages"
         ></image>
       </view>
-    </view>
 
-    <view class="card">
-      <view class="d-row"><text class="d-k">地点</text><text class="d-v">{{item.location || '未填写'}}</text></view>
-      <view wx:if="{{item.price}}" class="d-row"><text class="d-k">参考价</text><text class="d-price">¥{{item.price}}</text></view>
-      <view class="d-row"><text class="d-k">时间</text><text class="d-v">{{item.time}}</text></view>
-      <view class="d-row"><text class="d-k">发布者</text><text class="d-v">{{item.author || '某个同学'}}</text></view>
-
-      <view wx:if="{{item.contact}}" class="d-contact">
-        <text class="d-k">联系方式</text>
-        <text class="d-contact-v">{{item.contact}}</text>
-        <text class="d-copy tap" catchtap="copyContact">复制</text>
-      </view>
-    </view>
-
-    <view class="card d-ops">
-      <button class="btn-ghost d-msg" open-type="share">转发给同学</button>
-      <view wx:if="{{item.isMine}}" class="d-mine">
-        <view class="d-op tap" bindtap="onDone">{{item.done ? '重新开放' : '标记为已解决'}}</view>
-        <view class="d-op d-del tap" bindtap="onDelete">删除</view>
-      </view>
-      <view wx:else class="d-else">
-        <view class="d-tip">
-          联系不上就打个招呼，对方上线后能看到你的消息
+      <base-card padded>
+        <view class="tag {{item.type === 'sell' ? 'tag--market' : 'tag--brand'}}">
+          <image
+            class="d-kind__icon"
+            src="{{item.type === 'sell' ? '/assets/icons/shopping-bag--market.svg' : '/assets/icons/tag--brand.svg'}}"
+            mode="aspectFit"
+          />
+          <text>{{item.type === 'sell' ? '闲置' : (item.type === 'found' ? '招领' : '寻物')}}</text>
         </view>
-        <button class="btn-primary d-msg tap" bindtap="goChat">打个招呼</button>
+
+        <view class="d-title">{{item.title}}</view>
+        <view wx:if="{{item.desc}}" class="d-desc">{{item.desc}}</view>
+      </base-card>
+
+      <base-card padded>
+        <view wx:if="{{item.courseName}}" class="d-row">
+          <image class="d-row__icon" src="/assets/icons/book-open--muted.svg" mode="aspectFit" />
+          <text class="d-row__k">教材</text>
+          <text class="d-row__v">{{item.courseName}}</text>
+        </view>
+        <view class="d-row">
+          <image class="d-row__icon" src="/assets/icons/map-pin--muted.svg" mode="aspectFit" />
+          <text class="d-row__k">地点</text>
+          <text class="d-row__v">{{item.location || '未填写'}}</text>
+        </view>
+        <view wx:if="{{item.price}}" class="d-row">
+          <image class="d-row__icon" src="/assets/icons/tag--muted.svg" mode="aspectFit" />
+          <text class="d-row__k">参考价</text>
+          <text class="d-price">¥{{item.price}}</text>
+        </view>
+        <view class="d-row">
+          <image class="d-row__icon" src="/assets/icons/clock--muted.svg" mode="aspectFit" />
+          <text class="d-row__k">时间</text>
+          <text class="d-row__v">{{item.time}}</text>
+        </view>
+        <view class="d-row">
+          <image class="d-row__icon" src="/assets/icons/user-round--muted.svg" mode="aspectFit" />
+          <text class="d-row__k">发布者</text>
+          <text class="d-row__v">{{item.author || '某个同学'}}</text>
+        </view>
+      </base-card>
+
+      <!-- 联系方式是这页的主角：整块用闲置橙浅底，比对齐的表格更容易被看见 -->
+      <view class="d-contact">
+        <image class="d-contact__icon" src="/assets/icons/message-circle--market.svg" mode="aspectFit" />
+        <view class="d-contact__body">
+          <view class="d-contact__label">联系方式</view>
+          <view class="d-contact__value">{{item.contact || '发布者没留'}}</view>
+        </view>
+        <view class="d-copy pressable" hover-class="d-copy--hover" hover-stay-time="80" bindtap="copyContact">
+          <text>复制</text>
+        </view>
       </view>
-    </view>
+
+      <base-card padded>
+        <button class="d-share" open-type="share">
+          <image src="/assets/icons/share-2--brand.svg" mode="aspectFit" />
+          <text>转发给同学</text>
+        </button>
+
+        <view wx:if="{{item.isMine}}" class="d-mine">
+          <view class="d-op pressable" hover-class="d-op--hover" hover-stay-time="80" bindtap="onDone">
+            <image src="/assets/icons/check--campus.svg" mode="aspectFit" />
+            <text>{{item.done ? '重新开放' : '标记为已解决'}}</text>
+          </view>
+          <view class="d-op d-op--danger pressable" hover-class="d-op--hover" hover-stay-time="80" bindtap="onDelete">
+            <image src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+            <text>删除</text>
+          </view>
+        </view>
+
+        <view wx:else class="d-else">
+          <view class="d-else__tip">联系不上就打个招呼，对方上线后能看到你的消息</view>
+          <button class="d-chat pressable" hover-class="d-chat--hover" hover-stay-time="80" bindtap="goChat">
+            <image src="/assets/icons/message-circle--white.svg" mode="aspectFit" />
+            <text>打个招呼</text>
+          </button>
+        </view>
+      </base-card>
+    </block>
   </block>
 </view>

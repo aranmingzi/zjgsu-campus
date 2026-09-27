@@ -15,11 +15,11 @@ const PAGE_SIZE = store.PAGE.SIZE;
 // 「最多评论」是信息墙专用的入口：找同好群的人不会去翻最新，
 // 他要的是「已经聚了最多人的那一个」—— 喊了三个月没人的群不该排在他前面
 const SORT_OPTIONS = [
-  { k: 'latest', icon: '🕐', label: '最新' },
-  { k: 'hot', icon: '🔥', label: '热门' },
-  { k: 'likes', icon: '👍', label: '最多赞' },
-  { k: 'dislikes', icon: '👎', label: '最多踩' },
-  { k: 'comments', icon: '💬', label: '最多留言' }
+  { k: 'latest', icon: 'clock', label: '最新' },
+  { k: 'hot', icon: 'flame', label: '热门' },
+  { k: 'likes', icon: 'thumbs-up', label: '最多赞' },
+  { k: 'dislikes', icon: 'thumbs-down', label: '最多踩' },
+  { k: 'comments', icon: 'message-circle', label: '最多留言' }
 ];
 
 Page({

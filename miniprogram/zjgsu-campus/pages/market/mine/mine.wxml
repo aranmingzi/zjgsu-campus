@@ -1,33 +1,92 @@
-<view class="container">
+<!-- pages/market/mine/mine.wxml —— 我发布的信息（入口在列表页「我发布的」） -->
+<app-header title="我发布的" showBack />
+
+<view class="container w-page">
   <view wx:if="{{loading}}" class="sk-wrap">
-    <view class="sk-card"><view class="sk-line sk-title"></view><view class="sk-line sk-mid"></view></view>
-    <view class="sk-card"><view class="sk-line sk-title"></view><view class="sk-line sk-mid"></view></view>
+    <view class="sk-card">
+      <view class="skeleton sk-line sk-title"></view>
+      <view class="skeleton sk-line sk-mid"></view>
+    </view>
+    <view class="sk-card">
+      <view class="skeleton sk-line sk-title"></view>
+      <view class="skeleton sk-line sk-mid"></view>
+    </view>
   </view>
 
-  <view wx:elif="{{items.length === 0}}" class="empty">
-    <view class="empty-icon">📮</view>
-    <view>你还没有发布过信息</view>
-    <view class="empty-btn tap" bindtap="goEdit">去发一条</view>
+  <view wx:elif="{{items.length === 0}}" class="empty-bag">
+    <view class="empty-bag__card">
+      <image
+        class="empty-bag__img"
+        src="/assets/illustrations/empty-market-bag.svg"
+        mode="aspectFit"
+      />
+      <view class="empty-bag__title">这里空空如也</view>
+      <view class="empty-bag__desc">快去发布你的第一件闲置吧，让好物在校园里继续流转。</view>
+      <view
+        class="empty-bag__cta pressable"
+        hover-class="empty-bag__cta--hover"
+        hover-stay-time="80"
+        bindtap="goEdit"
+      >
+        <image class="empty-bag__cta-icon" src="/assets/icons/plus--white.svg" mode="aspectFit" />
+        <text>发布第一件闲置</text>
+      </view>
+    </view>
   </view>
 
   <view wx:else>
     <view
       wx:for="{{items}}"
       wx:key="id"
-      class="card m-item tap"
+      class="card w-item pressable"
       data-id="{{item.id}}"
+      hover-class="w-item--hover"
+      hover-stay-time="80"
       bindtap="goDetail"
     >
-      <view class="m-top">
-        <view class="m-kind k-{{item.type}}">{{item.type === 'sell' ? '🛍️ 闲置' : (item.type === 'found' ? '📦 招领' : '🔍 寻物')}}</view>
-        <view wx:if="{{item.done}}" class="m-done">已解决</view>
+      <view class="w-item__top">
+        <view class="tag {{item.type === 'sell' ? 'tag--market' : 'tag--brand'}}">
+          <image
+            class="w-item__kind-icon"
+            src="{{item.type === 'sell' ? '/assets/icons/shopping-bag--market.svg' : '/assets/icons/tag--brand.svg'}}"
+            mode="aspectFit"
+          />
+          <text>{{item.type === 'sell' ? '闲置' : (item.type === 'found' ? '招领' : '寻物')}}</text>
+        </view>
+        <view wx:if="{{item.done}}" class="w-item__state">已解决</view>
       </view>
-      <view class="m-title">{{item.title}}</view>
-      <view wx:if="{{item.desc}}" class="m-desc">{{item.desc}}</view>
-      <view class="m-foot">
-        <text wx:if="{{item.price}}" class="m-price">¥{{item.price}}</text>
-        <text class="muted m-time">{{item.time}}</text>
+
+      <view class="w-item__title">{{item.title}}</view>
+      <view wx:if="{{item.desc}}" class="w-item__desc clamp2">{{item.desc}}</view>
+
+      <view wx:if="{{item.images && item.images.length}}" class="w-item__imgs">
+        <image
+          wx:for="{{item.images}}"
+          wx:for-item="src"
+          wx:key="*this"
+          class="w-item__img"
+          src="{{src}}"
+          mode="aspectFill"
+          lazy-load
+        ></image>
+      </view>
+
+      <view class="w-item__foot">
+        <text wx:if="{{item.price}}" class="w-item__price">¥{{item.price}}</text>
+        <text class="faint w-item__time">{{item.time}}</text>
       </view>
     </view>
+  </view>
+
+  <view class="w-gap"></view>
+
+  <view
+    class="w-publish pressable"
+    hover-class="w-publish--hover"
+    hover-stay-time="80"
+    bindtap="goEdit"
+  >
+    <image class="w-publish__icon" src="/assets/icons/plus--market.svg" mode="aspectFit" />
+    <text>再发一条</text>
   </view>
 </view>

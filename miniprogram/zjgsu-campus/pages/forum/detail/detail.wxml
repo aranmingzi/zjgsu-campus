@@ -1,82 +1,125 @@
-<!-- 被限时多人举报自动删掉：说清为什么，别让人以为是没加载出来 -->
-<view class="container" wx:if="{{gone}}">
-  <view class="card">
+<!-- pages/forum/detail/detail.wxml —— 帖子详情（投票 + 留言） -->
+<app-header title="{{post ? post.board : '帖子详情'}}" showBack />
+
+<view class="container detail-page">
+  <!-- 被限时多人举报自动删掉：说清为什么，别让人以为是没加载出来 -->
+  <view wx:if="{{gone}}" class="card">
     <view class="title-lg">这条内容已经被删除</view>
-    <view class="post-body">因为 24 小时内有多名同学举报它违规，系统已经自动删除，不用等人工处理。</view>
+    <view class="hint">因为 24 小时内有多名同学举报它违规，系统已经自动删除，不用等人工处理。</view>
     <view class="muted">如果这是误判，可以联系审核员恢复。</view>
-  </view>
-  <view class="btn-ghost tap" bindtap="goBack">返回论坛</view>
-</view>
-
-<view class="container detail-page" wx:if="{{post && !gone}}">
-  <view class="card">
-    <view class="post-board">{{post.board}}<text wx:if="{{post.kind === 'topic'}}" class="post-kind">📌 信息墙</text></view>
-    <view wx:if="{{post.courseName}}" class="post-course tap" data-id="{{post.courseId}}" bindtap="goCourse">📖 {{post.courseName}} · 查看课程详情 ›</view>
-    <view class="title-lg post-title">{{post.title}}</view>
-    <!-- 信息墙的正文位是空的，直接留白的话点进来的人会以为页面没加载出来。
-         补一句说明，顺便告诉他信息该去哪儿看 -->
-    <view wx:if="{{post.kind === 'topic'}}" class="topic-intro">
-      这条只列了主题，具体信息收在下面 —— 需要的话往这儿留言，也有人在这里留了。
-    </view>
-    <view wx:else class="post-body">{{post.content}}</view>
-    <view wx:if="{{postImages.length}}" class="detail-images">
-      <image wx:for="{{postImages}}" wx:key="*this" class="detail-img tap" src="{{item}}" mode="aspectFill" data-imgs="{{postImages}}" bindtap="previewImages"></image>
-    </view>
-    <view class="post-meta">
-      <text>{{post.showAuthor}}</text>
-      <text> · {{post.time}}</text>
-      <!-- 匿名帖不给主页入口：点进去就等于把人认出来了 -->
-      <text wx:if="{{post.authorOpenid && !post.anonymous}}" class="author-link tap" data-openid="{{post.authorOpenid}}" catchtap="goAuthor"> · 看TA的主页 ›</text>
-    </view>
-    <view class="like-row">
-      <!-- 树洞帖的赞叫「抱抱」，且没有踩 —— 树洞是安慰和陪伴的地方，
-           「踩」只会让说真心话的人更不敢说。计数字段还是 likes，只是换了个说法 -->
-      <view class="like-btn {{post.liked ? 'liked' : ''}} tap" bindtap="onLike">{{isHole ? '🤗' : '👍'}} {{post.likes}}</view>
-      <view wx:if="{{!isHole}}" class="like-btn dislike {{post.disliked ? 'disliked' : ''}} tap" bindtap="onDislike">👎 {{post.dislikes}}</view>
-      <button class="share-btn" open-type="share" size="mini">↗ 分享</button>
-      <view class="my-post-op fav-op {{favorited ? 'fav-on' : ''}} tap" catchtap="onFavorite">⭐ {{favorited ? '已收藏' : '收藏'}}</view>
-      <!-- 被暂停展示时，举报按钮必须留给所有人：下架之后这是唯一还能投票的地方，
-           收不到第 4、5 票，「5 人举报自动删除」就永远触发不了 -->
-      <view wx:if="{{post.hidden && canRestore}}" class="my-post-op tap" catchtap="onRestore">恢复展示</view>
-      <view wx:elif="{{post.hidden}}" class="my-post-op tap" catchtap="onReport">继续举报</view>
-      <view wx:elif="{{isMine}}" class="my-post-op tap" catchtap="onDelete">删除帖子</view>
-      <view wx:elif="{{canChat}}" class="my-post-op tap" catchtap="goChat">打个招呼</view>
-      <view wx:else class="my-post-op tap" catchtap="onReport">举报</view>
-    </view>
-    <view wx:if="{{post.status === 'deleted'}}" class="hidden-tip">
-      这条内容已经在全校范围内被删除：24 小时内有多名同学举报，系统自动处理的，不用等人工确认。
-      确认是误判的话，点「恢复展示」就能放回来。
-    </view>
-    <view wx:elif="{{post.hidden}}" class="hidden-tip">
-      这条内容已因举报暂停展示。确认没有违规的话，点「恢复展示」即可。
-    </view>
+    <view class="btn-ghost tap detail__back" bindtap="goBack">返回论坛</view>
   </view>
 
-  <!-- 信息墙的评论区要跟普通帖区分开：这里叫「N 条信息」，
-       输入框的提示也换成「留下你的群号 / 联系方式」。
-       沿用「评论」两个字的话，同学会以为这是在跟楼主说话，
-       其实他是要在这里留下自己那一条，供别人取用 -->
-  <view class="section-title">{{post.kind === 'topic' ? '信息（' + post.comments.length + '）' : '评论（' + post.comments.length + '）'}}</view>
-  <view wx:if="{{post.comments.length === 0}}" class="empty">{{post.kind === 'topic' ? '还什么都没有，第一个留下的' : '还没有评论，抢沙发～'}}</view>
+  <block wx:else>
+    <view class="card">
+      <view class="detail__head">
+        <view class="tag tag--forum">{{post.board}}</view>
+        <view wx:if="{{post.kind === 'topic'}}" class="tag tag--campus">
+          <image class="detail__mini-icon" src="/assets/icons/list-checks--campus.svg" mode="aspectFit" />
+          <text>信息墙</text>
+        </view>
+        <text class="detail__time">{{post.time}}</text>
+      </view>
 
-  <view wx:for="{{post.comments}}" wx:key="id" wx:for-item="c" class="card comment">
-    <view class="comment-head">
-      <text class="rv-name">{{c.author}}</text>
-      <text class="muted">{{c.time}}</text>
-      <!-- 能不能删，服务端才算数；这里只负责把按钮显示出来。
-           帖主能删是信息墙的刚需：群会过期、群会满、有人留错群，
-           而帖主是唯一有动力维护这面墙的人 -->
-      <text wx:if="{{c.canRemove}}" class="comment-del tap" data-id="{{c.id}}" catchtap="onRemoveComment">删除</text>
-      <!-- 举报：删留言不该只有帖主和审核员能干。运营是一个人，
-           让同学举报、服务端凑够人数自动删，才不用天天有人盯着每条留言 -->
-      <text wx:elif="{{!c.reported}}" class="comment-report tap" data-id="{{c.id}}" catchtap="onReportComment">举报</text>
-      <text wx:else class="comment-reported">已举报</text>
+      <view wx:if="{{post.courseName}}" class="detail__course tap" data-id="{{post.courseId}}" bindtap="goCourse">
+        <image class="detail__mini-icon" src="/assets/icons/book-open--brand.svg" mode="aspectFit" />
+        <text class="detail__course-text">{{post.courseName}}</text>
+        <text class="detail__course-go">查看课程详情 ›</text>
+      </view>
+
+      <view class="title-lg detail__title">{{post.title}}</view>
+      <!-- 信息墙的正文位是空的，补一句说明，顺便告诉他信息该去哪儿看 -->
+      <view wx:if="{{post.kind === 'topic'}}" class="detail__topic-intro">
+        这条只列了主题，具体信息收在下面 —— 需要的话往这儿留言，也有人在这里留了。
+      </view>
+      <view wx:else class="detail__body">{{post.content}}</view>
+
+      <view wx:if="{{postImages.length}}" class="detail__images">
+        <image wx:for="{{postImages}}" wx:key="*this" class="detail__img tap" src="{{item}}" mode="aspectFill" data-imgs="{{postImages}}" bindtap="previewImages"></image>
+      </view>
+
+      <view class="detail__meta">
+        <text>{{post.showAuthor}}</text>
+        <!-- 匿名帖不给主页入口：点进去就等于把人认出来了 -->
+        <text wx:if="{{post.authorOpenid && !post.anonymous}}" class="detail__author tap" data-openid="{{post.authorOpenid}}" catchtap="goAuthor"> · 看TA的主页 ›</text>
+      </view>
+
+      <view class="detail__ops">
+        <!-- 树洞帖的赞叫「抱抱」，且没有踩 -->
+        <view class="detail__op {{post.liked ? 'detail__op--on' : ''}} tap" bindtap="onLike">
+          <image class="detail__op-icon" src="{{post.liked ? '/assets/icons/thumbs-up--brand600.svg' : '/assets/icons/thumbs-up--muted.svg'}}" mode="aspectFit" />
+          <text>{{isHole ? '抱抱 ' : ''}}{{post.likes}}</text>
+        </view>
+        <view wx:if="{{!isHole}}" class="detail__op {{post.disliked ? 'detail__op--no' : ''}} tap" bindtap="onDislike">
+          <image class="detail__op-icon" src="{{post.disliked ? '/assets/icons/thumbs-down--brand600.svg' : '/assets/icons/thumbs-down--muted.svg'}}" mode="aspectFit" />
+          <text>{{post.dislikes}}</text>
+        </view>
+        <button class="detail__op detail__op--btn" open-type="share" size="mini">
+          <image class="detail__op-icon" src="/assets/icons/share-2--muted.svg" mode="aspectFit" />
+          <text>分享</text>
+        </button>
+        <view class="detail__op detail__op--fav {{favorited ? 'detail__op--fav-on' : ''}} tap" catchtap="onFavorite">
+          <image class="detail__op-icon" src="{{favorited ? '/assets/icons/star--market.svg' : '/assets/icons/star--muted.svg'}}" mode="aspectFit" />
+          <text>{{favorited ? '已收藏' : '收藏'}}</text>
+        </view>
+        <view wx:if="{{post.hidden && canRestore}}" class="detail__op tap" catchtap="onRestore">恢复展示</view>
+        <view wx:elif="{{post.hidden}}" class="detail__op detail__op--warn tap" catchtap="onReport">继续举报</view>
+        <view wx:elif="{{isMine}}" class="detail__op tap" catchtap="onDelete">删除帖子</view>
+        <view wx:elif="{{canChat}}" class="detail__op tap" catchtap="goChat">打个招呼</view>
+        <view wx:else class="detail__op tap" catchtap="onReport">举报</view>
+      </view>
+
+      <view wx:if="{{post.status === 'deleted'}}" class="detail__tip">
+        这条内容已经在全校范围内被删除：24 小时内有多名同学举报，系统自动处理的，不用等人工确认。
+        确认是误判的话，点「恢复展示」就能放回来。
+      </view>
+      <view wx:elif="{{post.hidden}}" class="detail__tip">
+        这条内容已因举报暂停展示。确认没有违规的话，点「恢复展示」即可。
+      </view>
     </view>
-    <view class="comment-content">{{c.content}}</view>
-  </view>
 
+    <!-- 投票帖：顶部一张概览，下面一张 vote-card 承载「未投票 / 已投票 / 已结束」三态 -->
+    <view wx:if="{{post.kind === 'vote' && post.voteData}}" class="poll-hero">
+      <view class="poll-hero__ring">
+        <view class="poll-hero__core">
+          <text class="poll-hero__count">{{post.voteData.totalVotes}}</text>
+          <text class="poll-hero__unit">人已参与</text>
+        </view>
+      </view>
+      <view class="poll-hero__text">
+        <view class="poll-hero__mode">{{post.voteData.multiple ? '多选' : '单选'}} · {{post.voteData.anonymous ? '匿名投票' : '公开投票'}}</view>
+        <view class="poll-hero__deadline">
+          <image class="poll-hero__clock" src="/assets/icons/clock--white.svg" mode="aspectFit" />
+          <text>{{post.voteData.ended ? '投票已结束，结果仅供查看' : '投票进行中，每 10 秒自动更新'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <vote-card wx:if="{{post.kind === 'vote' && post.voteData}}" voteData="{{post.voteData}}" />
+
+    <!-- 信息墙的评论区要跟普通帖区分开：这里叫「N 条信息」 -->
+    <view class="detail__section">
+      <image class="detail__section-icon" src="/assets/icons/message-circle--brand.svg" mode="aspectFit" />
+      <text>{{post.kind === 'topic' ? '信息（' + post.comments.length + '）' : '评论（' + post.comments.length + '）'}}</text>
+    </view>
+
+    <view wx:if="{{post.comments.length === 0}}" class="empty">{{post.kind === 'topic' ? '还什么都没有，第一个留下的' : '还没有评论，抢沙发～'}}</view>
+
+    <view wx:for="{{post.comments}}" wx:key="id" wx:for-item="c" class="card comment">
+      <view class="comment__head">
+        <text class="comment__name">{{c.author}}</text>
+        <text class="muted comment__time">{{c.time}}</text>
+        <text wx:if="{{c.canRemove}}" class="comment__del tap" data-id="{{c.id}}" catchtap="onRemoveComment">删除</text>
+        <text wx:elif="{{!c.reported}}" class="comment__report tap" data-id="{{c.id}}" catchtap="onReportComment">举报</text>
+        <text wx:else class="comment__reported">已举报</text>
+      </view>
+      <view class="comment__content">{{c.content}}</view>
+    </view>
+  </block>
+
+  <!-- 固定底栏：Web 版是 sticky，这里用 fixed（.container 上没有 transform，固定定位不会退化） -->
   <view class="input-bar">
-    <input class="input" placeholder="{{post.kind === 'topic' ? '留下你的群号 / 联系方式' : '友善评论，理性发言'}}" value="{{commentText}}" bindinput="onComment" confirm-type="send" bindconfirm="sendComment" />
-    <view class="send-btn tap" bindtap="sendComment">发送</view>
+    <input class="input-bar__input" placeholder="{{post.kind === 'topic' ? '留下你的群号 / 联系方式' : '友善评论，理性发言'}}" value="{{commentText}}" bindinput="onComment" confirm-type="send" bindconfirm="sendComment" />
+    <view class="input-bar__send {{commentText ? '' : 'input-bar__send--off'}} tap" bindtap="sendComment">发送</view>
   </view>
 </view>

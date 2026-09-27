@@ -1,43 +1,105 @@
-.empty-btn {
-  margin-top: 30rpx;
-  display: inline-block;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 999rpx;
-  padding: 18rpx 50rpx;
-  font-size: 28rpx;
-}
+/* pages/market/mine/mine.wxss —— 我发布的
+   场景色：闲置橙 #F58A32 / 浅底 #FFF3E9 / 标签文字 #D9731F */
 
-.m-done { margin-left: auto; }
-.m-kind { display: inline-block; }
-.m-top { display: flex; align-items: center; margin-bottom: 12rpx; }
-.k-lost { color: #c2410c; background: #fff1e8; font-size: 22rpx; padding: 4rpx 14rpx; border-radius: 8rpx; }
-.k-found { color: #0f6e56; background: #e1f5ee; font-size: 22rpx; padding: 4rpx 14rpx; border-radius: 8rpx; }
-.k-sell { color: #185fa5; background: #e6f1fb; font-size: 22rpx; padding: 4rpx 14rpx; border-radius: 8rpx; }
-.m-title { font-size: 30rpx; font-weight: 600; line-height: 1.5; }
-.m-desc { font-size: 26rpx; color: #5f6672; margin-top: 10rpx; line-height: 1.6; }
-.m-foot { display: flex; align-items: center; margin-top: 16rpx; }
-.m-time { margin-left: auto; }
-.m-price { font-size: 30rpx; color: #d85a30; font-weight: 600; }
+.w-page { padding-top: 20rpx; }
 
-.sk-wrap { padding-top: 10rpx; }
+/* ---------- 骨架屏 ---------- */
+.sk-wrap { margin-bottom: 24rpx; }
 .sk-card {
-  background: #fff;
-  border-radius: 20rpx;
+  background: #ffffff;
+  border-radius: 32rpx;
   padding: 28rpx;
   margin-bottom: 24rpx;
 }
-.sk-line {
-  height: 24rpx;
-  border-radius: 8rpx;
-  background: linear-gradient(90deg, #f0f1f3 25%, #e6e8eb 37%, #f0f1f3 63%);
-  background-size: 400% 100%;
-  animation: sk 1.2s ease-in-out infinite;
-  margin-bottom: 16rpx;
-}
+.sk-line { margin-bottom: 16rpx; }
 .sk-title { width: 55%; height: 30rpx; }
 .sk-mid { width: 80%; margin-bottom: 0; }
-@keyframes sk {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
+
+/* ---------- 空状态：牛皮纸袋 ---------- */
+.empty-bag { padding: 12rpx 0 32rpx; }
+.empty-bag__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 32rpx 48rpx;
+  border-radius: 32rpx;
+  background: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
+.empty-bag__img { width: 400rpx; height: 340rpx; }
+.empty-bag__title { margin-top: 8rpx; font-size: 30rpx; font-weight: 600; color: #172033; }
+.empty-bag__desc {
+  margin-top: 12rpx;
+  max-width: 440rpx;
+  font-size: 24rpx;
+  color: #6f7b91;
+  line-height: 1.7;
+}
+.empty-bag__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  min-height: 88rpx;
+  margin-top: 32rpx;
+  padding: 0 48rpx;
+  border-radius: 999rpx;
+  background: #f58a32;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(245, 138, 50, 0.22);
+}
+.empty-bag__cta--hover { opacity: 0.72; }
+.empty-bag__cta-icon { width: 32rpx; height: 32rpx; }
+
+/* ---------- 列表卡片 ---------- */
+.w-item { padding: 28rpx; }
+.w-item--hover { opacity: 0.72; }
+
+.w-item__top { display: flex; align-items: center; gap: 12rpx; margin-bottom: 14rpx; }
+.w-item__kind-icon { width: 24rpx; height: 24rpx; margin-right: 6rpx; }
+.w-item__state {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #6f7b91;
+  background: #eef1f6;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+}
+
+.w-item__title { font-size: 30rpx; font-weight: 600; line-height: 1.45; color: #172033; }
+.w-item__desc { margin-top: 12rpx; font-size: 26rpx; color: #6f7b91; line-height: 1.6; }
+
+.w-item__imgs { display: flex; gap: 12rpx; margin-top: 20rpx; }
+.w-item__img {
+  width: 140rpx;
+  height: 140rpx;
+  flex-shrink: 0;
+  border-radius: 16rpx;
+  background: #f4f5f7;
+}
+
+.w-item__foot { display: flex; align-items: center; gap: 16rpx; margin-top: 20rpx; }
+.w-item__price { flex-shrink: 0; font-size: 32rpx; font-weight: 700; color: #f58a32; }
+.w-item__time { margin-left: auto; flex-shrink: 0; }
+
+.w-gap { height: 24rpx; }
+
+/* ---------- 底部常驻发布条 ---------- */
+.w-publish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  min-height: 96rpx;
+  margin-top: 12rpx;
+  border-radius: 999rpx;
+  background: #fff3e9;
+  color: #d9731f;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.w-publish__icon { width: 36rpx; height: 36rpx; }
+.w-publish--hover { opacity: 0.72; }

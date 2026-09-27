@@ -6,9 +6,9 @@ const store = require('../../../utils/store.js');
 
 const MAX_IMAGES = 6;
 const TYPES = [
-  { key: 'lost', label: '我丢了东西', icon: '🔍' },
-  { key: 'found', label: '我捡到东西', icon: '📦' },
-  { key: 'sell', label: '闲置分享', icon: '🛍️' }
+  { key: 'lost', label: '我丢了东西', icon: 'search' },
+  { key: 'found', label: '我捡到东西', icon: 'inbox' },
+  { key: 'sell', label: '闲置分享', icon: 'shopping-bag️' }
 ];
 
 function catMap(current) {

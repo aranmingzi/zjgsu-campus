@@ -1,0 +1,11 @@
+<!-- components/ui/base-button/index.wxml -->
+<button
+  class="ui-btn ui-btn--{{variant}} ui-btn--{{size}} {{block ? 'ui-btn--block' : ''}} {{disabled || loading ? 'ui-btn--disabled' : ''}}"
+  disabled="{{disabled || loading}}"
+  hover-class="ui-btn--hover"
+  hover-stay-time="80"
+  bindtap="onTap"
+>
+  <view wx:if="{{loading}}" class="ui-btn__spinner" />
+  <slot />
+</button>

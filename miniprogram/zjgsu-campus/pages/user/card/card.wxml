@@ -1,56 +1,99 @@
-<view class="container" wx:if="{{profile}}">
-  <view class="card profile">
-    <view wx:if="{{!profile.avatarUrl}}" class="avatar">{{profile.avatarText}}</view>
-    <image wx:if="{{profile.avatarUrl}}" class="avatar-img" src="{{profile.avatarUrl}}" mode="aspectFill"></image>
-    <view class="profile-info">
-      <view class="title-lg">{{profile.nickName}}</view>
-      <view wx:if="{{profile.college}}" class="muted">{{profile.college}}</view>
-      <view wx:elif="{{profile.motto}}" class="muted">{{profile.motto}}</view>
-      <view wx:else class="muted">还没填写学院</view>
-    </view>
-  </view>
+<!-- pages/user/card —— 同学名片。
+     别人能在我这里看到多少，取决于我们之间的关系，四种分支都在下面：
+     陌生人（只有昵称头像）/ 已发起等通过 / 好友（看得到联系方式）/ 自己。
+     云函数参数没动，只换了呈现：场景色走个人资料青蓝 #2F9FD6。 -->
+<app-header title="{{profile ? profile.nickName : '同学名片'}}" showBack />
 
-  <view wx:if="{{blockedMe && !isMe}}" class="card">
-    <view class="section-title">你已拉黑 TA</view>
-    <view class="muted">TA 发不出请求给你，也不会出现在你的提醒里。</view>
-    <view class="btn-ghost tap" bindtap="onToggleBlock">解除拉黑</view>
-  </view>
-
-  <view wx:if="{{isMe}}" class="card">
-    <view class="section-title">这是你自己的名片</view>
-    <view class="muted">同学只能看到你愿意展示的部分。</view>
-    <view class="btn-primary tap" bindtap="onEditMine">编辑我的资料</view>
-  </view>
-
-  <!-- 好友：可以看到联系方式 -->
-  <view wx:if="{{isFriend && profile.contactValue}}" class="card contact-card">
-    <view class="section-title">我们的联系方式</view>
-    <view class="contact-row">
-      <text class="contact-label">{{contactLabel}}</text>
-      <text class="contact-value">{{profile.contactValue}}</text>
-    </view>
-    <button class="btn-ghost copy-btn tap" bindtap="onCopy" data-v="{{profile.contactValue}}">复制</button>
-    <view class="tip">只有同意之后才看得到，不同意就一直看不到。</view>
-  </view>
-
-  <view wx:if="{{isFriend && !profile.contactValue}}" class="card">
-    <view class="section-title">你们已经是同学关系</view>
-    <view class="muted">对方还没填联系方式，等他补充后这里就会显示。</view>
-  </view>
-
-  <!-- 陌生人：想认识 -->
-  <view wx:if="{{!isMe && !isFriend}}" class="card">
-    <view class="section-title">{{waiting ? '已发起，等对方通过' : '想认识TA'}}</view>
-    <view wx:if="{{waiting}}" class="waiting">对方通过以后，你就能看到对方的{{profile.contactType ? contactLabel : '联系方式'}}。</view>
-    <block wx:else>
-      <view class="tip">发起后对方会收到提醒，对方同意你们才能互相看到联系方式。</view>
-      <view wx:if="{{showMsg}}" class="msg-box">
-        <textarea class="msg-input" placeholder="说一句（可不填）" value="{{msg}}" bindinput="onMsg" maxlength="50" auto-height />
+<block wx:if="{{profile}}">
+  <view class="container cd">
+    <view class="card cd-hero">
+      <view class="cd-avatar">
+        <image wx:if="{{profile.avatarUrl}}" class="cd-avatar-img" src="{{profile.avatarUrl}}" mode="aspectFill" />
+        <view wx:else class="cd-avatar-text">{{profile.avatarText}}</view>
       </view>
-      <view class="btn-primary tap" bindtap="onRequest">想认识</view>
-      <view wx:if="{{showMsg}}" class="btn-ghost tap" bindtap="toggleMsg">收起留言</view>
-      <view wx:else class="btn-ghost tap" bindtap="toggleMsg">附一句留言</view>
-    </block>
-    <view class="btn-ghost danger-ghost tap" bindtap="onToggleBlock">拉黑 TA</view>
+      <view class="cd-info">
+        <view class="title-lg truncate">{{profile.nickName}}</view>
+        <view wx:if="{{profile.college}}" class="cd-tag">
+          <image class="cd-tag-icon" src="/assets/icons/book-open--profile.svg" mode="aspectFit" />
+          {{profile.college}}
+        </view>
+        <view wx:elif="{{profile.motto}}" class="cd-motto">{{profile.motto}}</view>
+        <view wx:else class="muted">还没填写学院</view>
+      </view>
+    </view>
+
+    <view wx:if="{{blockedMe && !isMe}}" class="card">
+      <view class="cd-sec">
+        <image class="cd-sec-icon" src="/assets/icons/shield--danger.svg" mode="aspectFit" />
+        你已拉黑 TA
+      </view>
+      <view class="muted">TA 发不出请求给你，也不会出现在你的提醒里。</view>
+      <base-button class="cd-btn" variant="danger" block bindtap="onToggleBlock">解除拉黑</base-button>
+    </view>
+
+    <view wx:if="{{isMe}}" class="card">
+      <view class="cd-sec">
+        <image class="cd-sec-icon" src="/assets/icons/user-round--profile.svg" mode="aspectFit" />
+        这是你自己的名片
+      </view>
+      <view class="muted">同学只能看到你愿意展示的部分。</view>
+      <base-button class="cd-btn" block bindtap="onEditMine">编辑我的资料</base-button>
+    </view>
+
+    <!-- 好友：看得到联系方式 -->
+    <view wx:if="{{isFriend && profile.contactValue}}" class="card cd-contact">
+      <view class="cd-sec">
+        <image class="cd-sec-icon" src="/assets/icons/message-square--campus.svg" mode="aspectFit" />
+        我们的联系方式
+      </view>
+      <view class="cd-contact-row bg-profile-soft">
+        <text class="cd-contact-label">{{contactLabel}}</text>
+        <text class="cd-contact-value truncate">{{profile.contactValue}}</text>
+      </view>
+      <base-button class="cd-btn" variant="secondary" block bindtap="onCopy" data-v="{{profile.contactValue}}">
+        <image class="cd-btn-icon" src="/assets/icons/edit--brand600.svg" mode="aspectFit" />复制
+      </base-button>
+      <view class="cd-tip">只有同意之后才看得到，不同意就一直看不到。</view>
+    </view>
+
+    <view wx:if="{{isFriend && !profile.contactValue}}" class="card">
+      <view class="cd-sec">
+        <image class="cd-sec-icon" src="/assets/icons/users--campus.svg" mode="aspectFit" />
+        你们已经是同学关系
+      </view>
+      <view class="muted">对方还没填联系方式，等他补充后这里就会显示。</view>
+    </view>
+
+    <!-- 陌生人：想认识 -->
+    <view wx:if="{{!isMe && !isFriend}}" class="card">
+      <view class="cd-sec">
+        <image class="cd-sec-icon" src="/assets/icons/users-round--profile.svg" mode="aspectFit" />
+        {{waiting ? '已发起，等对方通过' : '想认识TA'}}
+      </view>
+      <view wx:if="{{waiting}}" class="cd-waiting">
+        <image class="cd-waiting-icon" src="/assets/icons/clock--market.svg" mode="aspectFit" />
+        对方通过以后，你就能看到对方的{{profile.contactType ? contactLabel : '联系方式'}}。
+      </view>
+      <block wx:else>
+        <view class="cd-tip">发起后对方会收到提醒，对方同意你们才能互相看到联系方式。</view>
+        <view wx:if="{{showMsg}}" class="cd-msg-box">
+          <textarea class="cd-msg-input" placeholder="说一句（可不填）" value="{{msg}}"
+                    bindinput="onMsg" maxlength="50" auto-height />
+        </view>
+        <base-button class="cd-btn" block bindtap="onRequest">想认识</base-button>
+        <base-button class="cd-btn" variant="ghost" block size="sm" bindtap="toggleMsg">
+          {{showMsg ? '收起留言' : '附一句留言'}}
+        </base-button>
+      </block>
+      <base-button class="cd-btn" variant="danger" block size="sm" bindtap="onToggleBlock">拉黑 TA</base-button>
+    </view>
   </view>
-</view>
+</block>
+
+<empty-state
+  wx:else
+  icon="user-round"
+  iconColor="faint"
+  title="这位同学还没有填资料"
+  description="等 TA 补充之后，这里就能看到 TA 的学院和联系方式了"
+/>

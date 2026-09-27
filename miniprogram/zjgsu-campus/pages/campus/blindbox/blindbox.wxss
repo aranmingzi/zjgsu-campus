@@ -1,259 +1,487 @@
-/* pages/campus/blindbox —— 校园盲盒 / 漂流瓶样式
-   配色沿用全站蓝（#1a5fb4），卡片、圆角、字号跟其它页面保持一致。 */
+/* pages/campus/blindbox/blindbox —— 校园盲盒 / 漂流瓶（深色沉浸式）
+   底色 #0d1026，卡片一律降级成「半透明底 + 同色描边」，不用毛玻璃 API。
+   氛围光晕是 absolute + filter:blur 的装饰层，不参与布局也不吃点击。 */
 
-/* ---------- 顶部规则卡 ---------- */
-.bb-head {
-  background: linear-gradient(135deg, #eaf1fc, #f7faff);
-}
-.bb-title {
-  font-size: 33rpx;
-  font-weight: 600;
-  color: #1a5fb4;
-}
-.bb-sub {
-  font-size: 25rpx;
-  color: #5b636d;
-  margin-top: 12rpx;
-}
-.bb-rules {
-  margin-top: 16rpx;
-  padding-top: 16rpx;
-  border-top: 1rpx dashed #d7e0ee;
-  display: flex;
-  flex-direction: column;
-}
-.bb-rules text {
-  font-size: 23rpx;
-  color: #7b8189;
-  line-height: 40rpx;
+.bb {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #0d1026;
+  /* 顶部紫色光 + 右侧蓝色光 + 主体纵向渐变，全部走 background-image，不用伪元素堆叠 */
+  background-image:
+    radial-gradient(circle at 50% 6%, rgba(92, 76, 185, 0.42), rgba(13, 16, 38, 0) 38%),
+    radial-gradient(circle at 88% 72%, rgba(32, 92, 180, 0.26), rgba(13, 16, 38, 0) 36%),
+    linear-gradient(180deg, #0b1234 0%, #0d1026 48%, #080b1d 100%);
 }
 
-/* 云端连不上时的一句实话，放在次数卡下面，不抢主按钮的位置 */
-.cloud-msg {
-  font-size: 22rpx;
-  color: #b07a2a;
+.bb__glow {
+  position: absolute;
+  left: -20%;
+  top: -12%;
+  width: 140%;
+  height: 460rpx;
+  border-radius: 999rpx;
+  background-color: rgba(92, 76, 185, 0.28);
+  filter: blur(60rpx);
+  pointer-events: none;
+}
+.bb__glow--btm {
+  left: -30%;
+  top: auto;
+  bottom: 8%;
+  height: 420rpx;
+  background-color: rgba(32, 92, 180, 0.22);
+  filter: blur(70rpx);
+}
+
+.bb__body {
+  position: relative;
+  z-index: 10;
+  padding: 16rpx 24rpx calc(60rpx + env(safe-area-inset-bottom));
+}
+
+/* --------------------------------------------------------------------------
+   顶部标题区
+   -------------------------------------------------------------------------- */
+.bb-hero {
+  padding: 32rpx 16rpx 20rpx;
   text-align: center;
-  margin: -8rpx 0 20rpx;
 }
-
-/* ---------- 今日次数 + 捞瓶 ---------- */
-.bb-pool {
+.bb-hero__badge {
+  width: 80rpx;
+  height: 80rpx;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 26rpx 28rpx;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
 }
-.bb-count { display: flex; align-items: baseline; }
-.bb-count-num {
+.bb-hero__icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+.bb-hero__title {
+  margin-top: 24rpx;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+.bb-hero__sub {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   捞瓶区（大字次数 + 圆形撒网按钮）
+   -------------------------------------------------------------------------- */
+.bb-pool {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  padding: 32rpx 28rpx;
+  margin-bottom: 24rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bb-pool__left {
+  flex: 1;
+  min-width: 0;
+}
+.bb-pool__num {
   font-size: 56rpx;
   font-weight: 700;
-  color: #1a5fb4;
   line-height: 1;
+  color: #ffffff;
 }
-.bb-count-unit {
-  font-size: 24rpx;
-  color: #8a9099;
-  margin-left: 12rpx;
+.bb-pool__unit {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.5);
 }
-.bb-fetch-btn {
-  font-size: 27rpx;
-  font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #1a5fb4, #3d86e0);
-  border-radius: 999rpx;
-  padding: 20rpx 44rpx;
-  box-shadow: 0 6rpx 18rpx rgba(26, 95, 180, 0.25);
-}
-/* 次数用完 / 正在撒网：置灰，但不能看着还能点 */
-.bb-fetch-btn.off {
-  color: #9aa1a9;
-  background: #eef0f3;
-  box-shadow: none;
-}
-
-/* ---------- 捞到的瓶子 ---------- */
-.bb-bottle {
-  background: linear-gradient(160deg, #ffffff, #fbfcff);
-  border: 1rpx solid #e4ebf6;
-}
-.bb-bottle-top {
+.bb-pool__hint {
   display: flex;
   align-items: center;
-  margin-bottom: 16rpx;
+  gap: 8rpx;
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.38);
 }
-.bb-bottle-kind {
+.bb-pool__hint-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+}
+
+.bb-fetch {
+  position: relative;
+  flex-shrink: 0;
+  width: 200rpx;
+  height: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  border: 2rpx solid rgba(169, 233, 255, 0.22);
+  background: rgba(169, 233, 255, 0.08);
+  box-shadow: 0 0 56rpx rgba(74, 196, 255, 0.18);
+}
+.bb-fetch.off {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+}
+.bb-fetch__core {
+  width: 160rpx;
+  height: 160rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #5fd3ff 0%, #2b5aed 100%);
+  box-shadow: 0 0 36rpx rgba(94, 206, 255, 0.45);
+}
+.bb-fetch.off .bb-fetch__core {
+  background: linear-gradient(135deg, #6b7590 0%, #3c465f 100%);
+  box-shadow: none;
+}
+.bb-fetch__core-icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+.bb-fetch__core-text {
   font-size: 24rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 8rpx;
-  padding: 4rpx 16rpx;
+  font-weight: 700;
+  color: #071333;
+}
+.bb-fetch.off .bb-fetch__core-text { color: rgba(255, 255, 255, 0.7); }
+
+/* 撒网时的水波：三圈错开延迟扩散 */
+.bb-fetch__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200rpx;
+  height: 200rpx;
+  margin-left: -100rpx;
+  margin-top: -100rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid rgba(169, 233, 255, 0.3);
+  animation: bbRipple 1.6s ease-out infinite;
+}
+.bb-fetch__ring--2 { animation-delay: 0.5s; }
+@keyframes bbRipple {
+  0% { transform: scale(0.92); opacity: 0.55; }
+  100% { transform: scale(1.85); opacity: 0; }
+}
+
+.bb-cloud {
+  margin: -8rpx 0 24rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 24rpx;
+  background: rgba(217, 140, 11, 0.14);
+  border: 2rpx solid rgba(217, 140, 11, 0.3);
+  font-size: 22rpx;
+  color: #f0c583;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   玻璃卡（毛玻璃降级）
+   -------------------------------------------------------------------------- */
+.bb-card {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 24rpx;
+  padding: 28rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: rgba(9, 11, 30, 0.34);
+  box-shadow: 0 12rpx 34rpx rgba(4, 7, 24, 0.2);
+}
+.bb-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.bb-card__icon {
+  width: 34rpx;
+  height: 34rpx;
+  flex-shrink: 0;
+}
+.bb-card__title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   捞到的瓶子
+   -------------------------------------------------------------------------- */
+.bb-bottle__top {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 48rpx;
+}
+.bb-kind {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-shrink: 0;
+  padding: 6rpx 20rpx;
+  border-radius: 999rpx;
+  background: rgba(169, 233, 255, 0.14);
+}
+.bb-kind__icon {
+  width: 28rpx;
+  height: 28rpx;
+}
+.bb-kind__text {
+  font-size: 22rpx;
+  color: #a9e9ff;
 }
 .bb-lock {
-  margin-left: auto;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8rpx;
   font-size: 22rpx;
-  color: #8a9099;
-  background: #f2f4f7;
-  border-radius: 999rpx;
-  padding: 6rpx 18rpx;
+  color: rgba(255, 255, 255, 0.45);
 }
-/* 解锁态：换成暖色，一眼看出「这个人是谁已经翻开」 */
-.bb-lock-on {
-  color: #8a6d3b;
-  background: #fdf6e3;
+.bb-lock--on {
+  justify-content: flex-start;
+  color: #a9e9ff;
 }
-.bb-bottle-content {
-  font-size: 29rpx;
-  color: #1f2329;
-  line-height: 48rpx;
+.bb-lock__icon {
+  width: 26rpx;
+  height: 26rpx;
+  flex-shrink: 0;
+}
+
+.bb-bottle__content {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.92);
   word-break: break-all;
 }
 
-/* 回复框：定高自适应（auto-height），不写死 height，免得长文本被截 */
-.bb-reply,
-.bb-content {
+.bb-area {
   width: 100%;
   box-sizing: border-box;
-  font-size: 27rpx;
-  color: #1f2329;
-  background: #f6f8fb;
-  border-radius: 16rpx;
-  padding: 20rpx 22rpx;
   margin-top: 20rpx;
-  min-height: 120rpx;
+  padding: 20rpx 24rpx;
+  min-height: 160rpx;
+  border-radius: 24rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #ffffff;
 }
+.bb-area-ph { color: rgba(255, 255, 255, 0.32); }
 
-.bb-bottle-ops {
+.bb-ops {
   display: flex;
   justify-content: flex-end;
+  gap: 16rpx;
   margin-top: 20rpx;
 }
 .bb-op {
-  font-size: 26rpx;
-  color: #6b7280;
-  background: #f2f4f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180rpx;
+  min-height: 88rpx;
+  padding: 0 32rpx;
   border-radius: 999rpx;
-  padding: 16rpx 36rpx;
-  margin-left: 18rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
 }
-.bb-op.main {
-  color: #fff;
-  background: #1a5fb4;
+.bb-op--main {
+  border-color: transparent;
+  background: #19a66a;
+  color: #ffffff;
+  font-weight: 600;
 }
-.bb-op.off {
-  color: #9aa1a9;
-  background: #eef0f3;
+.bb-op--main.off {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* 解锁提示条：刚解锁时弹一下（pop），之后安静地挂着 */
 .bb-unlocked {
-  font-size: 25rpx;
-  color: #0f8b5f;
-  background: #e8f8f1;
-  border-radius: 14rpx;
-  padding: 18rpx 22rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
   margin-top: 20rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 24rpx;
+  background: rgba(25, 166, 106, 0.16);
+  border: 2rpx solid rgba(25, 166, 106, 0.34);
+  font-size: 24rpx;
+  color: #7fe0b4;
+  min-width: 0;
 }
-.bb-unlocked.pop {
-  animation: bbPop .42s ease both;
+.bb-unlocked__icon {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
 }
+.bb-unlocked.pop { animation: bbPop 0.42s ease both; }
 @keyframes bbPop {
-  0%   { transform: scale(.94); opacity: 0; }
-  60%  { transform: scale(1.02); opacity: 1; }
+  0% { transform: scale(0.94); opacity: 0; }
+  60% { transform: scale(1.02); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ---------- 扔瓶子 ---------- */
-.bb-throw-title {
-  font-size: 29rpx;
-  font-weight: 600;
-  color: #1f2329;
-}
-/* 类型横滑：三个 chip 一行放得下，但窄屏也能横向滑 */
+/* --------------------------------------------------------------------------
+   扔瓶子
+   -------------------------------------------------------------------------- */
 .bb-kinds {
-  margin-top: 18rpx;
+  margin-top: 20rpx;
+}
+.bb-kinds__row {
+  display: flex;
+  gap: 16rpx;
   white-space: nowrap;
 }
-.bb-kinds .chip {
-  display: inline-block;
-  padding: 12rpx 28rpx;
-  margin-right: 16rpx;
-  background: #fff;
-  border: 1rpx solid #e6e9ee;
+.bb-kind-chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  min-height: 88rpx;
+  padding: 0 28rpx;
   border-radius: 999rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   font-size: 26rpx;
-  color: #5a6068;
+  color: rgba(255, 255, 255, 0.62);
+  transition: background-color 0.24s ease, border-color 0.24s ease, color 0.24s ease;
 }
-.bb-kinds .chip-on {
-  background: #1a5fb4;
-  border-color: #1a5fb4;
-  color: #fff;
+.bb-kind-chip.on {
+  border-color: rgba(25, 166, 106, 0.6);
+  background: rgba(25, 166, 106, 0.18);
+  color: #ffffff;
 }
-.bb-throw-hint {
-  margin-top: 14rpx;
-}
-.bb-throw-btn {
-  margin-top: 24rpx;
-  text-align: center;
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #fff;
-  background: #1a5fb4;
-  border-radius: 16rpx;
-  padding: 24rpx 0;
-}
-.bb-throw-btn.off {
-  color: #9aa1a9;
-  background: #eef0f3;
-}
-.bb-throw-note {
-  margin-top: 16rpx;
-  text-align: center;
+.bb-kind-chip__icon {
+  width: 30rpx;
+  height: 30rpx;
 }
 
-/* ---------- 我的瓶子 ---------- */
-/* more-row 在 campus.wxss 里也有，但那个是页面级样式，这里得自己有一份 */
-.more-row {
+.bb-hint {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.6;
+}
+
+.bb-throw {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border-radius: 18rpx;
-  padding: 24rpx 28rpx;
-  margin: 8rpx 0 20rpx;
-  font-size: 26rpx;
-  color: #5b636d;
+  justify-content: center;
+  min-height: 96rpx;
+  margin-top: 24rpx;
+  border-radius: 999rpx;
+  background: #19a66a;
+  font-size: 29rpx;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(25, 166, 106, 0.28);
 }
-.more-go { color: #b0b6be; }
+.bb-throw.off {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.4);
+}
 
-.empty-sm {
+.bb-note {
+  margin-top: 18rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   我的瓶子
+   -------------------------------------------------------------------------- */
+.bb-more {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 96rpx;
+  margin: 8rpx 0 20rpx;
+  padding: 22rpx 28rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+/* 展开时箭头转 90° 变成朝下，收起时回到朝右 */
+.bb-more__icon {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
+  transform: rotate(0deg);
+  transition: transform 0.24s ease;
+}
+.bb-more--open .bb-more__icon { transform: rotate(90deg); }
+.bb-more__text {
+  flex: 1;
+  min-width: 0;
+  font-size: 27rpx;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.bb-empty {
   text-align: center;
   font-size: 24rpx;
-  color: #b0b6be;
-  padding: 40rpx 0;
+  color: rgba(255, 255, 255, 0.42);
+  padding: 48rpx 0;
 }
 
 .bb-mine { padding: 24rpx 26rpx; }
-.bb-mine-top {
+.bb-mine__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14rpx;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
 }
-.bb-mine-replies { font-size: 22rpx; }
+.bb-mine__replies {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.45);
+}
 
-.bb-reply-item {
-  background: #f6f8fb;
-  border-radius: 14rpx;
-  padding: 18rpx 20rpx;
-  margin-top: 14rpx;
+.bb-reply {
+  margin-top: 16rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.06);
+  border-left: 4rpx solid rgba(25, 166, 106, 0.6);
 }
-.bb-reply-content {
+.bb-reply__content {
   font-size: 26rpx;
-  color: #1f2329;
-  line-height: 42rpx;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
   word-break: break-all;
 }
-.bb-reply-meta {
-  margin-top: 8rpx;
+.bb-reply__meta {
+  margin-top: 10rpx;
   font-size: 21rpx;
+  color: rgba(255, 255, 255, 0.4);
 }

@@ -1,107 +1,212 @@
-<view class="container">
+<app-header dark title="校园盲盒 · 漂流瓶" showBack />
 
-  <!-- 规则卡：三句话说清这个功能，别让同学对着按钮猜 -->
-  <view class="card bb-head">
-    <view class="bb-title">🫙 校园盲盒 · 漂流瓶</view>
-    <view class="bb-sub">匿名扔一句心里话进海里，随机被一位同学捞到。</view>
-    <view class="bb-rules">
-      <text>· 每天能捞 {{daily}} 次，捞到吐槽、分享或匿名提问</text>
-      <text>· 捞到时看不到是谁 —— 回复之后才会解锁对方的院系</text>
+<view class="bb">
+
+  <!-- 氛围层：两团光晕，纯装饰，不挡点击 -->
+  <view class="bb__glow bb__glow--top"></view>
+  <view class="bb__glow bb__glow--btm"></view>
+
+  <view class="bb__body">
+
+    <!-- 标题区：一句话说清这是个什么 -->
+    <view class="bb-hero">
+      <view class="bb-hero__badge">
+        <image class="bb-hero__icon" src="/assets/icons/life-buoy--campus.svg" mode="aspectFit" />
+      </view>
+      <view class="bb-hero__title">让心事漂一会儿</view>
+      <view class="bb-hero__sub">每天可以捞 {{daily}} 次，回复后解锁对方院系。自己扔出的瓶子不会回到手里。</view>
     </view>
-  </view>
 
-  <!-- 今日次数 + 捞瓶 -->
-  <view class="card bb-pool">
-    <view class="bb-count">
-      <text class="bb-count-num">{{left === null ? daily : left}}</text>
-      <text class="bb-count-unit">/ {{daily}} 次 · 今日剩余</text>
+    <!-- 捞瓶区 -->
+    <view class="bb-pool">
+      <view
+        class="bb-fetch tap pressable {{fetching || (left !== null && left <= 0) ? 'off' : ''}}"
+        bindtap="onFetch"
+      >
+        <view wx:if="{{fetching}}" class="bb-fetch__ring bb-fetch__ring--1"></view>
+        <view wx:if="{{fetching}}" class="bb-fetch__ring bb-fetch__ring--2"></view>
+        <view class="bb-fetch__core">
+          <image class="bb-fetch__core-icon" src="/assets/icons/life-buoy--white.svg" mode="aspectFit" />
+          <text class="bb-fetch__core-text">{{fetching ? '撒网中…' : '捞一个树洞'}}</text>
+        </view>
+      </view>
+      <view class="bb-pool__left">
+        <view class="bb-pool__num">{{left === null ? daily : left}}</view>
+        <view class="bb-pool__unit">/ {{daily}} 次 · 今日剩余</view>
+        <view class="bb-pool__hint">
+          <image class="bb-pool__hint-icon" src="/assets/icons/compass--faint.svg" mode="aspectFit" />
+          <text>捞到的心事只有你和对方看得见</text>
+        </view>
+      </view>
     </view>
-    <view class="bb-fetch-btn tap {{fetching || (left !== null && left <= 0) ? 'off' : ''}}" bindtap="onFetch">
-      {{fetching ? '撒网中…' : (left !== null && left <= 0 ? '明天再来' : '🎣 捞一个')}}
+
+    <!-- 云端连不上（多半是云函数还没部署新版）时给一句实话 -->
+    <view wx:if="{{cloudMsg}}" class="bb-cloud">{{cloudMsg}}</view>
+
+    <!-- 捞到的瓶子：回复区 + 解锁院系 -->
+    <view wx:if="{{bottle}}" class="bb-card bb-bottle">
+      <view class="bb-bottle__top">
+        <view class="bb-kind">
+          <image
+            wx:if="{{bottle.kind === '分享'}}"
+            class="bb-kind__icon"
+            src="/assets/icons/gift--campus.svg"
+            mode="aspectFit"
+          />
+          <image
+            wx:elif="{{bottle.kind === '提问'}}"
+            class="bb-kind__icon"
+            src="/assets/icons/message-circle--campus.svg"
+            mode="aspectFit"
+          />
+          <image
+            wx:else
+            class="bb-kind__icon"
+            src="/assets/icons/message-square--campus.svg"
+            mode="aspectFit"
+          />
+          <text class="bb-kind__text">{{bottle.kind}}</text>
+        </view>
+        <view wx:if="{{bottle.locked}}" class="bb-lock">
+          <image class="bb-lock__icon" src="/assets/icons/lock--faint.svg" mode="aspectFit" />
+          <text>院系未解锁</text>
+        </view>
+        <view wx:else class="bb-lock bb-lock--on">
+          <image class="bb-lock__icon" src="/assets/icons/check--campus.svg" mode="aspectFit" />
+          <text class="truncate">来自 {{bottle.ownerCollege || '未填写'}} 的同学</text>
+        </view>
+      </view>
+
+      <view class="bb-bottle__content">{{bottle.content}}</view>
+
+      <block wx:if="{{bottle.locked}}">
+        <textarea
+          class="bb-area"
+          placeholder="回一句话，回复后解锁院系"
+          placeholder-class="bb-area-ph"
+          value="{{replyText}}"
+          bindinput="onReplyInput"
+          maxlength="300"
+          auto-height="{{true}}"
+          show-confirm-bar="{{false}}"
+        />
+        <view class="bb-ops">
+          <view class="bb-op tap pressable" bindtap="onPutBack">放回去</view>
+          <view class="bb-op bb-op--main tap pressable {{replying ? 'off' : ''}}" bindtap="onReply">
+            {{replying ? '发送中…' : '回复并解锁'}}
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="bb-unlocked {{justUnlocked ? 'pop' : ''}}">
+          <image class="bb-unlocked__icon" src="/assets/icons/sparkles--campus.svg" mode="aspectFit" />
+          <text class="truncate">你已解锁：这位同学来自 {{bottle.ownerCollege || '未填写'}}</text>
+        </view>
+        <view class="bb-ops">
+          <view class="bb-op bb-op--main tap pressable" bindtap="onPutBack">好的，放回去</view>
+        </view>
+      </block>
     </view>
-  </view>
 
-  <!-- 云端连不上（多半是云函数还没部署新版）时给一句实话 -->
-  <view wx:if="{{cloudMsg}}" class="cloud-msg">{{cloudMsg}}</view>
+    <!-- 扔瓶子 -->
+    <view class="bb-card">
+      <view class="bb-card__head">
+        <image class="bb-card__icon" src="/assets/icons/sparkles--campus.svg" mode="aspectFit" />
+        <text class="bb-card__title">往海里扔一个</text>
+      </view>
 
-  <!-- 捞到的瓶子：回复区 + 解锁院系 -->
-  <view wx:if="{{bottle}}" class="card bb-bottle">
-    <view class="bb-bottle-top">
-      <text class="bb-bottle-kind">{{bottle.kind === '分享' ? '🎁' : (bottle.kind === '提问' ? '❓' : '💢')}} {{bottle.kind}}</text>
-      <view wx:if="{{bottle.locked}}" class="bb-lock">🔒 院系未解锁</view>
-      <view wx:else class="bb-lock bb-lock-on">🏷️ 来自 {{bottle.ownerCollege || '未填写'}} 的同学</view>
-    </view>
-    <view class="bb-bottle-content">{{bottle.content}}</view>
+      <scroll-view class="bb-kinds no-scrollbar" scroll-x="true" show-scrollbar="{{false}}">
+        <view class="bb-kinds__row">
+          <view
+            wx:for="{{kinds}}"
+            wx:key="key"
+            class="bb-kind-chip {{throwKindMap[item.key] ? 'on' : ''}} tap pressable"
+            data-k="{{item.key}}"
+            bindtap="onPickKind"
+          >
+            <image
+              wx:if="{{item.key === '分享'}}"
+              class="bb-kind-chip__icon"
+              src="/assets/icons/gift--campus.svg"
+              mode="aspectFit"
+            />
+            <image
+              wx:elif="{{item.key === '提问'}}"
+              class="bb-kind-chip__icon"
+              src="/assets/icons/message-circle--campus.svg"
+              mode="aspectFit"
+            />
+            <image
+              wx:else
+              class="bb-kind-chip__icon"
+              src="/assets/icons/message-square--campus.svg"
+              mode="aspectFit"
+            />
+            <text>{{item.key}}</text>
+          </view>
+        </view>
+      </scroll-view>
 
-    <block wx:if="{{bottle.locked}}">
+      <view class="bb-hint">{{throwKindMap['吐槽'] ? kinds[0].hint : (throwKindMap['分享'] ? kinds[1].hint : kinds[2].hint)}}</view>
+
       <textarea
-        class="bb-reply"
-        placeholder="回一句话，回复后解锁院系"
-        value="{{replyText}}"
-        bindinput="onReplyInput"
-        maxlength="300"
+        class="bb-area"
+        placeholder="写一句匿名心事，500 字内"
+        placeholder-class="bb-area-ph"
+        value="{{throwContent}}"
+        bindinput="onThrowInput"
+        maxlength="500"
         auto-height="{{true}}"
         show-confirm-bar="{{false}}"
       />
-      <view class="bb-bottle-ops">
-        <view class="bb-op tap" bindtap="onPutBack">放回去</view>
-        <view class="bb-op main tap {{replying ? 'off' : ''}}" bindtap="onReply">{{replying ? '发送中…' : '回复并解锁'}}</view>
-      </view>
-    </block>
-    <block wx:else>
-      <view class="bb-unlocked {{justUnlocked ? 'pop' : ''}}">🎉 你已解锁：这位同学来自 {{bottle.ownerCollege || '未填写'}}</view>
-      <view class="bb-bottle-ops">
-        <view class="bb-op main tap" bindtap="onPutBack">好的，放回去</view>
-      </view>
-    </block>
-  </view>
 
-  <!-- 扔瓶子 -->
-  <view class="card bb-throw">
-    <view class="bb-throw-title">往海里扔一个</view>
-    <scroll-view class="bb-kinds" scroll-x="true">
       <view
-        wx:for="{{kinds}}"
-        wx:key="key"
-        class="chip {{throwKindMap[item.key] ? 'chip-on' : ''}} tap"
-        data-k="{{item.key}}"
-        bindtap="onPickKind"
-      >{{item.icon}} {{item.key}}</view>
-    </scroll-view>
-    <view class="bb-throw-hint muted">{{throwKindMap['吐槽'] ? kinds[0].hint : (throwKindMap['分享'] ? kinds[1].hint : kinds[2].hint)}}</view>
-    <textarea
-      class="bb-content"
-      placeholder="写一句想说的（500 字内）"
-      value="{{throwContent}}"
-      bindinput="onThrowInput"
-      maxlength="500"
-      auto-height="{{true}}"
-      show-confirm-bar="{{false}}"
-    />
-    <view class="bb-throw-btn tap {{throwing || !throwContent ? 'off' : ''}}" bindtap="onThrow">
-      {{throwing ? '扔出去啦…' : '🫙 扔进海里'}}
-    </view>
-    <view class="muted bb-throw-note">扔出去就收不回来了，会匿名漂到某个同学手里。违反校规的内容会被拦截。</view>
-  </view>
+        class="bb-throw tap pressable {{throwing || !throwContent ? 'off' : ''}}"
+        bindtap="onThrow"
+      >{{throwing ? '扔出去啦…' : '扔进海里'}}</view>
 
-  <!-- 我的瓶子：我扔的 + 收到的回复（回复人院系已解锁） -->
-  <view class="more-row tap" bindtap="onToggleMine">
-    <text>我的瓶子（{{mine.length}}）{{mineOpen ? ' ▴' : ' ▾'}}</text>
-    <text class="more-go">›</text>
-  </view>
-  <block wx:if="{{mineOpen}}">
-    <view wx:if="{{mine.length === 0}}" class="empty-sm">还没扔过瓶子，扔一个试试</view>
-    <view wx:for="{{mine}}" wx:key="id" wx:for-item="b" class="card bb-mine">
-      <view class="bb-mine-top">
-        <text class="bb-bottle-kind">{{b.kind === '分享' ? '🎁' : (b.kind === '提问' ? '❓' : '💢')}} {{b.kind}}</text>
-        <text class="muted bb-mine-replies">{{b.replies.length}} 条回复</text>
-      </view>
-      <view class="bb-bottle-content">{{b.content}}</view>
-      <view wx:for="{{b.replies}}" wx:key="id" wx:for-item="r" class="bb-reply-item">
-        <view class="bb-reply-content">{{r.content}}</view>
-        <view class="muted bb-reply-meta">来自 {{r.college || '未填写'}} 的同学</view>
-      </view>
+      <view class="bb-note">扔出去就收不回来了，会匿名漂到某位同学手里。违反校规的内容会被拦截。</view>
     </view>
-  </block>
 
+    <!-- 我的瓶子：我扔的 + 收到的回复（回复人院系已解锁） -->
+    <view class="bb-more {{mineOpen ? 'bb-more--open' : ''}} tap pressable" bindtap="onToggleMine">
+      <image class="bb-more__icon" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
+      <text class="bb-more__text">我的瓶子（{{mine.length}}）</text>
+    </view>
+    <block wx:if="{{mineOpen}}">
+      <view wx:if="{{mine.length === 0}}" class="bb-empty">还没扔过瓶子，扔一个试试</view>
+      <view wx:for="{{mine}}" wx:key="id" wx:for-item="b" class="bb-card bb-mine">
+        <view class="bb-mine__top">
+          <view class="bb-kind">
+            <image
+              wx:if="{{b.kind === '分享'}}"
+              class="bb-kind__icon"
+              src="/assets/icons/gift--campus.svg"
+              mode="aspectFit"
+            />
+            <image
+              wx:elif="{{b.kind === '提问'}}"
+              class="bb-kind__icon"
+              src="/assets/icons/message-circle--campus.svg"
+              mode="aspectFit"
+            />
+            <image
+              wx:else
+              class="bb-kind__icon"
+              src="/assets/icons/message-square--campus.svg"
+              mode="aspectFit"
+            />
+            <text class="bb-kind__text">{{b.kind}}</text>
+          </view>
+          <text class="bb-mine__replies">{{b.replies.length}} 条回复</text>
+        </view>
+        <view class="bb-bottle__content">{{b.content}}</view>
+        <view wx:for="{{b.replies}}" wx:key="id" wx:for-item="r" class="bb-reply">
+          <view class="bb-reply__content">{{r.content}}</view>
+          <view class="bb-reply__meta">来自 {{r.college || '未填写'}} 的同学</view>
+        </view>
+      </view>
+    </block>
+
+  </view>
 </view>

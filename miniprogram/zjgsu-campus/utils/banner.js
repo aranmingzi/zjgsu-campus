@@ -24,7 +24,7 @@ function pickHole() {
   if (!p) return null;
   return {
     key: 'hole',
-    icon: '🎭',
+    icon: 'message-square',
     tag: '全站最热树洞',
     title: p.title || p.content,
     desc: (p.content || '').slice(0, 30),
@@ -38,7 +38,7 @@ function pickLost() {
   if (!it) return null;
   return {
     key: 'lost',
-    icon: '🔍',
+    icon: 'search',
     tag: '最急寻物启事',
     title: it.title,
     desc: (it.desc || '').slice(0, 30),
@@ -58,7 +58,7 @@ function pickSell() {
   });
   return {
     key: 'sell',
-    icon: '🛍️',
+    icon: 'shopping-bag',
     tag: bestFav > 0 ? ('最火闲置 · ' + bestFav + ' 人收藏') : '最新闲置',
     title: best.title,
     desc: best.price ? ('¥' + best.price) : ((best.desc || '').slice(0, 30)),

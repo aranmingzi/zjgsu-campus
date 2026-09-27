@@ -16,7 +16,7 @@ const MOODS = [
   { key: 'happy', icon: '😄', name: '开心' },
   { key: 'flat', icon: '😐', name: '平静' },
   { key: 'down', icon: '😔', name: '低落' },
-  { key: 'busy', icon: '🔥', name: '充实' },
+  { key: 'busy', icon: 'flame', name: '充实' },
   { key: 'tired', icon: '😮‍💨', name: '累了' }
 ];
 

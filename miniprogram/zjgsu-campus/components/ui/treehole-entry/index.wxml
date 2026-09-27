@@ -1,0 +1,27 @@
+<!-- components/ui/treehole-entry/index.wxml
+     紫色渐变卡片 + 轻微星点颗粒 + 盾牌隐私提示（Web 版 TreeHoleEntryCard.vue） -->
+<view class="ui-hole" bindtap="onTap" hover-class="ui-hole--hover" hover-stay-time="90">
+  <!-- 星点颗粒：纯 WXSS 画，不依赖浏览器特性 -->
+  <view class="ui-hole__star ui-hole__star--1" />
+  <view class="ui-hole__star ui-hole__star--2" />
+  <view class="ui-hole__star ui-hole__star--3" />
+  <view class="ui-hole__star ui-hole__star--4" />
+
+  <view class="ui-hole__inner">
+    <image class="ui-hole__art" src="{{art}}" mode="aspectFit" />
+
+    <view class="ui-hole__text">
+      <view class="ui-hole__title">{{title}}</view>
+      <view class="ui-hole__sub">{{subtitle}}</view>
+      <view class="ui-hole__privacy">
+        <image class="ui-hole__shield" src="/assets/icons/shield-check--white.svg" mode="aspectFit" />
+        <text>全程匿名，不进主论坛</text>
+      </view>
+    </view>
+
+    <view class="ui-hole__go">
+      <text>进入</text>
+      <image class="ui-hole__go-icon" src="/assets/icons/chevron-right--white.svg" mode="aspectFit" />
+    </view>
+  </view>
+</view>

@@ -1,0 +1,2 @@
+<!-- components/ui/skeleton/index.wxml -->
+<view class="ui-skeleton" style="width:{{width}};height:{{height}};border-radius:{{radius}};" />

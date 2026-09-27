@@ -1,109 +1,169 @@
-<view class="container" wx:if="{{course}}">
+<!-- pages/course/review/review.wxml
+     写评价页。两档分（课程分 / 老师分）分开打，匿名默认开。
+     星条用图标不用 emoji，热区 88rpx，按压反馈全部走 app.wxss 的 .tap。
+     数据字段一个没动：score / teacherScore / scale / tagsMap 都由页面 JS 自己维护。 -->
+<app-header title="{{navTitle}}" showBack />
+
+<view class="container rv-page" wx:if="{{course}}">
   <view class="card">
     <view class="muted">正在评价</view>
-    <view class="title-md">{{course.name}} · {{course.major}}</view>
+    <view class="title-md rv-course">{{course.name}} · {{course.major}}</view>
   </view>
 
-  <!-- 评分对象：先选「给课打分」还是「给老师打分」，再点星。
-       两档分是两个意思，混在一张卡上同学很容易以为只有一个分 -->
+  <!-- 评分对象：先选「给课打分」还是「给老师打分」，再点星 -->
   <view class="card">
-    <view class="label">这次要打哪个分</view>
-    <view class="target-row">
-      <view class="target-chip {{scale === 'course' ? 'on' : ''}} tap" data-s="course" bindtap="onScale">
-        课程评分 <text class="target-num">{{score}}.0</text>
+    <view class="rv-label">这次要打哪个分</view>
+    <view class="rv-targets">
+      <view class="rv-target {{scale === 'course' ? 'rv-target-on' : ''}} tap" data-s="course" bindtap="onScale">
+        课程评分 <text class="rv-target-num">{{score}}.0</text>
       </view>
       <view
         wx:if="{{teacher}}"
-        class="target-chip {{scale === 'teacher' ? 'on' : ''}} tap"
+        class="rv-target {{scale === 'teacher' ? 'rv-target-on' : ''}} tap"
         data-s="teacher"
         bindtap="onScale"
-      >老师评分 <text class="target-num">{{teacherScore}}.0</text></view>
-      <view wx:else class="target-chip target-off tap" bindtap="onNeedTeacher">老师评分</view>
+      >老师评分 <text class="rv-target-num">{{teacherScore}}.0</text></view>
+      <view wx:else class="rv-target rv-target-off tap" bindtap="onNeedTeacher">老师评分</view>
     </view>
 
     <block wx:if="{{scale === 'course'}}">
-      <view class="scale-title">课程评分</view>
-      <view class="stars-pick">
-        <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star-pick {{s <= score ? 'on' : ''}} tap" data-s="{{s}}" bindtap="selectScore">★</text>
-        <text class="score-text">{{score}}.0</text>
+      <view class="rv-scale-title">课程评分</view>
+      <view class="rv-stars">
+        <view
+          wx:for="{{[1,2,3,4,5]}}"
+          wx:for-item="s"
+          wx:key="*this"
+          class="rv-star tap"
+          data-s="{{s}}"
+          bindtap="selectScore"
+        >
+          <image class="rv-star-icon" src="{{s <= score ? '/assets/icons/star--amber.svg' : '/assets/icons/star--faint.svg'}}" mode="aspectFit" />
+        </view>
+        <text class="rv-star-text">{{score}}.0</text>
       </view>
-      <view class="muted star-hint">给分 / 作业量 / 考试难度 —— 这门课值不值得选</view>
+      <view class="muted rv-star-hint">给分 / 作业量 / 考试难度 —— 这门课值不值得选</view>
     </block>
 
     <block wx:else>
-      <view class="scale-title">老师评分 · {{teacher}}</view>
-      <view class="stars-pick">
-        <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star-pick on2 {{s <= teacherScore ? 'on' : ''}} tap" data-s="{{s}}" bindtap="selectTeacherScore">★</text>
-        <text class="score-text">{{teacherScore}}.0</text>
+      <view class="rv-scale-title">老师评分 · {{teacher}}</view>
+      <view class="rv-stars">
+        <view
+          wx:for="{{[1,2,3,4,5]}}"
+          wx:for-item="s"
+          wx:key="*this"
+          class="rv-star rv-star--warm tap"
+          data-s="{{s}}"
+          bindtap="selectTeacherScore"
+        >
+          <image class="rv-star-icon" src="{{s <= teacherScore ? '/assets/icons/star--market.svg' : '/assets/icons/star--faint.svg'}}" mode="aspectFit" />
+        </view>
+        <text class="rv-star-text rv-star-text--warm">{{teacherScore}}.0</text>
       </view>
-      <view class="muted star-hint">讲课水平 / 态度 / 是否点名 —— 和课程分分开算</view>
-      <view wx:if="{{teacherVerified}}" class="tip ok">✓ 学校官方名录里有这位老师</view>
+      <view class="muted rv-star-hint">讲课水平 / 态度 / 是否点名 —— 和课程分分开算</view>
+      <view wx:if="{{teacherVerified}}" class="rv-tip rv-tip-ok">
+        <image class="rv-tip-icon" src="/assets/icons/check--campus.svg" mode="aspectFit" />
+        学校官方名录里有这位老师
+      </view>
     </block>
   </view>
 
   <!-- 匿名：默认开着。实名留评价对发帖人是有风险的，所以不强迫 -->
-  <view class="card anon-card">
-    <view class="anon-row">
-      <view class="anon-left">
-        <view class="anon-title">匿名发布</view>
-        <view class="muted anon-sub">默认匿名 · 别人只看到「匿名同学」</view>
+  <view class="card">
+    <view class="rv-anon-row">
+      <view class="rv-anon-main">
+        <view class="title-sm">匿名发布</view>
+        <view class="muted rv-anon-sub">默认匿名 · 别人只看到「匿名同学」</view>
       </view>
-      <switch checked="{{anonymous}}" bindchange="toggleAnonymous" color="#1a5fb4" />
+      <switch checked="{{anonymous}}" bindchange="toggleAnonymous" color="#2b5aed" />
     </view>
-    <view wx:if="{{!anonymous}}" class="tip">你选择了显示昵称「{{myNick}}」，评价内容会公开显示。</view>
+    <view wx:if="{{!anonymous}}" class="rv-tip">你选择了显示昵称「{{myNick}}」，评价内容会公开显示。</view>
   </view>
 
   <view class="card">
-    <view class="label">标签（可多选）</view>
-    <view class="tag-row">
-      <text wx:for="{{presetTags}}" wx:key="*this" wx:for-item="t" class="tag-pick {{tagsMap[t] ? 'on' : ''}} tap" data-t="{{t}}" bindtap="toggleTag">{{t}}</text>
+    <view class="rv-label">标签（可多选）</view>
+    <view class="rv-tags">
+      <text
+        wx:for="{{presetTags}}"
+        wx:key="*this"
+        wx:for-item="t"
+        class="tag {{tagsMap[t] ? 'tag--campus' : 'rv-tag-off'}} tap"
+        data-t="{{t}}"
+        bindtap="toggleTag"
+      >{{t}}</text>
     </view>
-    <view wx:if="{{universalTags.length}}" class="tag-row">
-      <text wx:for="{{universalTags}}" wx:key="*this" wx:for-item="t" class="tag-pick {{tagsMap[t] ? 'on' : ''}} tap" data-t="{{t}}" bindtap="toggleTag">{{t}}</text>
+    <view wx:if="{{universalTags.length}}" class="rv-tags">
+      <text
+        wx:for="{{universalTags}}"
+        wx:key="*this"
+        wx:for-item="t"
+        class="tag {{tagsMap[t] ? 'tag--campus' : 'rv-tag-off'}} tap"
+        data-t="{{t}}"
+        bindtap="toggleTag"
+      >{{t}}</text>
     </view>
-    <view wx:if="{{tags.length}}" class="picked-row">
-      <text class="muted">已选：</text>
-      <text wx:for="{{tags}}" wx:key="*this" class="tag on tap" data-t="{{item}}" bindtap="removeTag">{{item}} ×</text>
+    <view wx:if="{{tags.length}}" class="rv-picked">
+      <text class="muted rv-picked-label">已选：</text>
+      <text
+        wx:for="{{tags}}"
+        wx:key="*this"
+        wx:for-item="t"
+        class="tag rv-picked-tag tap"
+        data-t="{{t}}"
+        bindtap="removeTag"
+      >{{t}} ×</text>
     </view>
-    <view class="muted tip">标签会汇总成课程页的「大家都在说」，帮后面的同学选课。</view>
+    <view class="muted rv-tip">标签会汇总成课程页的「大家都在说」，帮后面的同学选课。</view>
   </view>
 
-  <!-- 任课老师：选填，而且和上面的课程打分是两档分 -->
-  <view class="card tch-pick">
-    <view class="label">任课老师（可不填）</view>
+  <!-- 任课老师：选填，和上面的课程打分是两档 -->
+  <view class="card">
+    <view class="rv-label">任课老师（可不填）</view>
     <input
-      class="input"
+      class="rv-input"
       placeholder="填了才能给老师单独打分"
       value="{{teacher}}"
       maxlength="20"
       bindinput="onTeacherInput"
     />
-    <view wx:if="{{teacherOptions.length}}" class="match-row">
+    <view wx:if="{{teacherOptions.length}}" class="rv-match">
       <text
         wx:for="{{teacherOptions}}"
         wx:key="name"
-        class="match-chip {{teacher === item.name ? 'on' : ''}} tap"
+        wx:for-item="item"
+        class="rv-match-chip {{teacher === item.name ? 'rv-match-chip-on' : ''}} tap"
         data-name="{{item.name}}"
         bindtap="pickTeacher"
       >{{item.name}}<text wx:if="{{item.college}}"> · {{item.college}}</text></text>
     </view>
-    <view wx:if="{{teacherVerified}}" class="tip ok">✓ 已查到，学校官方名录里有这位老师</view>
-    <view wx:else class="tip">名录里没有也没关系，点下面一键加入，后面的人就能选到 TA</view>
-    <view wx:if="{{teacher && !teacherVerified}}" class="add-row tap" bindtap="onAddTeacher">
-      <text>＋ 把「{{teacher}}」加入名录</text>
+    <view wx:if="{{teacherVerified}}" class="rv-tip rv-tip-ok">
+      <image class="rv-tip-icon" src="/assets/icons/check--campus.svg" mode="aspectFit" />
+      已查到，学校官方名录里有这位老师
+    </view>
+    <view wx:else class="rv-tip">名录里没有也没关系，点下面一键加入，后面的人就能选到 TA</view>
+    <view wx:if="{{teacher && !teacherVerified}}" class="rv-add tap" bindtap="onAddTeacher">
+      <image class="rv-add-icon" src="/assets/icons/plus--brand.svg" mode="aspectFit" />
+      把「{{teacher}}」加入名录
     </view>
 
-    <view wx:if="{{teacher && scale === 'course'}}" class="to-teacher tap" bindtap="onScale" data-s="teacher">
+    <view wx:if="{{teacher && scale === 'course'}}" class="rv-to-teacher tap" bindtap="onScale" data-s="teacher">
       <text>再给「{{teacher}}」打个分 ›</text>
     </view>
   </view>
 
   <view class="card">
-    <view class="label">详细评价</view>
-    <textarea class="textarea" placeholder="老师风格、作业量、给分、怎么备考…" value="{{content}}" bindinput="onContent" maxlength="300" />
-    <view class="counter">{{content.length}}/300</view>
+    <view class="rv-label">详细评价</view>
+    <textarea
+      class="rv-textarea"
+      placeholder="老师风格、作业量、给分、怎么备考…"
+      value="{{content}}"
+      bindinput="onContent"
+      maxlength="300"
+    />
+    <view class="rv-counter">{{content.length}}/300</view>
   </view>
 
-  <button wx:if="{{!isEdit}}" class="btn-ghost draft-btn tap" bindtap="onSaveDraft">存草稿</button>
-  <button class="btn-primary tap" bindtap="submit" loading="{{submitting}}">{{isEdit ? '保存修改' : '提交评价'}}</button>
+  <view class="rv-submit">
+    <base-button wx:if="{{!isEdit}}" variant="secondary" block bindtap="onSaveDraft">存草稿</base-button>
+    <base-button block loading="{{submitting}}" bindtap="submit">{{isEdit ? '保存修改' : '提交评价'}}</base-button>
+  </view>
 </view>

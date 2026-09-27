@@ -21,6 +21,9 @@ function tabMap(cur) {
 Page({
   data: {
     id: '',
+    // 自定义导航条（app-header）要显示课名，WXML 里拿不到 course，
+    // 这里单独存一份给标题用；原有业务字段一个没动
+    navTitle: '课程详情',
     course: null,
     reviews: [],
     expanded: false,
@@ -56,10 +59,11 @@ Page({
     // 找不到课程不能直接 return：整页 wx:if="{{course}}" 会变成一片空白，
     // 同学看到的就是「点进来啥都没有、也没法操作」，比报错还难办
     if (!course) {
-      this.setData({ course: null, notFound: true });
+      this.setData({ course: null, notFound: true, navTitle: '课程详情' });
       return;
     }
-    this.setData({ notFound: false });
+    // 一行：把课名交给自定义导航条（原来这行逻辑是给原生导航条 setNavigationBarTitle）
+    this.setData({ notFound: false, navTitle: course.name || '课程详情' });
     // 「按老师」这一栏是聚合视图，永远显示全部（不受"只显示前 3 条"影响），
     // 不然同学点进老师评价，看到的是被截断的半成品
     const reviews = store.getReviews(this.data.id).map((r) =>
@@ -87,7 +91,7 @@ Page({
     if (!c || !c.id) return;
     const types = ['专业必修', '专业选修', '通识课', '体育课', '思政课'];
     wx.showActionSheet({
-      itemList: types.map((t) => (t === c.ctype ? '✓ ' + t + '（当前）' : t)),
+      itemList: types.map((t) => (t === c.ctype ? '· ' + t + '（当前）' : t)),
       success: (r) => {
         const t = types[r.tapIndex];
         if (!t || t === c.ctype) return;

@@ -1,0 +1,14 @@
+<!-- components/ui/pill-selector/index.wxml -->
+<scroll-view scroll-x class="ui-pill no-scrollbar" show-scrollbar="{{false}}">
+  <view class="ui-pill__row">
+    <view
+      wx:for="{{items}}"
+      wx:key="*this"
+      class="ui-pill__item {{value === item ? 'ui-pill__item--on ui-pill__item--' + accent : ''}}"
+      data-v="{{item}}"
+      bindtap="onTap"
+      hover-class="ui-pill__item--hover"
+      hover-stay-time="80"
+    >{{label(item)}}</view>
+  </view>
+</scroll-view>

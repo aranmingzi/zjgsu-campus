@@ -1,0 +1,165 @@
+/* components/course/course-card/index.wxss
+   课程卡：外层 32rpx 圆角 + 统一阴影（和 .card 同款），内层间距按 28rpx 走。
+   所有文字都带 truncate/省略，320 宽度下课程名 + 学院 + 学分并存也不换行挤爆。 */
+.cc {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+  padding: 28rpx;
+  background: #ffffff;
+  border-radius: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 24rpx;
+}
+
+/* 首字母头像：6 色按 codePointAt(0) % 6 取，圆角 24rpx（对应 Web 的 rounded-inner） */
+.cc__avatar {
+  width: 96rpx;
+  height: 96rpx;
+  flex-shrink: 0;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+.cc__avatar--0 { background: #2b5aed; }
+.cc__avatar--1 { background: #7357ff; }
+.cc__avatar--2 { background: #f58a32; }
+.cc__avatar--3 { background: #19a66a; }
+.cc__avatar--4 { background: #2f9fd6; }
+.cc__avatar--5 { background: #dd4b55; }
+
+.cc__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cc__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.cc__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.cc__name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #172033;
+  line-height: 1.4;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cc__detail {
+  display: block;
+  margin-top: 4rpx;
+  font-size: 24rpx;
+  color: #6f7b91;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 有评分：琥珀底 + 琥珀数字 */
+.cc__score {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+  background: #fff7eb;
+}
+.cc__score-num {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #d98c0b;
+  line-height: 1.2;
+}
+.cc__score-unit {
+  margin-left: 4rpx;
+  font-size: 20rpx;
+  color: #d98c0b;
+}
+
+/* 没评分：灰胶囊「暂无评分」，绝不显示 0.0 */
+.cc__score-none {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #98a3b8;
+  background: #eef1f6;
+  border-radius: 999rpx;
+  padding: 6rpx 20rpx;
+}
+
+.cc__meta {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 16rpx;
+  min-width: 0;
+}
+.cc__meta-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+}
+.cc__meta-text {
+  font-size: 24rpx;
+  color: #d98c0b;
+  flex-shrink: 0;
+}
+.cc__meta-text--muted { color: #6f7b91; }
+.cc__meta-diag { font-size: 24rpx; color: #c8d0dd; flex-shrink: 0; }
+
+/* 没评价的提示条：整行浅底，先告诉同学「这里将来会有东西」 */
+.cc__cta {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 16rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 24rpx;
+  background: #f6f8fb;
+}
+.cc__cta-icon {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
+}
+.cc__cta-text {
+  font-size: 24rpx;
+  color: #6f7b91;
+  line-height: 1.5;
+}
+
+.cc__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+.cc__tag { line-height: 1.6; }
+.cc__tag-none {
+  font-size: 22rpx;
+  color: #98a3b8;
+}
+
+.cc__arrow {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+  margin-top: 12rpx;
+}

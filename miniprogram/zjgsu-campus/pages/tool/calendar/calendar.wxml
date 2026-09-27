@@ -1,83 +1,116 @@
-<view class="container">
-  <!-- 顶部：最近一个还没到的节点 -->
-  <view class="card next-card">
-    <view class="next-label">下一个节点</view>
-    <view class="next-text">{{nextText}}</view>
+<!-- pages/tool/calendar/calendar.wxml —— 校历倒计时
+     Web 参考：src/components/campus/CampusCalendar.vue
+     顶部渐变节点卡 + 校园绿时间轴 + 白卡；审核员编辑区用同一个 .card。
+     JS 只多给了 nextDays / nextName / nextDate 三个派生字段（见 calendar.js 说明）。 -->
+<app-header title="校历倒计时" showBack />
+
+<view class="container cl-page">
+
+  <!-- ---------------- 最近一个还没到的节点 ---------------- -->
+  <view class="card cl-next">
+    <view class="cl-next__head">
+      <image class="cl-next__icon" src="/assets/icons/calendar-days--white.svg" mode="aspectFit" />
+      <text class="cl-next__label">最近一个节点</text>
+    </view>
+    <view class="cl-next__count">
+      <text class="cl-next__days">{{nextDays}}</text>
+      <text class="cl-next__unit">天后</text>
+    </view>
+    <view class="cl-next__name truncate">{{nextName}}</view>
+    <view wx:if="{{nextDate}}" class="cl-next__date">{{nextDate}}</view>
+    <view wx:else class="cl-next__date cl-next__date--empty">{{nextText}}</view>
   </view>
 
-  <view wx:if="{{loading}}" class="empty">加载中…</view>
+  <view wx:if="{{loading}}" class="cl-loading">加载中…</view>
 
-  <view wx:elif="{{list.length === 0}}" class="empty">
-    <view class="empty-icon">📅</view>
-    <view>还没有校历节点</view>
-  </view>
+  <empty-state
+    wx:elif="{{list.length === 0}}"
+    icon="calendar-days"
+    iconColor="faint"
+    title="还没有校历节点"
+    description="考试周、四六级、开学这些时间点，加进来全校都能看到"
+  />
 
-  <view wx:else class="card">
-    <view class="section-title">全部节点</view>
-    <view
-      wx:for="{{list}}"
-      wx:key="id"
-      class="cal-item {{item.past ? 'past' : ''}}"
-    >
-      <view class="cal-left">
-        <text class="cal-icon">{{item.typeIcon}}</text>
-        <view class="cal-main">
-          <view class="cal-name">{{item.name}}</view>
-          <view class="muted cal-date">{{item.date}}</view>
-          <view wx:if="{{item.note}}" class="muted cal-note">{{item.note}}</view>
+  <block wx:else>
+    <view class="cl-list">
+      <view wx:for="{{list}}" wx:key="id" class="cl-node">
+        <view class="cl-node__dot {{item.past ? 'cl-node__dot--past' : ''}}"></view>
+
+        <view class="card cl-item {{item.past ? 'cl-item--past' : ''}}">
+          <view class="cl-item__main">
+            <view class="title-sm truncate">{{item.name}}</view>
+            <view class="muted cl-item__date">{{item.date}}</view>
+            <view wx:if="{{item.note}}" class="faint cl-item__note clamp2">{{item.note}}</view>
+          </view>
+
+          <view class="cl-item__side">
+            <view class="tag {{item.past ? 'tag--gray' : 'tag--campus'}}">{{item.daysText}}</view>
+            <view
+              wx:if="{{isMod}}"
+              class="cl-del pressable"
+              hover-class="cl-del--hover"
+              hover-stay-time="80"
+              data-id="{{item.id}}"
+              catchtap="onRemove"
+            >
+              <image class="cl-del__icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+              <text>删除</text>
+            </view>
+          </view>
         </view>
       </view>
-      <view class="cal-right">
-        <view wx:if="{{item.past}}" class="cal-days past-days">{{item.daysText}}</view>
-        <view wx:else class="cal-days">{{item.daysText}}</view>
-        <view wx:if="{{isMod}}" class="cal-del tap" data-id="{{item.id}}" catchtap="onRemove">删除</view>
-      </view>
     </view>
-  </view>
+  </block>
 
-  <!-- 审核员编辑区 -->
-  <view wx:if="{{isMod}}" class="card">
-    <view class="mod-head tap" bindtap="onEditToggle">
-      <text class="mod-title">审核员：{{editing ? '收起编辑' : '添加 / 修改节点'}}</text>
-      <text class="mod-go">{{editing ? '▲' : '▼'}}</text>
+  <!-- ---------------- 审核员编辑区 ---------------- -->
+  <view wx:if="{{isMod}}" class="card cl-mod">
+    <view
+      class="cl-mod__head pressable"
+      hover-class="cl-mod__head--hover"
+      hover-stay-time="80"
+      bindtap="onEditToggle"
+    >
+      <image class="cl-mod__icon" src="/assets/icons/edit--brand.svg" mode="aspectFit" />
+      <text class="cl-mod__title">{{editing ? '收起编辑' : '审核员：添加 / 修改节点'}}</text>
+      <image class="cl-mod__go" src="{{editing ? '/assets/icons/arrow-up--faint.svg' : '/assets/icons/arrow-down--faint.svg'}}" mode="aspectFit" />
     </view>
+
     <block wx:if="{{editing}}">
       <input
-        class="field"
+        class="cl-field"
         placeholder="节点名，如「期末考试周」"
         value="{{form.name}}"
         data-k="name"
         bindinput="onFormInput"
         maxlength="30"
       />
-      <view class="type-row">
+      <view class="chip-row">
         <view
           wx:for="{{types}}"
           wx:for-item="t"
           wx:key="key"
-          class="type {{typeMap[t.key] ? 'on' : ''}} tap"
+          class="chip {{typeMap[t.key] ? 'chip-on' : ''}} tap"
           data-k="{{t.key}}"
           bindtap="onFormType"
-        >{{t.icon}} {{t.label}}</view>
+        >{{t.label}}</view>
       </view>
       <picker mode="date" value="{{form.date}}" bindchange="onFormDate">
-        <view class="field picker-field">
-          {{form.date || '选择日期'}}
-        </view>
+        <view class="cl-field cl-field--picker">{{form.date || '选择日期'}}</view>
       </picker>
       <input
-        class="field"
+        class="cl-field"
         placeholder="选填，如「以通知为准」"
         value="{{form.note}}"
         data-k="note"
         bindinput="onFormInput"
         maxlength="60"
       />
-      <button class="btn-primary tap" bindtap="onSubmit">保存节点</button>
+      <button class="btn-primary tap cl-submit" hover-stay-time="80" bindtap="onSubmit">保存节点</button>
     </block>
   </view>
 
-  <view class="tip-box">
-    日期以学校通知为准。发现对不上的，点「我的 → 审核」里的审核员入口就能改。
+  <view class="cl-foot">
+    <image class="cl-foot__icon" src="/assets/icons/check--campus.svg" mode="aspectFit" />
+    <text>日期以学校正式通知为准。发现对不上的，点「我的 → 内容审核」的入口就能改。</text>
   </view>
 </view>

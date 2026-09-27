@@ -1,173 +1,330 @@
-.hole-head {
-  padding: 8rpx 8rpx 20rpx;
-}
-.hole-title {
-  font-size: 38rpx;
-  font-weight: 600;
-  color: #4a2f8f;
-}
-.hole-sub {
-  font-size: 24rpx;
-  color: #8a9099;
-  margin-top: 8rpx;
-  line-height: 1.6;
+/* pages/forum/hole/hole.wxss —— 匿名树洞
+   6 种情绪各有独立配色，切情绪时底色 / 光晕 / 强调色走 720ms 过渡。
+   毛玻璃一律降级成「半透明底色 + 同色描边」：不用 backdrop-filter。 */
+
+.hole-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 24rpx 24rpx 240rpx;
+  overflow: hidden;
+  background-color: #171438;
+  transition: background-color 0.72s ease-in-out;
 }
 
-.composer {
-  background: #f7f5fd;
-  border: 2rpx solid #e4dcfb;
+/* ---- 6 种情绪调色板（base 底色 / glow 顶部光晕 / sec 底部柔光 / accent 强调色） ---- */
+.hole-page--calm   { --hole-base: #0b2944; --hole-glow: rgba(64, 170, 211, 0.34);  --hole-sec: rgba(35, 101, 148, 0.30); --hole-accent: #a9e9ff; }
+.hole-page--happy  { --hole-base: #5d3f1d; --hole-glow: rgba(255, 190, 78, 0.44);  --hole-sec: rgba(244, 112, 68, 0.24); --hole-accent: #ffe39a; }
+.hole-page--sad    { --hole-base: #171438; --hole-glow: rgba(118, 83, 238, 0.40);  --hole-sec: rgba(45, 64, 155, 0.32);  --hole-accent: #d6cbff; }
+.hole-page--angry  { --hole-base: #3c1018; --hole-glow: rgba(235, 86, 52, 0.42);   --hole-sec: rgba(138, 37, 35, 0.34);  --hole-accent: #ffc0a6; }
+.hole-page--awkward{ --hole-base: #292638; --hole-glow: rgba(145, 122, 177, 0.36); --hole-sec: rgba(91, 81, 118, 0.30);  --hole-accent: #ddd2f4; }
+.hole-page--tired  { --hole-base: #222a24; --hole-glow: rgba(112, 140, 103, 0.34); --hole-sec: rgba(111, 91, 67, 0.26);  --hole-accent: #e5ddc7; }
+
+/* ---- 氛围层 ---- */
+.hole-page__aura,
+.hole-page__sec,
+.hole-page__dots {
+  position: absolute;
+  pointer-events: none;
 }
-.hole-title-input {
-  font-size: 28rpx;
-  height: 76rpx;
-  padding: 0 4rpx;
-  color: #1f2329;
+.hole-page__aura {
+  left: -20%;
+  top: -12%;
+  width: 140%;
+  height: 520rpx;
+  border-radius: 999rpx;
+  background-color: var(--hole-glow);
+  filter: blur(60rpx);
+  transition: background-color 0.72s ease-in-out;
 }
-.hole-content {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 140rpx;
-  max-height: 400rpx;
-  font-size: 28rpx;
+.hole-page__sec {
+  left: -30%;
+  bottom: 6%;
+  width: 110%;
+  height: 460rpx;
+  border-radius: 999rpx;
+  background-color: var(--hole-sec);
+  filter: blur(70rpx);
+  transition: background-color 0.72s ease-in-out;
+}
+.hole-page__dots {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.32) 0 0.8px, transparent 1.2px);
+  background-position: 0 0, 17px 23px;
+  background-size: 46px 46px, 67px 67px;
+}
+
+.hole-page__body { position: relative; z-index: 10; }
+
+/* --------------------------------------------------------------------------
+   情绪主视觉
+   -------------------------------------------------------------------------- */
+.mood-hero { padding: 24rpx 8rpx 8rpx; text-align: center; }
+.mood-hero__badge {
+  width: 148rpx;
+  height: 148rpx;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 0 56rpx var(--hole-glow);
+  transition: box-shadow 0.72s ease-in-out, background-color 0.72s ease-in-out;
+}
+.mood-hero__icon {
+  width: 88rpx;
+  height: 88rpx;
+  transition: opacity 0.4s ease;
+}
+.mood-hero__title {
+  margin-top: 28rpx;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+.mood-hero__prompt {
+  margin-top: 12rpx;
+  font-size: 26rpx;
   line-height: 1.7;
-  padding: 4rpx 4rpx 0;
+  color: rgba(255, 255, 255, 0.86);
 }
-.composer-foot {
+
+/* --------------------------------------------------------------------------
+   情绪胶囊
+   -------------------------------------------------------------------------- */
+.mood-chips { margin-top: 40rpx; }
+.mood-chips__row { display: flex; gap: 16rpx; padding-right: 24rpx; }
+.mood-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  min-height: 72rpx;
+  padding: 0 26rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 26rpx;
+  transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+}
+.mood-chip.on {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  box-shadow: 0 4rpx 18rpx rgba(0, 0, 0, 0.14);
+}
+.mood-chip__icon { width: 32rpx; height: 32rpx; }
+
+.mood-kws {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 28rpx;
+}
+.mood-kw {
+  padding: 10rpx 26rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 22rpx;
+  transition: color 0.5s ease, background-color 0.5s ease;
+}
+
+/* --------------------------------------------------------------------------
+   玻璃卡片（毛玻璃降级：半透明底 + 同色描边，文字保持高对比）
+   -------------------------------------------------------------------------- */
+.glass-card {
+  border-radius: 32rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.16);
+  background: rgba(9, 11, 30, 0.30);
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 12rpx 34rpx rgba(4, 7, 24, 0.16);
+}
+
+/* --------------------------------------------------------------------------
+   写一条
+   -------------------------------------------------------------------------- */
+.composer__title {
+  width: 100%;
+  height: 88rpx;
+  font-size: 30rpx;
+  color: #ffffff;
+  padding: 0 4rpx;
+  box-sizing: border-box;
+}
+.composer__title::placeholder,
+.composer__content::placeholder { color: rgba(255, 255, 255, 0.45); }
+.composer__content {
+  width: 100%;
+  min-height: 200rpx;
+  max-height: 620rpx;
+  margin-top: 8rpx;
+  font-size: 28rpx;
+  line-height: 1.75;
+  color: #ffffff;
+  padding: 4rpx 4rpx 0;
+  box-sizing: border-box;
+}
+.composer__foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 18rpx;
-  padding-top: 18rpx;
-  border-top: 1rpx solid #ece7fb;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid rgba(255, 255, 255, 0.10);
 }
-.anon-tip {
-  font-size: 22rpx;
-  color: #8a9099;
-}
-.send-btn {
-  padding: 14rpx 40rpx;
+.composer__tip { flex: 1; min-width: 0; font-size: 22rpx; color: rgba(255, 255, 255, 0.6); }
+.composer__send {
+  flex-shrink: 0;
+  min-height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 36rpx;
   border-radius: 999rpx;
-  background: #5b3ea8;
-  color: #fff;
+  background: var(--hole-accent);
+  color: #11142e;
   font-size: 28rpx;
+  font-weight: 700;
+  transition: background-color 0.6s ease, opacity 0.2s ease;
 }
-.send-btn.disabled {
-  background: #c3b9e0;
-}
+.composer__send--off { opacity: 0.4; }
 
-/* 排序同主论坛：五档横滑，避免挤成一条 */
-.sort-bar-wrap {
-  white-space: nowrap;
-  margin-bottom: 20rpx;
-}
-.sort-bar {
-  display: inline-flex;
-  background: #eceef1;
+/* --------------------------------------------------------------------------
+   排序
+   -------------------------------------------------------------------------- */
+.sort-seg { margin: 8rpx 0 24rpx; }
+.sort-seg .segmented { display: flex; background: rgba(255, 255, 255, 0.08); border-radius: 999rpx; padding: 6rpx; }
+.sort-seg .segmented-item {
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4rpx;
+  min-height: 88rpx;
   border-radius: 999rpx;
-  padding: 6rpx;
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.2;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
-.sort-item {
-  text-align: center;
-  font-size: 24rpx;
-  color: #5a6068;
-  padding: 12rpx 26rpx;
-  border-radius: 999rpx;
-}
-.sort-item.on {
-  background: #fff;
-  color: #5b3ea8;
+.sort-seg .segmented-item-on {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
   font-weight: 600;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
 }
+.sort-seg__icon { width: 30rpx; height: 30rpx; }
+.sort-seg__label { max-width: 100%; overflow: hidden; white-space: nowrap; }
 
-.hole-card {
-  position: relative;
-}
-.hole-card-head {
-  display: flex;
-  align-items: baseline;
-  margin-bottom: 12rpx;
-}
-.hole-card-who {
-  font-size: 26rpx;
-  color: #5b3ea8;
-  margin-right: 16rpx;
-}
-.hole-card-time {
-  font-size: 22rpx;
-}
-.hole-card-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  margin-bottom: 8rpx;
-}
-.hole-card-content {
-  font-size: 28rpx;
-  color: #1f2329;
-  line-height: 1.7;
-}
-.hole-card-foot {
+/* --------------------------------------------------------------------------
+   树洞卡片
+   -------------------------------------------------------------------------- */
+.hole-card__head {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-  margin-top: 16rpx;
+  gap: 16rpx;
+  min-height: 44rpx;
 }
-.hole-card-foot .stat {
-  white-space: nowrap;
-}
-.hole-card-foot .vote {
-  white-space: nowrap;
-  color: #6b7280;
-  border-radius: 999rpx;
-  padding: 4rpx 16rpx;
-}
-.hole-card-foot .vote.v-on {
-  color: #1a5fb4;
-  background: #eef3fb;
+.hole-card__who {
+  flex-shrink: 0;
+  font-size: 26rpx;
   font-weight: 600;
+  color: var(--hole-accent);
+  transition: color 0.72s ease-in-out;
 }
-.hole-card-foot .vote.v-no {
-  color: #1f9d55;
-  background: #eaf7ef;
+.hole-card__time { flex-shrink: 0; font-size: 22rpx; color: rgba(255, 255, 255, 0.5); }
+.hole-card__replies {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.62);
+}
+.hole-card__mini-icon { width: 26rpx; height: 26rpx; }
+
+.hole-card__title {
+  margin-top: 12rpx;
+  font-size: 30rpx;
   font-weight: 600;
+  color: #ffffff;
+  line-height: 1.5;
 }
-/* 已举报：变灰，一眼看出这条自己已经报过了，别重复点 */
-.hole-card-foot .vote.v-done {
-  color: #9aa0a6;
-  background: #f2f3f5;
-}
-.hole-card-foot .foot-share {
-  margin-left: auto !important;
-}
-.foot-share {
-  display: inline-block;
-  background: transparent !important;
-  color: #8a9099 !important;
-  font-size: 24rpx !important;
-  font-weight: normal !important;
-  line-height: normal !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
-  min-height: 0 !important;
-  min-width: 0 !important;
-  box-shadow: none !important;
-}
-.foot-share::after {
-  display: none !important;
+.hole-card__content {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.94);
 }
 
-.empty-icon {
-  font-size: 60rpx;
+.hole-card__reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
 }
-.empty-hint {
+.reaction {
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2rpx solid rgba(255, 255, 255, 0.12);
   font-size: 24rpx;
-  margin-top: 8rpx;
+  color: rgba(255, 255, 255, 0.86);
 }
+
+.hole-card__foot {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 8rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx solid rgba(255, 255, 255, 0.10);
+}
+.hole-card__act {
+  display: flex;
+  align-items: center;
+  min-height: 72rpx;
+  padding: 0 12rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.78);
+}
+.hole-card__act--on { color: #ffffff; font-weight: 600; }
+.hole-card__act--right { margin-left: auto; }
+.hole-card__act--done { color: rgba(255, 255, 255, 0.42); }
+.hole-card__share {
+  flex-shrink: 0;
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  line-height: normal;
+}
+.hole-card__share::after { border: none; }
+
+/* --------------------------------------------------------------------------
+   空态 / 提示
+   -------------------------------------------------------------------------- */
+.hole-empty { padding: 60rpx 48rpx; text-align: center; }
+.hole-empty__art { width: 200rpx; height: 200rpx; }
+.hole-empty__title { margin-top: 24rpx; font-size: 30rpx; font-weight: 600; color: #ffffff; }
+.hole-empty__hint { margin-top: 12rpx; font-size: 24rpx; color: rgba(255, 255, 255, 0.6); }
+
 .hole-tip {
   font-size: 22rpx;
-  color: #8a9099;
-  line-height: 1.6;
-  padding: 8rpx 12rpx 24rpx;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.7;
+  padding: 8rpx 12rpx 0;
 }
