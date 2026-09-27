@@ -10,40 +10,6 @@
 .search-bar__clear { padding: 0 12rpx; }
 .search-bar__clear-icon { width: 32rpx; height: 32rpx; }
 
-/* ---------- 顶部 Banner（include 片段自带样式） ---------- */
-.top-banner { margin: 24rpx 0 0; border-radius: 32rpx; overflow: hidden; }
-.top-banner-item {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  min-height: 160rpx;
-  padding: 24rpx 28rpx;
-  border-radius: 32rpx;
-  background: #ffffff;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
-}
-.top-banner-icon { flex-shrink: 0; width: 44rpx; height: 44rpx; }
-.top-banner-main { flex: 1; min-width: 0; }
-.top-banner-tag {
-  display: inline-block;
-  font-size: 20rpx;
-  color: #ffffff;
-  background: #f58a32;
-  padding: 4rpx 16rpx;
-  border-radius: 999rpx;
-}
-.top-banner-title { margin-top: 8rpx; font-size: 28rpx; font-weight: 600; }
-.top-banner-desc { margin-top: 4rpx; font-size: 22rpx; color: #6f7b91; }
-.top-banner-go { flex-shrink: 0; width: 30rpx; height: 30rpx; }
-.top-banner-dots { display: flex; justify-content: center; gap: 10rpx; margin-top: 12rpx; }
-.top-banner-dot {
-  width: 12rpx;
-  height: 12rpx;
-  border-radius: 999rpx;
-  background: #dfe4ec;
-}
-.top-banner-dot.on { background: #f58a32; width: 28rpx; }
-
 /* ---------- 学习资料共享入口卡 ---------- */
 .res-entry {
   display: flex;

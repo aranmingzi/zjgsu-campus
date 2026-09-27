@@ -31,8 +31,6 @@
     />
   </sticky-filter>
 
-  <!-- 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置，自动缓慢切换，触摸即停 -->
-  <include src="/utils/banner.wxml"/>
 
   <!-- 学习资料共享：笔记、真题和讲义，上传后全校都能用 -->
   <view

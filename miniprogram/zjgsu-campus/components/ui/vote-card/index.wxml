@@ -24,18 +24,18 @@
       hover-stay-time="80"
     >
       <view class="ui-vote__option-head">
-        <view class="ui-vote__option-label {{selectedIds.indexOf(item.id) > -1 ? 'ui-vote__option-label--on' : ''}}">
-          <view wx:if="{{selectedIds.indexOf(item.id) > -1}}" class="ui-vote__check">
+        <view class="ui-vote__option-label {{item.selected ? 'ui-vote__option-label--on' : ''}}">
+          <view wx:if="{{item.selected}}" class="ui-vote__check">
             <image class="ui-vote__check-icon" src="/assets/icons/check--white.svg" mode="aspectFit" />
           </view>
           <text class="ui-vote__option-text">{{item.label}}</text>
         </view>
-        <text class="ui-vote__pct">{{percentage(item.votes)}}%</text>
+        <text class="ui-vote__pct">{{item.pct}}%</text>
       </view>
       <view class="ui-vote__track">
         <view
-          class="ui-vote__fill {{item.id === topOptionId ? 'ui-vote__fill--top' : (selectedIds.indexOf(item.id) > -1 ? 'ui-vote__fill--on' : 'ui-vote__fill--idle')}}"
-          style="width:{{percentage(item.votes)}}%;"
+          class="ui-vote__fill {{item.id === topOptionId ? 'ui-vote__fill--top' : (item.selected ? 'ui-vote__fill--on' : 'ui-vote__fill--idle')}}"
+          style="width:{{item.pct}}%;"
         />
       </view>
     </view>

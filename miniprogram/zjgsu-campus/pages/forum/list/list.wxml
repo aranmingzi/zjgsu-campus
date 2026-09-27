@@ -2,8 +2,6 @@
 <view class="container">
   <view wx:if="{{offline}}" class="net-bar">当前处于离线状态，下面显示的是本地缓存</view>
 
-  <!-- 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置，自动缓慢切换，触摸即停 -->
-  <include src="/utils/banner.wxml"/>
 
   <view wx:if="{{loading}}" class="sk-wrap">
     <view class="sk-card">

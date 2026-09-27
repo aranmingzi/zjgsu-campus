@@ -32,16 +32,19 @@ Component({
         ? this.data.localOptionIds
         : v.myOptionIds || [];
 
-      const displayOptions = (v.options || []).map((o) => ({
-        ...o,
-        votes: o.votes + (selected.indexOf(o.id) > -1 ? 1 : 0),
-      }));
-
-      const totalBase = displayOptions.reduce((t, o) => t + o.votes, 0);
+      const rawOptions = v.options || [];
+      const totalBase = rawOptions.reduce((t, o) => t + (o.votes || 0), 0);
       const totalVotes = Math.max(
         totalBase,
         voted ? (v.totalVotes || 0) + selected.length : v.totalVotes || 0,
       );
+      // 百分比在这儿算好写进每条选项。WXML 的 {{}} 里既调不到组件方法，
+      // 也调不到数组方法，所以 pct / selected / 是否领先 都必须在这里定死
+      const displayOptions = rawOptions.map((o) => ({
+        ...o,
+        selected: selected.indexOf(o.id) > -1,
+        pct: totalVotes ? Math.round(((o.votes || 0) / totalVotes) * 100) : 0
+      }));
 
       let topOptionId = '';
       if (displayOptions.length) {
@@ -51,7 +54,6 @@ Component({
 
       this.setData({
         hasVoted: voted,
-        selectedIds: selected,
         displayOptions,
         totalVotes,
         topOptionId,
@@ -60,8 +62,6 @@ Component({
         anonymous: !!v.anonymous,
         title: v.title || '',
         statusText: this._statusText(v),
-        likeCount: v.likes || 0,
-        commentCount: v.comments || 0,
       });
     },
 
@@ -70,12 +70,6 @@ Component({
       const hours = typeof v.remainingHours === 'number' ? v.remainingHours : 0;
       if (hours <= 24) return `剩余 ${hours} 小时`;
       return `剩余 ${Math.ceil(hours / 24)} 天`;
-    },
-
-    percentage(votes) {
-      const total = this.data.totalVotes || 0;
-      if (!total) return 0;
-      return Math.round((votes / total) * 100);
     },
 
     onOptionTap(e) {

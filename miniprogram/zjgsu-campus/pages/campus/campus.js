@@ -9,8 +9,6 @@
 // （那两页有地图选点、审核员编辑这些用不上的复杂逻辑，不往这里搬）。
 const eventApi = require('../../utils/event.js');
 const userApi = require('../../utils/user.js');
-// 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置（论坛、闲置、活动三个板块共用）
-const bannerApi = require('../../utils/banner.js');
 
 const TABS = [
   { key: 'events', label: '活动信息' },
@@ -81,17 +79,11 @@ Page({
     placeCat: '全部',
     placeCatMap: {},
     placeList: [],
-    placeLoading: true,
-
-    /* 顶部 Banner 轮播：4 秒自动切；手指一碰立刻停，抬手恢复 */
-    banner: [],
-    bannerIdx: 0,
-    bannerAutoplay: true
+    placeLoading: true
   },
 
   onLoad() {
     this.setData({ placeCatMap: this.buildPlaceCatMap('全部') });
-    this.loadBanner();
     this.loadEvents();
     // 悄咪咪补一次同步：定时的管每天 07:30，白天打开小程序的人也该看到最新的活动。
     // 排在列表加载之后，不挡首屏、不弹任何东西，失败就当没发生过。
@@ -101,42 +93,6 @@ Page({
   onShow() {
     // 从发布活动页 / 活动详情页退回来时刷新，刚发的不该看不到
     if (this.data.loaded.events) this.loadEvents();
-    this.loadBanner();
-  },
-
-  /* ---------------- 顶部 Banner 轮播 ---------------- */
-
-  // 数据随 onShow 刷新：刚发的寻物 / 闲置、刚被顶起来的树洞，回来就该看到新的
-  loadBanner() {
-    this.setData({ banner: bannerApi.getBannerItems(), bannerIdx: 0, bannerAutoplay: true });
-  },
-
-  // 手指触碰轮播立即停：自动切换和拖动抢一个 swiper，触摸期间把 autoplay 关掉
-  onBannerTouchStart() {
-    if (!this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: false });
-  },
-
-  // 抬手 / 划出轮播区域就恢复自动切换
-  onBannerTouchEnd() {
-    if (this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: true });
-  },
-  onBannerTouchCancel() {
-    this.onBannerTouchEnd();
-  },
-
-  // swiper 自滚也会触发 change：只用来同步指示点
-  onBannerChange(e) {
-    const cur = e.detail.current;
-    if (cur === this.data.bannerIdx) return;
-    this.setData({ bannerIdx: cur });
-  },
-
-  onBannerTap(e) {
-    const b = this.data.banner[e.currentTarget.dataset.idx];
-    if (!b || !b.url) return;
-    wx.navigateTo({ url: b.url });
   },
 
   buildPlaceCatMap(cur) {

@@ -45,13 +45,8 @@ function nowText() {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
 }
 
-function call(action, payload) {
-  if (!cloud.cfg.USE_CLOUD || !cloud.ensureCloud()) return Promise.resolve(null);
-  return wx.cloud.callFunction({
-    name: 'user',
-    data: Object.assign({ action: action }, payload || {})
-  }).then((res) => (res && res.result) || null).catch(() => null);
-}
+// 云函数统一入口在 cloud.js，这里只转发
+const call = cloud.callFunction;
 
 /* ---------------- 发布 ---------------- */
 

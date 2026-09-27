@@ -302,7 +302,11 @@ Page({
 
   // 选图：本地只留一份临时路径，真正用的是上传后的 fileID
   chooseImages() {
-    if (this.data.uploading) return;
+    // 上一批还在传就别再开相册：既会重复计费上传，界面上也只会让人觉得「点了没反应」
+    if (this.data.uploading) {
+      wx.showToast({ title: '图片还在上传，稍等一下', icon: 'none' });
+      return;
+    }
     const rest = MAX_IMAGES - this.data.images.length;
     if (rest <= 0) {
       wx.showToast({ title: '最多 ' + MAX_IMAGES + ' 张', icon: 'none' });
@@ -317,7 +321,13 @@ Page({
         const files = (res.tempFiles || []).map((f) => f.tempFilePath);
         this.uploadImages(files);
       },
-      fail: () => {}
+      // 用户自己从相册退出来不算错误，静默即可；
+      // 真出错（没授权 / 设备不支持）必须说话，否则界面上就是「点了完全没反应」
+      fail: (err) => {
+        const msg = (err && err.errMsg) || '';
+        if (msg.indexOf('cancel') >= 0) return;
+        wx.showToast({ title: '选图没打开，检查下相册权限', icon: 'none' });
+      }
     });
   },
 
@@ -391,6 +401,11 @@ Page({
       wx.showToast({ title: '写点内容', icon: 'none' });
       return;
     }
+    // 投票帖必须有两个以上填了字儿的选项，否则发出去是一张投不了票的空卡
+    if (kind === 'vote' && this.data.voteFilled < 2) {
+      wx.showToast({ title: '至少填写 2 个投票选项', icon: 'none' });
+      return;
+    }
     // 带上板块：社团同好 / 活动组队里留群号联系方式是正常内容，不该被屏蔽词挡住。
     // 主题帖的正文是空的，过 guardText 的前提是拼接串里至少要有东西可查
     if (!moderation.guardText(title + ' ' + content, '帖子', this.data.board)) return;
@@ -400,6 +415,13 @@ Page({
     wx.showLoading({ title: '发布中', mask: true });
     let r;
     try {
+      // 身份预热：和下面这轮服务端校验并行跑。
+      // login 云函数没部署时 fetchOpenid 要等满 5 秒兜底，而 addPost 内部判断
+      // 「还没拿到 openid」时会再等一轮 —— 串起来就是两次满 5 秒，点一下要干等十几秒。
+      // 这里先并行跑掉，等 addPost 走到那一步通常已经缓存好了，直接跳过等待。
+      if (cloud.cfg.USE_CLOUD && cloud.ensureCloud()) {
+        cloud.fetchOpenid().catch(() => {});
+      }
       // 服务端权威校验（本地词表只是提示，拦截权在云函数）
       const safe = await userApi.checkText({ title: title, content: content });
       if (safe && safe.ok === false) {

@@ -49,14 +49,8 @@ function withTimeout(promise, fallback, ms) {
 }
 
 /** 调云函数；云函数未部署 / 超时 / 报错时 resolve(null)，由调用方回落本地 */
-function call(action, payload) {
-  if (!cloud.cfg.USE_CLOUD || !cloud.ensureCloud()) return Promise.resolve(null);
-  const req = wx.cloud.callFunction({
-    name: 'user',
-    data: Object.assign({ action: action }, payload || {})
-  }).then((res) => (res && res.result) || null).catch(() => null);
-  return withTimeout(req, null, CALL_TIMEOUT_MS);
-}
+// 真正的发请求那一份在 cloud.js，这里额外套一层上面的超时
+const call = (action, payload) => withTimeout(cloud.callFunction(action, payload), null, CALL_TIMEOUT_MS);
 
 /* ---------------- 启动登记 ---------------- */
 

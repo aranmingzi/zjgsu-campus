@@ -1,8 +1,6 @@
 // pages/market/list/list.js —— 失物招领 / 二手交易 列表
 // 三个 tab 共用一套逻辑，只靠 type 切换；云端没部署时照常显示本地缓存。
 const market = require('../../../utils/market.js');
-// 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置（论坛、闲置、活动三个板块共用）
-const bannerApi = require('../../../utils/banner.js');
 
 // 「全部」= TYPES 里没有的 key，getMarkets / searchMarkets 会原样返回全部类型
 const TABS = [
@@ -55,12 +53,6 @@ Page({
     loading: true,
     firstLoaded: false,
     noMore: false,
-    // 顶部 Banner 轮播：4 秒自动切；手指一碰立刻停，抬手恢复
-    banner: [],
-    bannerIdx: 0,
-    bannerAutoplay: true,
-    // banner.wxml 里的图标取色：白底卡，图标用主色
-    bannerTone: 'brand'
   },
 
   onLoad() {
@@ -70,43 +62,8 @@ Page({
   onShow() {
     // 从发布页退回来时刷新（刚发的不该看不到）
     if (this.data.firstLoaded) this.load();
-    this.loadBanner();
   },
 
-  /* ---------------- 顶部 Banner 轮播 ---------------- */
-
-  // 数据随 onShow 刷新：刚发的寻物 / 闲置、刚被顶起来的树洞，回来就该看到新的
-  loadBanner() {
-    this.setData({ banner: bannerApi.getBannerItems(), bannerIdx: 0, bannerAutoplay: true });
-  },
-
-  // 手指触碰轮播立即停：自动切换和拖动抢一个 swiper，触摸期间把 autoplay 关掉
-  onBannerTouchStart() {
-    if (!this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: false });
-  },
-
-  // 抬手 / 划出轮播区域就恢复自动切换
-  onBannerTouchEnd() {
-    if (this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: true });
-  },
-  onBannerTouchCancel() {
-    this.onBannerTouchEnd();
-  },
-
-  // swiper 自滚也会触发 change：只用来同步指示点
-  onBannerChange(e) {
-    const cur = e.detail.current;
-    if (cur === this.data.bannerIdx) return;
-    this.setData({ bannerIdx: cur });
-  },
-
-  onBannerTap(e) {
-    const b = this.data.banner[e.currentTarget.dataset.idx];
-    if (!b || !b.url) return;
-    wx.navigateTo({ url: b.url });
-  },
 
   async load() {
     const tab = this.data.tab;

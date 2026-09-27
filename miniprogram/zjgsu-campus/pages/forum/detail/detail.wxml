@@ -10,6 +10,13 @@
     <view class="btn-ghost tap detail__back" bindtap="goBack">返回论坛</view>
   </view>
 
+  <!-- 按 id 没取到内容：说清楚原因，别留一片空白让人以为程序坏了 -->
+  <view wx:if="{{missing}}" class="card">
+    <view class="title-lg">这条内容不见了</view>
+    <view class="hint">它可能已经被删除，或者当前账号没有查看权限。链接失效的话，从列表里重新找找看。</view>
+    <view class="btn-ghost tap detail__back" bindtap="goBack">返回论坛</view>
+  </view>
+
   <block wx:else>
     <view class="card">
       <view class="detail__head">
