@@ -1,0 +1,19 @@
+<!-- components/ui/bottom-sheet/index.wxml -->
+<view
+  wx:if="{{open}}"
+  class="ui-sheet__mask {{open ? '' : 'ui-sheet__mask--off'}}"
+  bindtap="onMask"
+/>
+<view class="ui-sheet {{open ? 'ui-sheet--open' : 'ui-sheet--closed'}}" catchtap="noop">
+  <view class="ui-sheet__handle" />
+  <view wx:if="{{title || description}}" class="ui-sheet__head">
+    <view class="ui-sheet__head-text">
+      <view wx:if="{{title}}" class="ui-sheet__title">{{title}}</view>
+      <view wx:if="{{description}}" class="ui-sheet__desc">{{description}}</view>
+    </view>
+    <view class="ui-sheet__close pressable" data-act="close" bindtap="close">
+      <image class="ui-sheet__close-icon" src="/assets/icons/x--ink.svg" mode="aspectFit" />
+    </view>
+  </view>
+  <view class="ui-sheet__body"><slot /></view>
+</view>

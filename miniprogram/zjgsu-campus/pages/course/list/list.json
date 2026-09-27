@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "课程评价",
-  "usingComponents": {}
+  "usingComponents": {
+    "course-card": "/components/course/course-card/index",
+    "sticky-filter": "/components/ui/sticky-filter/index"
+  }
 }

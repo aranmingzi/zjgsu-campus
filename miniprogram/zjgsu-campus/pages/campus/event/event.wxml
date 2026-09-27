@@ -1,54 +1,105 @@
-<view class="container">
+<app-header title="活动详情" showBack />
+
+<view class="container ev-page">
 
   <view wx:if="{{notFound}}" class="empty">
-    <view class="empty-icon">🔍</view>
-    <view>这个活动找不到了</view>
-    <view class="empty-hint">可能已经被作者删掉，或者链接过期了</view>
+    <image class="ev-empty-art" src="/assets/icons/search--muted.svg" mode="aspectFit" />
+    <view class="empty-title">这个活动找不到了</view>
+    <view class="empty-desc">可能已经被作者删掉，或者链接过期了</view>
   </view>
 
   <block wx:else>
     <view wx:if="{{loading}}" class="empty">
-      <view class="empty-icon">⏳</view>
-      <view>活动加载中…</view>
+      <image class="ev-empty-art" src="/assets/icons/loader--muted.svg" mode="aspectFit" />
+      <view class="empty-title">活动加载中…</view>
     </view>
 
     <block wx:else>
-      <view class="card">
-        <view class="ev-top">
-          <view class="ev-type">{{ev.typeIcon}} {{ev.typeLabel}}</view>
-          <view wx:if="{{ev.isMine}}" class="ev-mine">我发布的</view>
+      <view class="card ev-card">
+        <view class="ev__top">
+          <text class="tag {{ev.official ? 'ev__tag--official' : 'tag--campus'}}">
+            {{ev.official ? '学校官网' : '同学发起'}}
+          </text>
+          <text wx:if="{{ev.isMine}}" class="ev__badge">我发布的</text>
+          <text wx:elif="{{ev.joined}}" class="ev__badge ev__badge--joined">已报名</text>
         </view>
-        <view class="ev-title">{{ev.title}}</view>
 
-        <view class="ev-row">🕘 {{ev.start || '时间待定'}}</view>
-        <view wx:if="{{ev.location}}" class="ev-row">📍 {{ev.location}}</view>
-        <view wx:if="{{!ev.official}}" class="ev-row">👥 {{ev.countText}}</view>
-        <view wx:if="{{ev.official && ev.source}}" class="ev-row">🏛️ 来源：{{ev.source}}</view>
+        <view class="ev__title">{{ev.title}}</view>
 
-        <view wx:if="{{ev.desc}}" class="ev-desc">{{ev.desc}}</view>
+        <view class="ev__row">
+          <image class="ev__row-icon" src="/assets/icons/clock--muted.svg" mode="aspectFit" />
+          <text class="truncate">{{ev.start || '时间待定'}}</text>
+        </view>
+        <view wx:if="{{ev.location}}" class="ev__row">
+          <image class="ev__row-icon" src="/assets/icons/map-pin--muted.svg" mode="aspectFit" />
+          <text class="truncate">{{ev.location}}</text>
+        </view>
+        <view wx:if="{{!ev.official}}" class="ev__row">
+          <image class="ev__row-icon" src="/assets/icons/users-round--campus.svg" mode="aspectFit" />
+          <text class="truncate">{{ev.countText}}</text>
+        </view>
+        <view wx:if="{{ev.official && ev.source}}" class="ev__row">
+          <image class="ev__row-icon" src="/assets/icons/graduation-cap--muted.svg" mode="aspectFit" />
+          <text class="truncate">来源：{{ev.source}}</text>
+        </view>
+
+        <view wx:if="{{ev.desc}}" class="ev__desc">{{ev.desc}}</view>
       </view>
 
       <view class="card">
-        <view class="sec-title">联系人</view>
-        <!-- 没报名不显示联系方式：(activity)公开号码会把发布者直接架在火上 -->
-        <view wx:if="{{contactVisible && ev.contact}}" class="contact tap" bindtap="onCopyContact">
-          <text>{{ev.contact}}</text>
-          <text class="contact-go">复制</text>
+        <view class="ev__sec-title">联系人</view>
+        <!-- 没报名不显示联系方式：公开号码会把发布者直接架在火上 -->
+        <view wx:if="{{contactVisible && ev.contact}}" class="ev-contact tap pressable" bindtap="onCopyContact">
+          <image class="ev-contact__icon" src="/assets/icons/user-round--brand.svg" mode="aspectFit" />
+          <text class="ev-contact__text truncate">{{ev.contact}}</text>
+          <text class="ev-contact__go">复制</text>
         </view>
         <view wx:elif="{{contactVisible}}" class="muted">发布者没留联系方式</view>
         <view wx:else class="muted">报名成功后可以看到联系方式</view>
       </view>
 
-      <view wx:if="{{ev.isMine}}" class="act act-danger tap" bindtap="onRemove">🗑 删除这个活动</view>
-      <view class="foot-space"></view>
+      <view wx:if="{{ev.isMine}}" class="ev-del tap pressable" bindtap="onRemove">
+        <image class="ev-del__icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+        <text>删除这个活动</text>
+      </view>
     </block>
   </block>
 
-  <!-- 底部操作条：报名 / 取消报名永远是最显眼的位置 -->
-  <view wx:if="{{!loading && !notFound && ev}}" class="bar">
-    <view wx:if="{{ev.official}}" class="bar-btn tap" bindtap="onCopySource">复制原文链接</view>
-    <view wx:elif="{{ev.isMine}}" class="bar-btn tap" bindtap="goBack">返回</view>
-    <view wx:elif="{{ev.joined}}" class="bar-btn joined tap" bindtap="onCancel">取消报名</view>
-    <view wx:else class="bar-btn tap" bindtap="onJoin">{{ev.fullText || '我要报名'}}</view>
+  <!-- 底部操作条：报名 / 取消报名永远是最显眼的位置。
+       固定在视口底部，所以 .container 上不能出现 transform -->
+  <view wx:if="{{!loading && !notFound && ev}}" class="ev-bar fixed-bar">
+    <view
+      wx:if="{{ev.official}}"
+      class="ev-bar__btn tap pressable"
+      bindtap="onCopySource"
+    >
+      <image class="ev-bar__icon" src="/assets/icons/book-open--campus.svg" mode="aspectFit" />
+      <text>复制原文链接</text>
+    </view>
+    <view
+      wx:elif="{{ev.isMine}}"
+      class="ev-bar__btn tap pressable"
+      bindtap="goBack"
+    >
+      <image class="ev-bar__icon" src="/assets/icons/chevron-left--campus.svg" mode="aspectFit" />
+      <text>返回</text>
+    </view>
+    <view
+      wx:elif="{{ev.joined}}"
+      class="ev-bar__btn ev-bar__btn--joined tap pressable"
+      bindtap="onCancel"
+    >
+      <image class="ev-bar__icon" src="/assets/icons/check--campus.svg" mode="aspectFit" />
+      <text>取消报名</text>
+    </view>
+    <view
+      wx:else
+      class="ev-bar__btn tap pressable"
+      bindtap="onJoin"
+    >
+      <image class="ev-bar__icon" src="/assets/icons/plus--white.svg" mode="aspectFit" />
+      <text>{{ev.fullText || '我要报名'}}</text>
+    </view>
   </view>
+
 </view>

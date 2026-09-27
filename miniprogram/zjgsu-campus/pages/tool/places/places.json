@@ -1,4 +1,9 @@
 {
   "navigationBarTitleText": "校园地点",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "empty-state": "/components/ui/empty-state/index",
+    "bottom-sheet": "/components/ui/bottom-sheet/index"
+  }
 }

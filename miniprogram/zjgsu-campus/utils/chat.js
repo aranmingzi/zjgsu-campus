@@ -6,14 +6,9 @@
 //   所以现在是「进入会话时拉一次历史 + 发一句刷新一次」，点击进入就能看到对方的新消息。
 const cloud = require('./cloud.js');
 
+// 云函数统一入口在 cloud.js，这里只转发。
 // 云函数返回 null 表示「云函数没部署 / 网络断了」，调用方据此决定要不要提示
-function call(action, payload) {
-  if (!cloud.cfg.USE_CLOUD || !cloud.ensureCloud()) return Promise.resolve(null);
-  return wx.cloud.callFunction({
-    name: 'user',
-    data: Object.assign({ action: action }, payload || {})
-  }).then((res) => (res && res.result) || null).catch(() => null);
-}
+const call = cloud.callFunction;
 
 // 会话列表：对方昵称 / 头像 / 最后一句 / 未读红点
 function list() {

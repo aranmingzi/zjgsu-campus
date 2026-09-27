@@ -1,332 +1,202 @@
-/* pages/tool/memo/memo.wxss —— 我的备忘 */
+/* pages/tool/memo/memo.wxss —— 我的备忘
+   复用 app.wxss：.container / .card / .clamp2 / .pressable / .search-bar。
+   本页独有全部是 mm-*。mask / sheet 那套自绘弹层已经换成共享的
+   components/ui/bottom-sheet，这里的 mm-sheet 只写抽屉内容的排版。 */
 
-page {
-  background: #f4f5f7;
-}
+.mm-page { padding-top: 8rpx; }
 
-/* ---------- 顶部统计 ---------- */
-
-.memo-top {
+/* ---------- 顶部统计：青蓝 → 主色渐变 ---------- */
+.mm-top {
   display: flex;
-  margin: 24rpx 24rpx 0;
-  padding: 34rpx 0;
-  border-radius: 20rpx;
-  background: linear-gradient(135deg, #1a5fb4, #3582e8);
-  color: #fff;
+  margin-bottom: 24rpx;
+  padding: 36rpx 0 32rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #2f9fd6 0%, #2b5aed 100%);
+  box-shadow: 0 12rpx 32rpx rgba(43, 90, 237, 0.2);
+  color: #ffffff;
 }
+.mm-stat { flex: 1; min-width: 0; text-align: center; }
+.mm-stat__num { font-size: 56rpx; font-weight: 700; line-height: 1.1; }
+/* 连续天数是这个页面唯一能让人上瘾的数字，给它一点暖色 */
+.mm-stat__num--hot { color: #ffdf85; }
+.mm-stat__label { margin-top: 10rpx; font-size: 22rpx; color: rgba(255, 255, 255, 0.85); }
 
-.stat {
-  flex: 1;
-  text-align: center;
-}
-
-.stat-num {
-  font-size: 56rpx;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-/* 连续天数是这个页面唯一能让人上瘾的数字，给它点暖色 */
-.stat-num.hot {
-  color: #ffdf85;
-}
-
-.stat-label {
-  font-size: 24rpx;
-  opacity: 0.85;
-  margin-top: 10rpx;
-}
-
-.memo-tip {
-  margin: 20rpx 24rpx 0;
-  padding: 16rpx 20rpx;
+.mm-tip {
+  margin-bottom: 24rpx;
+  padding: 20rpx 24rpx;
   font-size: 26rpx;
   color: #7a5b12;
   background: #fff8e6;
-  border-left: 6rpx solid #ffc53d;
-  border-radius: 10rpx;
+  border-left: 6rpx solid #f58a32;
+  border-radius: 24rpx;
+  line-height: 1.6;
 }
 
 /* ---------- 空态介绍 ---------- */
-
-.memo-intro {
-  margin: 24rpx 24rpx 0;
-  padding: 36rpx 28rpx;
-  text-align: center;
-}
-
-.intro-icon {
-  font-size: 64rpx;
-}
-
-.intro-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #1f2329;
+.mm-intro { padding: 40rpx 32rpx 36rpx; text-align: center; }
+.mm-intro__icon { width: 88rpx; height: 88rpx; }
+.mm-intro__title { margin-top: 16rpx; font-size: 32rpx; font-weight: 600; color: #172033; }
+.mm-intro__sub {
   margin-top: 12rpx;
-}
-
-.intro-sub {
   font-size: 26rpx;
-  color: #8a9099;
+  color: #6f7b91;
   line-height: 1.7;
-  margin-top: 12rpx;
 }
-
-.intro-btn {
-  display: inline-block;
-  margin-top: 24rpx;
-  padding: 16rpx 48rpx;
-  font-size: 28rpx;
-  color: #fff;
-  background: #1a5fb4;
+.mm-intro__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88rpx;
+  margin-top: 28rpx;
+  padding: 0 56rpx;
   border-radius: 999rpx;
+  background: #2b5aed;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(43, 90, 237, 0.22);
 }
+.mm-intro__btn--hover { opacity: 0.78; }
 
 /* ---------- 搜索 ---------- */
-
-.memo-search {
+.mm-search { margin-bottom: 4rpx; }
+.mm-search__icon { width: 34rpx; height: 34rpx; flex-shrink: 0; }
+/* input 不给定高会被默认行高拦腰截字 */
+.mm-search__input { height: 88rpx; }
+.mm-search__ph { color: #98a3b8; }
+.mm-search__clear {
   display: flex;
   align-items: center;
-  margin: 24rpx 24rpx 0;
-  padding: 0 20rpx;
-  height: 72rpx;
-  background: #fff;
-  border-radius: 12rpx;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  flex-shrink: 0;
 }
-
-.search-icon {
-  margin-right: 12rpx;
-  font-size: 26rpx;
-}
-
-/* input 不给固定高度会被默认的 1.4rem 拦腰截字，必须定高 */
-.search-input {
-  flex: 1;
-  height: 72rpx;
-  font-size: 28rpx;
-  color: #1f2329;
-}
-
-.search-ph {
-  color: #b6bcc5;
-}
-
-.search-clear {
-  font-size: 26rpx;
-  color: #1a5fb4;
-  padding-left: 16rpx;
-}
+.mm-search__clear--hover { opacity: 0.6; }
+.mm-search__clear-icon { width: 32rpx; height: 32rpx; }
 
 /* ---------- 日期分组 ---------- */
-
-.day-head {
-  display: flex;
-  align-items: baseline;
-  margin: 28rpx 28rpx 12rpx;
-}
-
-.day-date {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #1f2329;
-}
-
-.day-week {
-  font-size: 24rpx;
-  color: #8a9099;
-  margin-left: 14rpx;
-}
+.mm-day { display: flex; align-items: baseline; padding: 28rpx 8rpx 12rpx; }
+.mm-day__date { font-size: 30rpx; font-weight: 600; color: #172033; }
+.mm-day__week { margin-left: 14rpx; font-size: 24rpx; color: #98a3b8; }
 
 /* ---------- 条目 ---------- */
+.mm-item { display: flex; align-items: center; gap: 20rpx; padding: 28rpx; margin-bottom: 20rpx; }
+.mm-item--hover { opacity: 0.72; }
 
-.memo-item {
+.mm-item__mood {
+  width: 64rpx;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 48rpx;
+  line-height: 1;
+}
+
+.mm-item__body { flex: 1; min-width: 0; }
+.mm-item__text { font-size: 30rpx; color: #172033; line-height: 1.6; word-break: break-all; }
+.mm-item__meta { margin-top: 10rpx; font-size: 24rpx; color: #98a3b8; }
+
+.mm-item__del {
   display: flex;
   align-items: center;
-  margin: 0 24rpx 16rpx;
-  padding: 24rpx;
+  justify-content: center;
+  width: 72rpx;
+  height: 88rpx;
+  flex-shrink: 0;
 }
+.mm-item__del--hover { opacity: 0.6; }
+.mm-item__del-icon { width: 36rpx; height: 36rpx; }
 
-.memo-mood {
-  font-size: 44rpx;
-  margin-right: 20rpx;
-}
-
-.memo-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.memo-text {
-  font-size: 30rpx;
-  color: #1f2329;
-  line-height: 1.6;
-  /* 一条最多露两行，剩下的进编辑页看 */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  word-break: break-all;
-}
-
-.memo-meta {
+/* ---------- 底部说明 ---------- */
+.mm-note {
+  margin: 16rpx 8rpx 140rpx;
   font-size: 24rpx;
-  color: #9aa0a6;
-  margin-top: 10rpx;
+  color: #98a3b8;
+  line-height: 1.7;
 }
 
-.memo-del {
-  font-size: 24rpx;
-  color: #b6bcc5;
-  padding-left: 16rpx;
-}
-
-/* ---------- 悬浮按钮 ---------- */
-
-/* 备忘页的「＋ 写一条」是带字的胶囊，跟全局那个纯圆形的 .fab 长得不一样。
-   这里用 .fab-text 而不叫 .fab —— 之前同名会整块覆盖掉 app.wxss 里的 .fab，
-   后代选择器都盖不住，看着像全局按钮坏了。同名 = 覆盖，改名 = 只在备忘页生效。 */
-.fab-text {
+/* ---------- 悬浮「写一条」 ---------- */
+/* 用 mm-fab 而不是 .fab：同名会整块覆盖 app.wxss 里的 .fab */
+.mm-fab {
   position: fixed;
   right: 32rpx;
   bottom: 60rpx;
-  height: 88rpx;
-  line-height: 88rpx;
-  padding: 0 40rpx;
-  font-size: 30rpx;
-  color: #fff;
-  background: #1a5fb4;
-  border-radius: 999rpx;
-  box-shadow: 0 8rpx 24rpx rgba(26, 95, 180, 0.35);
-}
-
-/* ---------- 底部弹层 ---------- */
-
-.mask {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 99;
-}
-
-.sheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #fff;
-  border-radius: 24rpx 24rpx 0 0;
-  padding: 28rpx 32rpx 40rpx;
-}
-
-.sheet-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #1f2329;
-  text-align: center;
-}
-
-.form-row {
+  z-index: 60;
   display: flex;
   align-items: center;
-  margin-top: 28rpx;
-}
-
-.form-label {
-  font-size: 26rpx;
-  color: #6b7280;
-  margin: 28rpx 0 16rpx;
-}
-
-.form-picker {
-  flex: 1;
-  height: 80rpx;
-  line-height: 80rpx;
-  padding: 0 20rpx;
+  gap: 10rpx;
+  height: 88rpx;
+  padding: 0 40rpx;
+  border-radius: 999rpx;
+  background: #2b5aed;
+  color: #ffffff;
   font-size: 30rpx;
-  color: #1a5fb4;
-  background: #f2f6fd;
-  border-radius: 12rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(43, 90, 237, 0.35);
+}
+.mm-fab--hover { opacity: 0.82; }
+.mm-fab__icon { width: 32rpx; height: 32rpx; }
+
+/* ---------- 抽屉内容 ---------- */
+.mm-sheet { padding-bottom: 8rpx; }
+.mm-form-row { display: flex; align-items: center; gap: 20rpx; margin-top: 8rpx; }
+.mm-form-label { display: block; margin: 28rpx 0 16rpx; font-size: 26rpx; color: #6f7b91; }
+.mm-form-picker {
+  flex: 1;
+  min-width: 0;
+  height: 88rpx;
+  line-height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 24rpx;
+  background: #f6f8fb;
+  color: #2b5aed;
+  font-size: 28rpx;
   text-align: right;
 }
 
-.mood-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.mood {
+.mm-moods { display: flex; justify-content: space-between; gap: 8rpx; }
+.mm-mood {
   flex: 1;
-  padding: 16rpx 0;
-  text-align: center;
-  border-radius: 12rpx;
-  background: #f7f8fa;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+  min-height: 132rpx;
+  padding: 18rpx 0;
+  border-radius: 24rpx;
+  background: #f6f8fb;
 }
+.mm-mood-on { background: #eff4ff; box-shadow: inset 0 0 0 2rpx #2b5aed; }
+.mm-mood__icon { font-size: 40rpx; line-height: 1; }
+.mm-mood__name { font-size: 22rpx; color: #6f7b91; }
+.mm-mood-on .mm-mood__name { color: #2047c9; }
 
-.mood.on {
-  background: #e8f1fd;
-  border: 2rpx solid #1a5fb4;
-}
-
-.mood-icon {
-  font-size: 40rpx;
-}
-
-.mood-name {
-  display: block;
-  font-size: 24rpx;
-  color: #6b7280;
-  margin-top: 4rpx;
-}
-
-.mood.on .mood-name {
-  color: #1a5fb4;
-}
-
-.memo-input {
+.mm-input {
   width: 100%;
   box-sizing: border-box;
-  /* textarea 同样必须定高，否则默认高度会把字压掉一半 */
-  height: 260rpx;
-  padding: 20rpx;
-  font-size: 30rpx;
-  color: #1f2329;
-  background: #f7f8fa;
-  border-radius: 12rpx;
-}
-
-.memo-ph {
-  color: #b6bcc5;
-}
-
-.sheet-ops {
-  display: flex;
-  margin-top: 32rpx;
-}
-
-.sheet-btn {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  text-align: center;
-  font-size: 30rpx;
-  color: #6b7280;
-  background: #f7f8fa;
-  border-radius: 12rpx;
-}
-
-.sheet-btn.primary {
-  color: #fff;
-  background: #1a5fb4;
-  margin-left: 24rpx;
-}
-
-.bottom-note {
-  margin: 16rpx 28rpx 140rpx;
-  font-size: 24rpx;
-  color: #9aa0a6;
+  height: 240rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
   line-height: 1.7;
+  color: #172033;
+  background: #f6f8fb;
+  border-radius: 24rpx;
 }
+.mm-input__ph { color: #98a3b8; }
+
+.mm-sheet__ops { display: flex; gap: 20rpx; margin-top: 32rpx; }
+.mm-sheet__btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88rpx;
+  border-radius: 999rpx;
+  background: #f6f8fb;
+  color: #6f7b91;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.mm-sheet__btn--hover { opacity: 0.72; }
+.mm-sheet__btn--primary { background: #2b5aed; color: #ffffff; }

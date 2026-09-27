@@ -11,16 +11,17 @@
 // 举报也跟主论坛完全一样：匿名是保护作者不被认出来，不是免罪牌。
 // 树洞内容反而更容易出事（吐槽、爆料、人身攻击），更不能没有举报口。
 const store = require('../../../utils/store.js');
+const { vibrateShort } = require('../../../utils/system.js');
 const moderation = require('../../../utils/moderation.js');
 const userApi = require('../../../utils/user.js');
 
 // 树洞只有四种排序：没有「最多踩」 —— 树洞里已经没有踩这个动作了（见 onPostVote），
 // 留着一个排不出来的档位只会让同学以为排序坏了
 const SORT_OPTIONS = [
-  { k: 'latest', icon: '🕐', label: '最新' },
-  { k: 'hot', icon: '🔥', label: '热门' },
-  { k: 'likes', icon: '🤗', label: '最多抱抱' },
-  { k: 'comments', icon: '💬', label: '最多评论' }
+  { k: 'latest', icon: 'clock', label: '最新' },
+  { k: 'hot', icon: 'flame', label: '热门' },
+  { k: 'likes', icon: 'heart', label: '最多抱抱' },
+  { k: 'comments', icon: 'message-circle', label: '最多评论' }
 ];
 
 Page({
@@ -32,6 +33,8 @@ Page({
     title: '',
     posting: false,
     loading: true,
+    // 此刻的心情：只影响顶部氛围层，不发进帖子内容
+    mood: 'sad',
     // 恢复的是哪条树洞草稿：发出去之后好把它撤掉
     draftId: ''
   },
@@ -191,6 +194,15 @@ Page({
     this._published = true;
     if (this.data.draftId) store.removeDraft(this.data.draftId);
     wx.showToast({ title: '已投进树洞', icon: 'success' });
+  },
+
+  // 切心情：氛围层 CSS 自己过渡 720ms，这里只换状态；
+  // wx.vibrateShort 是小程序里唯一能碰到的震动反馈（Web 版的 navigator.vibrate 用不了）
+  onMood(e) {
+    const mood = String(e.currentTarget.dataset.m || '');
+    if (!mood || mood === this.data.mood) return;
+    vibrateShort();
+    this.setData({ mood });
   },
 
   goDetail(e) {

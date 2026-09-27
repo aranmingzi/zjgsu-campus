@@ -1,0 +1,73 @@
+<!-- components/ui/vote-card/index.wxml
+     迁移自 src/components/vote/VoteCard.vue
+     未投票 / 已投票 / 已结束 三态；进度条 transition 500ms（在 wxss 里） -->
+<view class="ui-vote">
+  <view class="ui-vote__head">
+    <view class="ui-vote__badge">
+      <image class="ui-vote__badge-icon" src="/assets/icons/vote--white.svg" mode="aspectFit" />
+      <text class="ui-vote__badge-text">投票</text>
+    </view>
+    <view class="ui-vote__status {{ended ? 'ui-vote__status--end' : ''}}">{{statusText}}</view>
+    <view wx:if="{{multiple}}" class="ui-vote__multi">多选</view>
+  </view>
+
+  <view class="ui-vote__body">
+    <view class="ui-vote__title pressable" bindtap="onOpen">{{title}}</view>
+
+    <view
+      wx:for="{{displayOptions}}"
+      wx:key="id"
+      class="ui-vote__option {{hasVoted || ended ? 'ui-vote__option--locked' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onOptionTap"
+      hover-class="ui-vote__option--hover"
+      hover-stay-time="80"
+    >
+      <view class="ui-vote__option-head">
+        <view class="ui-vote__option-label {{item.selected ? 'ui-vote__option-label--on' : ''}}">
+          <view wx:if="{{item.selected}}" class="ui-vote__check">
+            <image class="ui-vote__check-icon" src="/assets/icons/check--white.svg" mode="aspectFit" />
+          </view>
+          <text class="ui-vote__option-text">{{item.label}}</text>
+        </view>
+        <text class="ui-vote__pct">{{item.pct}}%</text>
+      </view>
+      <view class="ui-vote__track">
+        <view
+          class="ui-vote__fill {{item.id === topOptionId ? 'ui-vote__fill--top' : (item.selected ? 'ui-vote__fill--on' : 'ui-vote__fill--idle')}}"
+          style="width:{{item.pct}}%;"
+        />
+      </view>
+    </view>
+
+    <button
+      wx:if="{{multiple && !hasVoted && !ended}}"
+      class="ui-vote__confirm {{localOptionIds.length ? '' : 'ui-vote__confirm--off'}}"
+      disabled="{{!localOptionIds.length || submitting}}"
+      hover-class="ui-vote__confirm--hover"
+      hover-stay-time="80"
+      bindtap="onConfirmMulti"
+    >{{submitting ? '提交中…' : (localOptionIds.length ? '确认投票（' + localOptionIds.length + '）' : '确认投票')}}</button>
+
+    <view class="ui-vote__meta">
+      <text class="ui-vote__meta-item">{{totalVotes}} 人已参与</text>
+      <text class="ui-vote__meta-item">{{statusText}}</text>
+      <text wx:if="{{anonymous}}" class="ui-vote__meta-item ui-vote__meta-item--right">匿名投票</text>
+    </view>
+
+    <view class="ui-vote__actions">
+      <view class="ui-vote__action {{liked ? 'ui-vote__action--on' : ''}}" bindtap="onLike" hover-class="ui-vote__action--hover" hover-stay-time="80">
+        <image class="ui-vote__action-icon" src="/assets/icons/thumbs-up--{{liked ? 'brand' : 'muted'}}.svg" mode="aspectFit" />
+        <text>{{liked ? '已赞同' : '赞同'}}</text>
+      </view>
+      <view class="ui-vote__action" bindtap="onDiscuss" hover-class="ui-vote__action--hover" hover-stay-time="80">
+        <image class="ui-vote__action-icon" src="/assets/icons/message-circle--muted.svg" mode="aspectFit" />
+        <text>查看讨论</text>
+      </view>
+      <view class="ui-vote__action ui-vote__action--right" bindtap="onShare" hover-class="ui-vote__action--hover" hover-stay-time="80">
+        <image class="ui-vote__action-icon" src="/assets/icons/share-2--muted.svg" mode="aspectFit" />
+        <text>分享</text>
+      </view>
+    </view>
+  </view>
+</view>

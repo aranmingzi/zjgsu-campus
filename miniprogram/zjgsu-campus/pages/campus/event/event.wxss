@@ -1,86 +1,161 @@
-/* pages/campus/event/event —— 活动详情 */
+/* pages/campus/event/event —— 活动详情
+   底部操作条用 .fixed-bar（position:fixed）贴在视口底部，
+   所以本页任何容器都不加 transform，否则 fixed 会退化成相对定位。 */
 
-.ev-top {
+/* 给固定底栏留位，最后一条内容不会被压住 */
+.ev-page {
+  padding-bottom: 200rpx;
+}
+
+.ev-empty-art {
+  width: 150rpx;
+  height: 150rpx;
+  margin-bottom: 16rpx;
+}
+
+.ev__top {
   display: flex;
   align-items: center;
-  margin-bottom: 10rpx;
+  gap: 12rpx;
+  min-height: 44rpx;
 }
-.ev-type {
-  font-size: 22rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 8rpx;
-  padding: 4rpx 14rpx;
+.ev__tag--official {
+  background: #eff4ff;
+  color: #2047c9;
 }
-.ev-mine {
+.ev__badge {
   margin-left: auto;
+  flex-shrink: 0;
   font-size: 22rpx;
-  color: #8a6d3b;
-  background: #fdf6e3;
-  border-radius: 8rpx;
-  padding: 4rpx 14rpx;
+  color: #128a56;
+  background: #e9f8f1;
+  border-radius: 999rpx;
+  padding: 6rpx 18rpx;
 }
-.ev-title {
-  font-size: 36rpx;
-  font-weight: 600;
-  margin-bottom: 14rpx;
-}
-.ev-row { font-size: 26rpx; color: #5b636d; margin-bottom: 6rpx; }
-.ev-desc {
-  font-size: 27rpx;
-  color: #3d434b;
-  margin-top: 18rpx;
-  padding-top: 18rpx;
-  border-top: 1rpx solid #f0f1f3;
-  white-space: pre-wrap;
+.ev__badge--joined {
+  color: #2047c9;
+  background: #eff4ff;
 }
 
-.sec-title { font-size: 26rpx; color: #6b7280; margin-bottom: 14rpx; }
-.contact {
+.ev__title {
+  margin-top: 14rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #172033;
+  line-height: 1.45;
+}
+
+.ev__row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: #f2f4f7;
-  border-radius: 14rpx;
-  padding: 20rpx 24rpx;
+  gap: 12rpx;
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  color: #6f7b91;
+  min-width: 0;
+}
+.ev__row-icon {
+  width: 30rpx;
+  height: 30rpx;
+  flex-shrink: 0;
+}
+.ev__desc {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid #e8edf5;
   font-size: 28rpx;
-  color: #1a5fb4;
+  color: #6f7b91;
+  line-height: 1.75;
 }
-.contact-go { font-size: 24rpx; color: #8a9099; }
 
-.act {
-  background: #fff;
-  border-radius: 18rpx;
-  padding: 24rpx 28rpx;
-  font-size: 27rpx;
-  text-align: center;
+.ev__sec-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #172033;
+}
+
+/* 联系方式：整块可点，右侧「复制」只是提示，热区留给整行 */
+.ev-contact {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 12rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #eff4ff;
+}
+.ev-contact__icon {
+  width: 34rpx;
+  height: 34rpx;
+  flex-shrink: 0;
+}
+.ev-contact__text {
+  flex: 1;
+  min-width: 0;
+  font-size: 28rpx;
+  color: #2047c9;
+}
+.ev-contact__go {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #2b5aed;
+}
+
+.ev-del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  min-height: 96rpx;
   margin-top: 8rpx;
+  padding: 24rpx;
+  border-radius: 32rpx;
+  background: #fff0f1;
+  font-size: 28rpx;
+  color: #dd4b55;
 }
-.act-danger { color: #c0392b; background: #fdecea; }
+.ev-del__icon {
+  width: 34rpx;
+  height: 34rpx;
+}
 
-.foot-space { height: 200rpx; }
-
-/* 底部操作条：常驻可见，报名不用滚到底找按钮 */
-.bar {
-  position: fixed;
+/* --------------------------------------------------------------------------
+   底部操作条
+   -------------------------------------------------------------------------- */
+.ev-bar {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
-  border-top: 1rpx solid #eef0f3;
-  padding: 18rpx 32rpx calc(18rpx + env(safe-area-inset-bottom));
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
-  z-index: 10;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: #ffffff;
+  border-top: 2rpx solid #e8edf5;
+  box-shadow: 0 -6rpx 24rpx rgba(23, 32, 51, 0.06);
 }
-.bar-btn {
-  text-align: center;
-  background: #1a5fb4;
-  color: #fff;
-  font-size: 31rpx;
-  padding: 24rpx 0;
+.ev-bar__btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  min-height: 96rpx;
+  margin: 0 auto;
+  padding: 0 24rpx;
   border-radius: 999rpx;
+  background: #19a66a;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
 }
-.bar-btn.joined {
-  background: #eef3fb;
-  color: #1a5fb4;
+.ev-bar__icon {
+  width: 34rpx;
+  height: 34rpx;
+  flex-shrink: 0;
+}
+.ev-bar__btn--joined {
+  background: #e9f8f1;
+  color: #128a56;
 }

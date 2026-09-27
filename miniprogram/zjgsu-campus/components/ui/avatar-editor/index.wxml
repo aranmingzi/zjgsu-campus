@@ -1,0 +1,11 @@
+<!-- components/ui/avatar-editor/index.wxml -->
+<view class="ui-avatar" style="width:{{size}};height:{{size}};" bindtap="onTap">
+  <image wx:if="{{src}}" class="ui-avatar__img" src="{{src}}" mode="aspectFill" />
+  <view wx:else class="ui-avatar__ph">{{initial || '我'}}</view>
+
+  <view wx:if="{{!readonly}}" class="ui-avatar__mask">
+    <image class="ui-avatar__mask-icon" src="/assets/icons/camera--white.svg" mode="aspectFit" />
+  </view>
+
+  <view wx:if="{{uploading}}" class="ui-avatar__loading" />
+</view>

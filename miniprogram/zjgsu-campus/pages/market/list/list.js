@@ -1,14 +1,22 @@
 // pages/market/list/list.js —— 失物招领 / 二手交易 列表
 // 三个 tab 共用一套逻辑，只靠 type 切换；云端没部署时照常显示本地缓存。
 const market = require('../../../utils/market.js');
-// 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置（论坛、闲置、活动三个板块共用）
-const bannerApi = require('../../../utils/banner.js');
 
+// 「全部」= TYPES 里没有的 key，getMarkets / searchMarkets 会原样返回全部类型
 const TABS = [
+  { key: 'all', label: '全部' },
   { key: 'lost', label: '寻物' },
   { key: 'found', label: '招领' },
   { key: 'sell', label: '闲置' }
 ];
+
+// 胶囊组件要的是「值数组 + 值->中文 的映射」，页面只负责把 TABS 摊成这两个
+const TAB_KEYS = TABS.map((t) => t.key);
+const TAB_LABELS = (function () {
+  const m = {};
+  TABS.forEach((t) => { m[t.key] = t.label; });
+  return m;
+})();
 
 // 选中态不能用 tab === 'lost' 这种判等来加 class（WXML 表达式能判等，但要写三遍），
 // 统一转成 map：tabMap.lost 就是 true/false
@@ -30,8 +38,10 @@ function catMap(current) {
 Page({
   data: {
     tabs: TABS,
-    tab: 'lost',
-    tabMap: tabMap('lost'),
+    tabKeys: TAB_KEYS,
+    tabLabels: TAB_LABELS,
+    tab: 'all',
+    tabMap: tabMap('all'),
     cats: CATS,
     category: 'all',
     catMap: catMap('all'),
@@ -43,10 +53,6 @@ Page({
     loading: true,
     firstLoaded: false,
     noMore: false,
-    // 顶部 Banner 轮播：4 秒自动切；手指一碰立刻停，抬手恢复
-    banner: [],
-    bannerIdx: 0,
-    bannerAutoplay: true
   },
 
   onLoad() {
@@ -56,43 +62,8 @@ Page({
   onShow() {
     // 从发布页退回来时刷新（刚发的不该看不到）
     if (this.data.firstLoaded) this.load();
-    this.loadBanner();
   },
 
-  /* ---------------- 顶部 Banner 轮播 ---------------- */
-
-  // 数据随 onShow 刷新：刚发的寻物 / 闲置、刚被顶起来的树洞，回来就该看到新的
-  loadBanner() {
-    this.setData({ banner: bannerApi.getBannerItems(), bannerIdx: 0, bannerAutoplay: true });
-  },
-
-  // 手指触碰轮播立即停：自动切换和拖动抢一个 swiper，触摸期间把 autoplay 关掉
-  onBannerTouchStart() {
-    if (!this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: false });
-  },
-
-  // 抬手 / 划出轮播区域就恢复自动切换
-  onBannerTouchEnd() {
-    if (this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: true });
-  },
-  onBannerTouchCancel() {
-    this.onBannerTouchEnd();
-  },
-
-  // swiper 自滚也会触发 change：只用来同步指示点
-  onBannerChange(e) {
-    const cur = e.detail.current;
-    if (cur === this.data.bannerIdx) return;
-    this.setData({ bannerIdx: cur });
-  },
-
-  onBannerTap(e) {
-    const b = this.data.banner[e.currentTarget.dataset.idx];
-    if (!b || !b.url) return;
-    wx.navigateTo({ url: b.url });
-  },
 
   async load() {
     const tab = this.data.tab;
@@ -123,6 +94,11 @@ Page({
     if (t === this.data.tab) return;
     this.setData({ tab: t, tabMap: tabMap(t), keyword: '' });
     this.load();
+  },
+
+  // 胶囊组件回传的是 detail.value，包一层换成 onTab 认的 data-k，筛选逻辑就不必重写
+  onPillChange(e) {
+    this.onTab({ currentTarget: { dataset: { k: e.detail.value } } });
   },
 
   onCategory(e) {

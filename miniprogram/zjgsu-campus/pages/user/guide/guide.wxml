@@ -1,52 +1,66 @@
-<view class="container">
-  <view class="hero">
-    <view class="hero-title">商砖小站 · 应用说明</view>
-    <view class="hero-sub">浙江工商大学校园小程序。五个底部标签 + 五个小工具，两分钟看完。</view>
-    <view class="hero-date">最后更新 {{updated}}</view>
+<!-- pages/user/guide —— 应用说明（这个小程序都能干什么）
+     内容全部按当前代码实测整理，改文案时记得同步 guide.js。
+     功能类 emoji 全部换成 assets/icons 里的线性 outline 图标（tabIcons / toolIcons）。 -->
+<app-header title="应用说明" showBack />
+
+<view class="container gd">
+  <view class="gd-hero">
+    <view class="title-lg gd-hero-title">商砖小站 · 应用说明</view>
+    <view class="gd-hero-sub">浙江工商大学校园小程序。五个底部标签 + 五个小工具，两分钟看完。</view>
+    <view class="gd-hero-date">最后更新 {{updated}}</view>
   </view>
 
   <view class="card">
-    <view class="sec-title">五个底部标签</view>
-    <view wx:for="{{tabs}}" wx:key="title" class="block">
-      <view class="tab-head">
-        <text class="tab-icon">{{item.icon}}</text>
-        <text class="tab-name">{{item.title}}</text>
-        <text class="tab-sub">{{item.sub}}</text>
-      </view>
-      <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="sec-line">· {{line}}</view>
-      <view wx:if="{{item.note}}" class="sec-note">{{item.note}}</view>
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="sec-title">五个小工具（入口分散，写清楚从哪进）</view>
-    <view wx:for="{{tools}}" wx:key="name" class="tool-row">
-      <view class="tool-icon">{{item.icon}}</view>
-      <view class="tool-body">
-        <view class="tool-name">
-          {{item.name}}
-          <text class="tool-from">{{item.from}}</text>
+    <view class="gd-sec">五个底部标签</view>
+    <view class="gd-block" wx:for="{{tabs}}" wx:key="title" wx:for-index="i">
+      <view class="gd-tab-head">
+        <view class="gd-tab-icon bg-brand-50">
+          <image class="gd-tab-icon-img" src="/assets/icons/{{tabIcons[i]}}--brand.svg" mode="aspectFit" />
         </view>
-        <view class="tool-desc">{{item.desc}}</view>
+        <view class="gd-tab-text">
+          <view class="gd-tab-name truncate">{{item.title}}</view>
+          <view class="muted truncate">{{item.sub}}</view>
+        </view>
+      </view>
+      <view class="gd-line" wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this">{{line}}</view>
+      <view wx:if="{{item.note}}" class="gd-note">
+        <image class="gd-note-icon" src="/assets/icons/sparkles--market.svg" mode="aspectFit" />
+        <text>{{item.note}}</text>
       </view>
     </view>
   </view>
 
   <view class="card">
-    <view class="sec-title">几点设计上的讲究</view>
-    <view wx:for="{{designs}}" wx:key="*this" class="sec-line">· {{item}}</view>
-  </view>
-
-  <view class="card warn-card">
-    <view class="sec-title">用之前先看两句</view>
-    <view wx:for="{{notes}}" wx:key="*this" class="sec-line warn-line">· {{item}}</view>
+    <view class="gd-sec">五个小工具（入口分散，写清楚从哪进）</view>
+    <view class="gd-tool" wx:for="{{tools}}" wx:key="name" wx:for-index="i">
+      <view class="gd-tool-icon bg-profile-soft">
+        <image class="gd-tool-icon-img" src="/assets/icons/{{toolIcons[i]}}--profile.svg" mode="aspectFit" />
+      </view>
+      <view class="gd-tool-body">
+        <view class="gd-tool-name">
+          {{item.name}}
+          <text class="gd-tool-from">{{item.from}}</text>
+        </view>
+        <view class="gd-tool-desc">{{item.desc}}</view>
+      </view>
+    </view>
   </view>
 
   <view class="card">
-    <view class="sec-title">有想法怎么办</view>
-    <view class="sec-line">· 缺功能、有意见：去论坛发一帖，管理员看得见。</view>
-    <view class="sec-line">· 看到违规内容：在帖子里点举报，会自动进审核队列。</view>
+    <view class="gd-sec">几点设计上的讲究</view>
+    <view class="gd-line" wx:for="{{designs}}" wx:key="*this">{{item}}</view>
   </view>
 
-  <view class="btn-primary tap" bindtap="onGoForum">去逛逛论坛</view>
+  <view class="card gd-warn">
+    <view class="gd-sec">用之前先看两句</view>
+    <view class="gd-line gd-line--warn" wx:for="{{notes}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <view class="card">
+    <view class="gd-sec">有想法怎么办</view>
+    <view class="gd-line">缺功能、有意见：去论坛发一帖，管理员看得见。</view>
+    <view class="gd-line">看到违规内容：在帖子里点举报，会自动进审核队列。</view>
+  </view>
+
+  <base-button block bindtap="onGoForum">去逛逛论坛</base-button>
 </view>

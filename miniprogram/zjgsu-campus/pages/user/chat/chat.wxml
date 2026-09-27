@@ -1,33 +1,42 @@
-<view class="page">
-  <scroll-view class="body" scroll-y="true" scroll-into-view="{{scrollTo}}" scroll-with-animation="true">
-    <view wx:if="{{loading}}" class="sk-tip">加载中…</view>
+<!-- pages/user/chat —— 和一位同学的私聊。
+     底部输入区是 position: fixed（.fixed-bar），所以整页容器绝不能出现 transform：
+     一旦祖先元素有 transform，fixed 会退化成相对定位，输入栏就沉不到屏幕底部。
+     云函数参数、历史分页、scrollTo 逻辑原样保留。 -->
+<app-header title="{{peerName || '私信'}}" showBack />
 
-    <view wx:elif="{{messages.length === 0}}" class="notice">
+<view class="ct">
+  <scroll-view class="ct-body" scroll-y="true" scroll-into-view="{{scrollTo}}" scroll-with-animation="true">
+    <view wx:if="{{loading}}" class="ct-tip">
+      <image class="ct-tip-icon" src="/assets/icons/loader--faint.svg" mode="aspectFit" />加载中…
+    </view>
+
+    <view wx:elif="{{messages.length === 0}}" class="ct-notice">
+      <image class="ct-notice-icon" src="/assets/icons/message-circle--faint.svg" mode="aspectFit" />
       还没有对话，发第一句话认识一下吧
     </view>
 
-    <view
-      wx:for="{{messages}}"
-      wx:key="id"
-      class="row {{item.mine ? 'row-mine' : ''}}"
-    >
-      <view id="msg-{{item.id}}" class="msg">
-        <view class="bubble {{item.mine ? 'b-mine' : ''}} {{item.failed ? 'b-failed' : ''}}">{{item.text}}</view>
-        <view class="clock">
+    <view wx:for="{{messages}}" wx:key="id" class="ct-row {{item.mine ? 'ct-row--mine' : ''}}">
+      <view id="msg-{{item.id}}" class="ct-msg">
+        <view class="ct-bubble {{item.mine ? 'ct-bubble--mine' : ''}} {{item.failed ? 'ct-bubble--failed' : ''}}">{{item.text}}</view>
+        <view class="ct-clock">
           {{item.clock}}<text wx:if="{{item.pending && !item.failed}}"> · 发送中</text><text wx:elif="{{item.failed}}"> · 未送达</text>
         </view>
       </view>
     </view>
-    <view class="bottom-space"></view>
+
+    <!-- 固定输入栏会压住内容，底部留出等高的空白，最后一句话才不会被盖住 -->
+    <view class="ct-bottom-space" />
   </scroll-view>
 
-  <view wx:if="{{contact}}" class="contact-bar tap" bindtap="copyContact">
-    {{contactLabel}}：{{contact}}　<text class="contact-copy">点击复制</text>
+  <view wx:if="{{contact}}" class="ct-contact tap" bindtap="copyContact">
+    <image class="ct-contact-icon" src="/assets/icons/message-square--profile.svg" mode="aspectFit" />
+    <text class="truncate">{{contactLabel}}：{{contact}}</text>
+    <text class="ct-contact-copy">点击复制</text>
   </view>
 
-  <view class="input-bar">
+  <view class="ct-bar fixed-bar">
     <input
-      class="input"
+      class="ct-input"
       placeholder="说点什么…"
       value="{{input}}"
       maxlength="300"
@@ -36,6 +45,8 @@
       bindconfirm="onConfirm"
       adjust-position="true"
     />
-    <view class="send tap" bindtap="onSendTap">发送</view>
+    <view class="ct-send tap" bindtap="onSendTap">
+      <image class="ct-send-icon" src="/assets/icons/send--white.svg" mode="aspectFit" />发送
+    </view>
   </view>
 </view>

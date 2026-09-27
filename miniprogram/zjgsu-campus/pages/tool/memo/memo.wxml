@@ -1,104 +1,139 @@
-<view class="container">
-  <!-- 顶部三个数：连续天数是这类工具唯一的「上瘾点」，必须放最大 -->
-  <view class="memo-top">
-    <view class="stat">
-      <view class="stat-num hot">{{streak}}</view>
-      <view class="stat-label">连续记天数</view>
+<!-- pages/tool/memo/memo.wxml —— 我的备忘
+     自定义导航 + app-header；顶部青蓝 → 主色渐变统计卡；写/改一条走共享的
+     components/ui/bottom-sheet（去掉了原来自己那份 mask + sheet）。
+     情绪 emoji 保留，功能类 emoji（📔 🔍 清空）换成线性图标。
+     数据字段沿用 memo.js：groups / total / streak / month / monthLabel / keyword /
+     showForm / editing / form / moods / moodMap。 -->
+<app-header title="我的备忘" showBack />
+
+<view class="container mm-page">
+
+  <!-- ---------------- 顶部三个数 ---------------- -->
+  <view class="mm-top">
+    <view class="mm-stat">
+      <view class="mm-stat__num mm-stat__num--hot">{{streak}}</view>
+      <view class="mm-stat__label">连续记天数</view>
     </view>
-    <view class="stat">
-      <view class="stat-num">{{total}}</view>
-      <view class="stat-label">累计记录</view>
+    <view class="mm-stat">
+      <view class="mm-stat__num">{{total}}</view>
+      <view class="mm-stat__label">累计记录</view>
     </view>
-    <view class="stat">
-      <view class="stat-num">{{month}}</view>
-      <view class="stat-label">{{monthLabel}}记录</view>
+    <view class="mm-stat">
+      <view class="mm-stat__num">{{month}}</view>
+      <view class="mm-stat__label">{{monthLabel}}记录</view>
     </view>
   </view>
 
-  <view wx:if="{{hasToday}}" class="memo-tip">今天已经记过了，顺手补一句也好。</view>
+  <view wx:if="{{hasToday}}" class="mm-tip">今天已经记过了，顺手补一句也好。</view>
+  <view wx:else class="mm-tip">今天还没记，花一分钟写下两句，明天就多一分「回头看」的乐趣。</view>
 
-  <view wx:else class="memo-tip">今天还没记，花一分钟写下两句，明天就多一分「回头看」的乐趣。</view>
-
-  <view wx:if="{{total === 0}}" class="card memo-intro">
-    <view class="intro-icon">📔</view>
-    <view class="intro-title">这里只属于你自己</view>
-    <view class="intro-sub">
-      记下今天的三两句话：吃了什么、想通了什么、明天要做什么。
-      别人看不到，你的同学也翻不到，只有你自己能翻。
+  <view wx:if="{{total === 0}}" class="card mm-intro">
+    <image class="mm-intro__icon" src="/assets/icons/notebook-pen--brand.svg" mode="aspectFit" />
+    <view class="mm-intro__title">这里只属于你自己</view>
+    <view class="mm-intro__sub">
+      记下今天的三两句话：吃了什么、想通了什么、明天要做什么。别人看不到，你的同学也翻不到，只有你自己能翻。
     </view>
-    <view class="intro-btn tap" bindtap="openForm">写下第一条</view>
+    <view class="mm-intro__btn pressable" hover-class="mm-intro__btn--hover" hover-stay-time="80" bindtap="openForm">写下第一条</view>
   </view>
 
-  <view class="memo-search">
-    <text class="search-icon">🔍</text>
+  <!-- ---------------- 搜索 ---------------- -->
+  <view class="search-bar mm-search">
+    <image class="mm-search__icon" src="/assets/icons/search--muted.svg" mode="aspectFit" />
     <input
-      class="search-input"
+      class="mm-search__input"
       value="{{keyword}}"
       placeholder="在本机记录里搜关键词"
-      placeholder-class="search-ph"
+      placeholder-class="mm-search__ph"
       bindinput="onSearch"
     />
-    <text wx:if="{{keyword}}" class="search-clear tap" bindtap="onClearSearch">清空</text>
+    <view
+      wx:if="{{keyword}}"
+      class="mm-search__clear pressable"
+      hover-class="mm-search__clear--hover"
+      hover-stay-time="80"
+      bindtap="onClearSearch"
+    >
+      <image class="mm-search__clear-icon" src="/assets/icons/x--muted.svg" mode="aspectFit" />
+    </view>
   </view>
 
+  <!-- ---------------- 按日期分组的列表 ---------------- -->
   <block wx:for="{{groups}}" wx:key="date">
-    <view class="day-head">
-      <text class="day-date">{{item.date}}</text>
-      <text class="day-week">{{item.week}}</text>
+    <view class="mm-day">
+      <text class="mm-day__date">{{item.date}}</text>
+      <text class="mm-day__week">{{item.week}}</text>
     </view>
 
     <view
       wx:for="{{item.items}}"
       wx:for-item="m"
       wx:key="id"
-      class="card memo-item tap"
+      class="card mm-item pressable"
+      hover-class="mm-item--hover"
+      hover-stay-time="80"
       data-item="{{m}}"
       bindtap="onEdit"
     >
-      <view class="memo-mood">{{m.moodIcon}}</view>
-      <view class="memo-body">
-        <view class="memo-text">{{m.brief}}</view>
-        <view class="memo-meta">{{m.moodName}}</view>
+      <!-- 心情是这个页面的情绪表情，按契约保留；功能类 emoji 已经全部换成图标 -->
+      <text class="mm-item__mood">{{m.moodIcon}}</text>
+      <view class="mm-item__body">
+        <view class="mm-item__text clamp2">{{m.brief}}</view>
+        <view class="mm-item__meta">{{m.moodName}}</view>
       </view>
-      <view class="memo-del tap" catchtap="onRemove" data-item="{{m}}">删除</view>
+      <view
+        class="mm-item__del pressable"
+        hover-class="mm-item__del--hover"
+        hover-stay-time="80"
+        catchtap="onRemove"
+        data-item="{{m}}"
+      >
+        <image class="mm-item__del-icon" src="/assets/icons/trash-2--muted.svg" mode="aspectFit" />
+      </view>
     </view>
   </block>
 
-  <view wx:if="{{groups.length === 0 && keyword}}" class="bottom-note">没搜到包含「{{keyword}}」的记录。</view>
-  <view wx:elif="{{groups.length > 0}}" class="bottom-note">点任意一条可以改，改完立刻生效。记录存在云端，换手机还在。</view>
+  <view wx:if="{{groups.length === 0 && keyword}}" class="mm-note">没搜到包含「{{keyword}}」的记录。</view>
+  <view wx:elif="{{groups.length > 0}}" class="mm-note">点任意一条可以改，改完立刻生效。记录存在云端，换手机还在。</view>
 
-  <view class="fab fab-text tap" bindtap="openForm">＋ 写一条</view>
+  <view class="mm-fab pressable" hover-class="mm-fab--hover" hover-stay-time="80" bindtap="openForm">
+    <image class="mm-fab__icon" src="/assets/icons/plus--white.svg" mode="aspectFit" />
+    <text>写一条</text>
+  </view>
 
-  <view wx:if="{{showForm}}" class="mask tap" bindtap="closeForm">
-    <view class="sheet tap" catchtap="noop">
-      <view class="sheet-title">{{editing ? '改一条' : '写一条'}}</view>
-
-      <view class="form-row">
-        <text class="form-label">日期</text>
+  <!-- ---------------- 写 / 改一条：半屏抽屉 ---------------- -->
+  <bottom-sheet
+    open="{{showForm}}"
+    title="{{editing ? '改一条' : '写一条'}}"
+    description="只给自己看，同学和审核员都翻不到"
+    bind:close="closeForm"
+  >
+    <view class="mm-sheet">
+      <view class="mm-form-row">
+        <text class="mm-form-label">日期</text>
         <picker mode="date" value="{{form.date}}" bindchange="onFormDate">
-          <view class="form-picker">{{form.date}}</view>
+          <view class="mm-form-picker">{{form.date}}</view>
         </picker>
       </view>
 
-      <view class="form-label">今天的心情</view>
-      <view class="mood-row">
+      <text class="mm-form-label">今天的心情</text>
+      <view class="mm-moods">
         <view
           wx:for="{{moods}}"
           wx:key="key"
-          class="mood {{moodMap[item.key] ? 'on' : ''}} tap"
+          class="mm-mood {{moodMap[item.key] ? 'mm-mood-on' : ''}} tap"
           data-k="{{item.key}}"
           bindtap="onFormMood"
         >
-          <text class="mood-icon">{{item.icon}}</text>
-          <text class="mood-name">{{item.name}}</text>
+          <text class="mm-mood__icon">{{item.icon}}</text>
+          <text class="mm-mood__name">{{item.name}}</text>
         </view>
       </view>
 
-      <view class="form-label">想说点什么</view>
+      <text class="mm-form-label">想说点什么</text>
       <textarea
-        class="memo-input"
+        class="mm-input"
         placeholder="今天发生了什么？"
-        placeholder-class="memo-ph"
+        placeholder-class="mm-input__ph"
         auto-height
         maxlength="2000"
         show-confirm-bar="{{false}}"
@@ -106,10 +141,10 @@
         bindinput="onFormText"
       ></textarea>
 
-      <view class="sheet-ops">
-        <view class="sheet-btn tap" bindtap="closeForm">取消</view>
-        <view class="sheet-btn primary tap" bindtap="onSave">{{editing ? '保存修改' : '记下来'}}</view>
+      <view class="mm-sheet__ops">
+        <view class="mm-sheet__btn pressable" hover-class="mm-sheet__btn--hover" hover-stay-time="80" bindtap="closeForm">取消</view>
+        <view class="mm-sheet__btn mm-sheet__btn--primary pressable" hover-class="mm-sheet__btn--hover" hover-stay-time="80" bindtap="onSave">{{editing ? '保存修改' : '记下来'}}</view>
       </view>
     </view>
-  </view>
+  </bottom-sheet>
 </view>

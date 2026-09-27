@@ -1,75 +1,113 @@
-<view class="container">
-  <view class="hole-head">
-    <view class="hole-title">🎭 匿名树洞</view>
-    <view class="hole-sub">没有昵称，没有头像，没有人知道这是谁写的。说点平时不敢说的。</view>
-  </view>
+<!-- pages/forum/hole/hole.wxml —— 匿名树洞（深底 + 6 种情绪） -->
+<app-header title="匿名树洞" showBack dark />
 
-  <view class="card composer">
-    <input
-      class="hole-title-input"
-      placeholder="给树洞起个标题（可不填）"
-      value="{{title}}"
-      bindinput="onTitle"
-      maxlength="60"
-    />
-    <textarea
-      class="hole-content"
-      placeholder="随便说，没人认识你"
-      value="{{content}}"
-      bindinput="onContent"
-      maxlength="2000"
-      auto-height="{{true}}"
-      show-confirm-bar="{{false}}"
-      confirm-type="send"
-      bindconfirm="send"
-    />
-    <view class="composer-foot">
-      <text class="anon-tip">发布后强制匿名 · 违规照样会被删</text>
-      <view class="send-btn {{content ? '' : 'disabled'}} tap" bindtap="send">{{posting ? '投放中…' : '投进树洞'}}</view>
+<view class="hole-page hole-page--{{mood}}">
+  <!-- 氛围层：底色 / 光晕 / 柔光 / 星点，切情绪时 720ms 过渡 -->
+  <view class="hole-page__aura"></view>
+  <view class="hole-page__sec"></view>
+  <view class="hole-page__dots"></view>
+
+  <view class="hole-page__body">
+    <view class="mood-hero">
+      <view class="mood-hero__badge">
+        <image class="mood-hero__icon" src="/assets/icons/mood-{{mood}}--white.svg" mode="aspectFit" />
+      </view>
+      <view class="mood-hero__title">树洞会接住每一种情绪</view>
+      <view class="mood-hero__prompt">{{mood === 'calm' ? '把今天轻轻放下，慢慢呼吸。' : (mood === 'happy' ? '把这份快乐说出来，会变成双份。' : (mood === 'sad' ? '不用马上振作，先在这里停一会儿。' : (mood === 'angry' ? '把火气留在这里，说完会轻一点。' : (mood === 'awkward' ? '大家都尴尬过，说出来就不只你一个。' : '累的时候不用解释，靠一会儿就好。'))))}}</view>
     </view>
-  </view>
 
-  <scroll-view class="sort-bar-wrap" scroll-x="true">
-    <view class="sort-bar">
-      <view wx:for="{{sortOptions}}" wx:key="k"
-            class="sort-item {{sort === item.k ? 'on' : ''}} tap"
-            data-s="{{item.k}}" bindtap="onSortPick">{{item.icon}} {{item.label}}</view>
+    <scroll-view class="mood-chips no-scrollbar" scroll-x="true" show-scrollbar="{{false}}">
+      <view class="mood-chips__row">
+        <view class="mood-chip {{mood === 'calm' ? 'on' : ''}} tap" data-m="calm" bindtap="onMood">
+          <image class="mood-chip__icon" src="/assets/icons/mood-calm--white.svg" mode="aspectFit" />
+          <text>平静</text>
+        </view>
+        <view class="mood-chip {{mood === 'happy' ? 'on' : ''}} tap" data-m="happy" bindtap="onMood">
+          <image class="mood-chip__icon" src="/assets/icons/mood-happy--white.svg" mode="aspectFit" />
+          <text>开心</text>
+        </view>
+        <view class="mood-chip {{mood === 'sad' ? 'on' : ''}} tap" data-m="sad" bindtap="onMood">
+          <image class="mood-chip__icon" src="/assets/icons/mood-sad--white.svg" mode="aspectFit" />
+          <text>Emo</text>
+        </view>
+        <view class="mood-chip {{mood === 'angry' ? 'on' : ''}} tap" data-m="angry" bindtap="onMood">
+          <image class="mood-chip__icon" src="/assets/icons/mood-angry--white.svg" mode="aspectFit" />
+          <text>愤怒</text>
+        </view>
+        <view class="mood-chip {{mood === 'awkward' ? 'on' : ''}} tap" data-m="awkward" bindtap="onMood">
+          <image class="mood-chip__icon" src="/assets/icons/mood-awkward--white.svg" mode="aspectFit" />
+          <text>尴尬</text>
+        </view>
+        <view class="mood-chip {{mood === 'tired' ? 'on' : ''}} tap" data-m="tired" bindtap="onMood">
+          <image class="mood-chip__icon" src="/assets/icons/mood-tired--white.svg" mode="aspectFit" />
+          <text>疲惫</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="mood-kws">
+      <view class="mood-kw" wx:for="{{mood === 'calm' ? ['放松', '治愈', '晚安'] : (mood === 'happy' ? ['分享', '好运', '哈哈'] : (mood === 'sad' ? ['难过', '迷茫', '抱抱'] : (mood === 'angry' ? ['吐槽', '气死', '无语'] : (mood === 'awkward' ? ['社死', '脚趾抠地', '裂开'] : ['累麻了', '碎碎念', '求安慰']))))}}" wx:key="*this"># {{item}}</view>
     </view>
-  </scroll-view>
 
-  <view wx:if="{{posts.length === 0}}" class="empty">
-    <view class="empty-icon">🌳</view>
-    <view>树洞还是空的</view>
-    <view class="empty-hint">前面第一条，可能被人记很久</view>
-  </view>
-
-  <view
-    wx:for="{{posts}}"
-    wx:key="id"
-    wx:for-item="p"
-    class="card hole-card tap post-anim"
-    data-id="{{p.id}}"
-    bindtap="goDetail"
-  >
-    <view class="hole-card-head">
-      <text class="hole-card-who">{{p.showAuthor}}</text>
-      <text class="muted hole-card-time">{{p.time}}</text>
+    <!-- 写一条：树洞只收文字，门槛压到最低 -->
+    <view class="glass-card composer">
+      <input class="composer__title" placeholder="给树洞起个标题（可不填）" value="{{title}}" bindinput="onTitle" maxlength="60" />
+      <textarea class="composer__content" placeholder="随便说，没人认识你" value="{{content}}" bindinput="onContent" maxlength="2000" auto-height="{{true}}" show-confirm-bar="{{false}}" confirm-type="send" bindconfirm="send" />
+      <view class="composer__foot">
+        <text class="composer__tip">发布后强制匿名 · 违规照样会被删</text>
+        <view class="composer__send {{content ? '' : 'composer__send--off'}} tap" bindtap="send">{{posting ? '投放中…' : '投进树洞'}}</view>
+      </view>
     </view>
-    <view wx:if="{{p.title}}" class="hole-card-title">{{p.title}}</view>
-    <view class="hole-card-content">{{p.content}}</view>
-    <view class="hole-card-foot">
-      <!-- 树洞的赞叫「抱抱」：安慰说真心话的人。没有踩 —— 想吐槽去主论坛，
-           树洞只收温柔。catchtap 挡住卡片跳转，点抱抱不会误进详情 -->
-      <view class="vote tap {{p.liked ? 'v-on' : ''}}" data-id="{{p.id}}" catchtap="onPostVote">🤗 抱抱 {{p.likes}}</view>
-      <text class="muted stat">💬 {{p.comments.length}}</text>
-      <!-- 匿名内容照样能被举报：匿名是保护作者不被认出来，不是免罪牌。
-           catchtap 挡住卡片的跳转，举报不会顺带点进详情 -->
-      <view class="vote tap {{p.reported ? 'v-done' : ''}}" data-id="{{p.id}}" data-openid="{{p.authorOpenid}}" catchtap="onReport">{{p.reported ? '✓ 已举报' : '⚑ 举报'}}</view>
-      <button class="foot-share" open-type="share">↗ 分享</button>
-    </view>
-  </view>
 
-  <view wx:if="{{posts.length && sort === 'hot'}}" class="hole-tip">
-    热度 =（抱抱 + 评论×2）× 时间衰减，72 小时外的帖只剩两成，热榜天天有新东西。
+    <view class="sort-seg">
+      <view class="segmented">
+        <view wx:for="{{sortOptions}}" wx:key="k"
+              class="segmented-item {{sort === item.k ? 'segmented-item-on' : ''}} tap"
+              data-s="{{item.k}}" bindtap="onSortPick">
+          <image class="sort-seg__icon" src="{{item.k === 'latest' ? '/assets/icons/clock--muted.svg' : (item.k === 'hot' ? '/assets/icons/flame--brand.svg' : (item.k === 'likes' ? '/assets/icons/thumbs-up--brand600.svg' : '/assets/icons/message-circle--muted.svg'))}}" mode="aspectFit" />
+          <text class="sort-seg__label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{posts.length === 0}}" class="hole-empty">
+      <image class="hole-empty__art" src="/assets/illustrations/treehole-night-light.svg" mode="aspectFit" />
+      <view class="hole-empty__title">树洞还是空的</view>
+      <view class="hole-empty__hint">前面第一条，可能被人记很久</view>
+    </view>
+
+    <view wx:for="{{posts}}" wx:key="id" wx:for-item="p" class="glass-card hole-card tap" data-id="{{p.id}}" bindtap="goDetail">
+      <view class="hole-card__head">
+        <text class="hole-card__who">{{p.showAuthor}}</text>
+        <text class="hole-card__time">{{p.time}}</text>
+        <view class="hole-card__replies">
+          <image class="hole-card__mini-icon" src="/assets/icons/message-circle--white.svg" mode="aspectFit" />
+          <text>{{p.comments.length}}</text>
+        </view>
+      </view>
+      <view wx:if="{{p.title}}" class="hole-card__title">{{p.title}}</view>
+      <view class="hole-card__content">{{p.content}}</view>
+
+      <!-- 情绪互动：emoji 是表达情绪用的，保留；这里只展示，点卡片进详情 -->
+      <view class="hole-card__reactions">
+        <view class="reaction">💖 抱抱</view>
+        <view class="reaction">🍵 递茶</view>
+        <view class="reaction">🐾 摸摸头</view>
+      </view>
+
+      <view class="hole-card__foot">
+        <!-- 树洞的赞叫「抱抱」：catchtap 挡住卡片跳转，点抱抱不会误进详情 -->
+        <view class="hole-card__act {{p.liked ? 'hole-card__act--on' : ''}} tap" data-id="{{p.id}}" catchtap="onPostVote">抱抱 {{p.likes}}</view>
+        <view class="hole-card__act hole-card__act--right {{p.reported ? 'hole-card__act--done' : ''}}"
+              data-id="{{p.id}}" data-openid="{{p.authorOpenid}}" catchtap="onReport">{{p.reported ? '已举报' : '举报'}}</view>
+        <button class="hole-card__share" open-type="share">
+          <image class="hole-card__mini-icon" src="/assets/icons/share-2--white.svg" mode="aspectFit" />
+        </button>
+      </view>
+    </view>
+
+    <view wx:if="{{posts.length && sort === 'hot'}}" class="hole-tip">
+      热度 =（抱抱 + 评论×2）× 时间衰减，72 小时外的帖只剩两成，热榜天天有新东西。
+    </view>
   </view>
 </view>

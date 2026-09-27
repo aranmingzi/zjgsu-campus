@@ -1,4 +1,10 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "内容审核",
-  "enablePullDownRefresh": true
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "base-button": "/components/ui/base-button/index",
+    "empty-state": "/components/ui/empty-state/index"
+  }
 }

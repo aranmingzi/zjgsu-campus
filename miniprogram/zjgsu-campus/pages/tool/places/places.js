@@ -18,7 +18,12 @@ Page({
     showForm: false,
     form: { name: '', category: '其他', desc: '', address: '', latitude: 0, longitude: 0 },
     catFormMap: {},
-    picked: false
+    picked: false,
+    // 地图标记由 load() 从 list 的经纬度算出来；markerId 和 list 下标一一对应
+    markers: [],
+    // 半屏抽屉：点列表项 / 点地图标记时打开，里面选「步行路线 / 呼叫校车」
+    navOpen: false,
+    sheetPlace: null
   },
 
   onLoad() {
@@ -36,12 +41,36 @@ Page({
     const list = await userApi.placeList(this.data.category === '全部' ? '' : this.data.category);
     this.setData({
       list: (list || []).map((p) => Object.assign({}, p, {
-        catIcon: p.category === '教学楼' ? '🏫' : (p.category === '食堂' ? '🍚'
-          : (p.category === '宿舍' ? '🛏️' : (p.category === '快递' ? '📦'
-            : (p.category === '运动' ? '⚽' : '📍'))))
+        catIcon: p.category === '教学楼' ? 'graduation-cap' : (p.category === '食堂' ? 'utensils'
+          : (p.category === '宿舍' ? 'home' : (p.category === '快递' ? 'inbox'
+            : (p.category === '运动' ? 'dumbbell' : 'pin'))))
       })),
-      loading: false
+      loading: false,
+      markers: this.buildMarkers(list || [])
     });
+  },
+
+  // map 组件的 markers 只认数字 id，所以这里用「下标 + 1」当 markerId，
+  // onMarkerTap 再按这个 id 反查回地点
+  buildMarkers(list) {
+    return (list || []).map((p, i) => ({
+      id: i + 1,
+      latitude: Number(p.latitude) || 0,
+      longitude: Number(p.longitude) || 0,
+      name: p.name || '',
+      width: 32,
+      height: 32
+    })).filter((m) => m.latitude && m.longitude);
+  },
+
+  placeByMarkerId(markerId) {
+    const p = this.data.list[Number(markerId) - 1];
+    return p || null;
+  },
+
+  openSheet(p) {
+    if (!p) return;
+    this.setData({ sheetPlace: p, navOpen: true });
   },
 
   onCategory(e) {
@@ -120,9 +149,24 @@ Page({
 
   /* ---------------- 使用 ---------------- */
 
-  // 点「导航」直接唤起微信内置地图，同学可以看位置、叫导航
+  // 点列表里的「导航」：不再直接跳地图，先弹抽屉让同学自己选到达方式
   onOpen(e) {
-    const p = this.data.list[e.currentTarget.dataset.i];
+    this.openSheet(this.data.list[e.currentTarget.dataset.i]);
+  },
+
+  // 点地图上的标记：同上，弹同一个抽屉
+  onMarkerTap(e) {
+    this.openSheet(this.placeByMarkerId(e.markerId));
+  },
+
+  onSheetClose() {
+    this.setData({ navOpen: false });
+  },
+
+  // 步行路线还是走 openLocation —— 微信内置地图能直接算步行路径，
+  // 比在小程序里塞一个只会转圈的路径页靠谱
+  onWalkRoute() {
+    const p = this.data.sheetPlace;
     if (!p) return;
     wx.openLocation({
       latitude: Number(p.latitude),
@@ -131,6 +175,16 @@ Page({
       address: p.address || p.desc || '',
       scale: 18
     });
+  },
+
+  // 校车热线要走审核才能接进小程序，没配好之前不说假话，只给一个明确的出口
+  onCallBus() {
+    const hotline = String(this.data.busHotline || '').replace(/\s/g, '');
+    if (!hotline) {
+      wx.showToast({ title: '校车热线待配置，先用上面的地图导航过去', icon: 'none', duration: 2600 });
+      return;
+    }
+    wx.makePhoneCall({ phoneNumber: hotline, fail: () => {} });
   },
 
   onRemove(e) {

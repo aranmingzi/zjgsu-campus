@@ -1,4 +1,8 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "应用说明",
-  "usingComponents": {}
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "base-button": "/components/ui/base-button/index"
+  }
 }

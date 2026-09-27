@@ -1,4 +1,8 @@
 {
-  "navigationBarTitleText": "失物招领 · 闲置分享",
-  "enablePullDownRefresh": false
+  "navigationBarTitleText": "闲置分享",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "pill-selector": "/components/ui/pill-selector/index",
+    "sticky-filter": "/components/ui/sticky-filter/index"
+  }
 }

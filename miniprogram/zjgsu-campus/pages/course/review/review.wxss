@@ -1,173 +1,226 @@
-.label {
-  font-weight: 600;
-  margin-bottom: 16rpx;
+/* pages/course/review —— 写 / 改评价。类名一律 rv-*，
+   app.wxss 里的 .card / .tag / .title-sm / .muted 直接复用。
+   底部留出 200rpx 给最后一组按钮，别让「提交」贴着屏幕底边。 */
+.rv-page {
+  padding-bottom: 200rpx;
 }
-.stars-pick {
+
+.rv-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 18rpx;
+}
+.rv-course {
+  margin-top: 6rpx;
+}
+
+/* ---------- 评分对象 + 星条 ---------- */
+.rv-targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+.rv-target {
+  display: inline-flex;
+  align-items: center;
+  min-height: 88rpx;
+  padding: 0 32rpx;
+  border-radius: 999rpx;
+  background: #f4f6f9;
+  border: 2rpx solid #e6e9ee;
+  font-size: 26rpx;
+  color: #6f7b91;
+}
+.rv-target-on {
+  background: #2b5aed;
+  border-color: #2b5aed;
+  color: #ffffff;
+  font-weight: 600;
+}
+.rv-target-num {
+  margin-left: 8rpx;
+  font-size: 22rpx;
+  color: #98a3b8;
+}
+.rv-target-on .rv-target-num { color: #ffe0b2; }
+.rv-target-off {
+  border-style: dashed;
+  color: #b0b6be;
+}
+
+.rv-scale-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #172033;
+  margin-bottom: 12rpx;
+}
+
+.rv-stars {
   display: flex;
   align-items: center;
 }
-.star-pick {
-  font-size: 56rpx;
-  color: #d9dde3;
-  margin-right: 12rpx;
-}
-.star-pick.on {
-  color: #ff9f1c;
-}
-.score-text {
-  margin-left: 12rpx;
-  color: #ff9f1c;
-  font-weight: 600;
-}
-.star-hint {
-  font-size: 22rpx;
-  margin-top: 14rpx;
-}
-/* 评分对象切换：先挑给谁打分，再点星 */
-.target-row {
+/* 星：热区 88rpx，图标 60rpx，够点也够看 */
+.rv-star {
+  width: 96rpx;
+  height: 88rpx;
   display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 22rpx;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.target-chip {
-  font-size: 24rpx;
-  color: #6b7280;
-  background: #f4f6f9;
-  border: 1rpx solid #e6e9ee;
-  border-radius: 999rpx;
-  padding: 12rpx 26rpx;
-  margin: 0 16rpx 12rpx 0;
+.rv-star-icon {
+  width: 56rpx;
+  height: 56rpx;
 }
-.target-chip.on {
-  color: #fff;
-  background: #1a5fb4;
-  border-color: #1a5fb4;
-  font-weight: 600;
+.rv-star-text {
+  margin-left: 16rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #d98c0b;
 }
-.target-chip.on .target-num { color: #ffe0b2; }
-.target-chip.target-off { color: #c2c7cd; border-style: dashed; }
-.target-num { font-size: 22rpx; color: #9aa0a6; margin-left: 6rpx; }
-
-.scale-title {
-  font-size: 26rpx;
-  color: #3d434b;
-  font-weight: 600;
-  margin-bottom: 12rpx;
-}
-/* 老师分用偏暖的橙色，和课程分的蓝调区分开，一眼能认出在打哪个 */
-.star-pick.on2.on { color: #e8703a; }
-
-/* 打完课程分，顺手引导去给老师打分 */
-.to-teacher {
-  margin-top: 22rpx;
-  padding-top: 20rpx;
-  border-top: 1rpx dashed #e3e7ec;
-  font-size: 25rpx;
-  color: #1a5fb4;
-  font-weight: 600;
-}
-.tag-row {
-  margin-top: 4rpx;
-}
-.tag-pick {
-  display: inline-block;
-  font-size: 24rpx;
-  color: #6b7280;
-  background: #f0f1f3;
-  border-radius: 8rpx;
-  padding: 10rpx 22rpx;
-  margin: 0 16rpx 16rpx 0;
-}
-.tag-pick.on {
-  color: #1a5fb4;
-  background: #eef3fb;
-  font-weight: 600;
-}
-.textarea {
-  width: 100%;
-  height: 220rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
-}
-.counter {
-  text-align: right;
-  color: #b0b6be;
-  font-size: 22rpx;
-}
-.btn-primary {
+/* 老师分用偏暖的橙色，和课程分的蓝调区分开，一眼看得出在打哪个分 */
+.rv-star-text--warm { color: #f58a32; }
+.rv-star-hint {
   margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
 }
-.draft-btn {
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 20rpx;
+
+.rv-tip {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #6f7b91;
 }
-.anon-card {
+.rv-tip-ok {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  color: #128a56;
 }
-.anon-row {
+.rv-tip-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+
+/* ---------- 匿名 ---------- */
+.rv-anon-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24rpx;
 }
-.anon-title {
-  font-size: 30rpx;
-  font-weight: 600;
+.rv-anon-main {
+  min-width: 0;
 }
-.anon-sub {
-  font-size: 24rpx;
+.rv-anon-sub {
   margin-top: 4rpx;
+  font-size: 24rpx;
 }
-.tip {
-  font-size: 22rpx;
-  line-height: 1.6;
-  margin-top: 8rpx;
+
+/* ---------- 标签多选 ---------- */
+.rv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
 }
-.picked-row {
+/* 没选中的标签盖掉 .tag 的场景色，保持「可多选但还没选」的观感 */
+.rv-tag-off {
+  background: #f0f1f3;
+  color: #6f7b91;
+}
+.rv-picked {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 12rpx;
+  gap: 12rpx;
+  margin-top: 16rpx;
 }
-.picked-row .tag {
-  margin: 0 12rpx 8rpx 0;
-}
+.rv-picked-label { font-size: 24rpx; }
+.rv-picked-tag { background: #eff4ff; color: #2047c9; }
 
-.tip.ok { color: #0f8b5f; }
-.input {
-  background: #f7f8fa;
-  border-radius: 14rpx;
-  /* 定高修复：input 只给 padding 不给 height，字会被上下切掉一半 */
-  height: 88rpx;
-  padding: 0 22rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
+/* ---------- 任课老师 ---------- */
+.rv-input {
   width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #172033;
+  background: #f6f8fb;
+  border-radius: 24rpx;
+  box-sizing: border-box;
 }
-.match-row {
+.rv-match {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 12rpx;
+  gap: 12rpx;
+  margin-top: 14rpx;
 }
-.match-chip {
-  font-size: 23rpx;
-  color: #5b636d;
+.rv-match-chip {
+  font-size: 24rpx;
+  color: #6f7b91;
   background: #f2f4f7;
   border-radius: 999rpx;
-  padding: 10rpx 22rpx;
-  margin: 0 12rpx 10rpx 0;
+  padding: 10rpx 24rpx;
 }
-.match-chip.on {
-  color: #fff;
-  background: #1a5fb4;
+.rv-match-chip-on {
+  background: #2b5aed;
+  color: #ffffff;
+  font-weight: 600;
 }
-.add-row {
-  margin-top: 14rpx;
-  text-align: center;
-  font-size: 25rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 14rpx;
-  padding: 18rpx 0;
+.rv-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  min-height: 88rpx;
+  margin-top: 16rpx;
+  border-radius: 24rpx;
+  background: #eff4ff;
+  color: #2047c9;
+  font-size: 26rpx;
+  font-weight: 600;
 }
+.rv-add-icon {
+  width: 30rpx;
+  height: 30rpx;
+}
+.rv-to-teacher {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx dashed #e3e7ec;
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #2b5aed;
+}
+
+/* ---------- 正文 ---------- */
+.rv-textarea {
+  width: 100%;
+  height: 260rpx;
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #172033;
+  box-sizing: border-box;
+  background: #f6f8fb;
+  border-radius: 24rpx;
+  padding: 20rpx 24rpx;
+}
+.rv-counter {
+  margin-top: 8rpx;
+  text-align: right;
+  font-size: 22rpx;
+  color: #98a3b8;
+}
+
+/* ---------- 底部按钮组 ---------- */
+.rv-submit {
+  display: block;
+  margin-top: 12rpx;
+}
+.rv-submit base-button { margin-bottom: 20rpx; }

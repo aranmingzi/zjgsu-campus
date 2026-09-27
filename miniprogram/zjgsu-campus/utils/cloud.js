@@ -66,4 +66,18 @@ function openidTrouble() {
   return { openid: _openid, tried: _tries, ok: !!_openid };
 }
 
-module.exports = { ensureCloud, db, getOpenid, fetchOpenid, openidTrouble, cfg };
+// ---- 云函数统一入口 ------------------------------------------------------
+// 早先 chat / event / user 三个模块各抄了一份一模一样的调用，
+// 改个云函数名、加个超时都要改三处，漏一处就是「就这个模块突然全挂」，
+// 最难查的就是这种。现在只留这一份，上面三个模块各自转发过来
+// （user 那侧还要再套一层 12 秒超时）。
+// 云函数返回 null = 「没部署 / 网络断 / 超时」，调用方据此决定要不要提示。
+function callFunction(action, payload) {
+  if (!cfg.USE_CLOUD || !ensureCloud()) return Promise.resolve(null);
+  return wx.cloud.callFunction({
+    name: 'user',
+    data: Object.assign({ action: action }, payload || {})
+  }).then((res) => (res && res.result) || null).catch(() => null);
+}
+
+module.exports = { ensureCloud, db, getOpenid, fetchOpenid, openidTrouble, callFunction, cfg };

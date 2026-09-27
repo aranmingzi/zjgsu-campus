@@ -1,189 +1,305 @@
-<view class="container">
+<view class="container hub">
 
-  <!-- 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置，自动缓慢切换，触摸即停 -->
-  <include src="/utils/banner.wxml"/>
 
-  <!-- 顶部分段：一个位置装三块内容 -->
-  <view class="seg">
+  <!-- ============ 三档切换：活动信息 / 校历 / 地点地图 ============ -->
+  <!-- 选中档用校园绿浅底 #E9F8F1 + 主色文字，切换时底色 / 文字 / 图标一起过渡，
+       不做位移，免得 tab 页出现横向跳动 -->
+  <view class="hub-seg">
     <view
       wx:for="{{tabs}}"
       wx:key="key"
-      class="seg-item {{tabMap[item.key] ? 'on' : ''}} tap"
+      class="hub-seg__item {{tabMap[item.key] ? 'on' : ''}} tap pressable"
       data-k="{{item.key}}"
       bindtap="onTab"
-    >{{item.label}}</view>
+    >
+      <image
+        class="hub-seg__icon"
+        src="/assets/icons/{{item.key === 'events' ? 'megaphone' : (item.key === 'calendar' ? 'calendar-days' : 'map-pinned')}}--{{tabMap[item.key] ? 'campus' : 'muted'}}.svg"
+        mode="aspectFit"
+      />
+      <text class="hub-seg__label">{{item.label}}</text>
+    </view>
   </view>
 
   <!-- ============ 活动信息 ============ -->
   <block wx:if="{{tab === 'events'}}">
-    <view class="notice tap" bindtap="goAddEvent">
-      <text class="notice-txt">有讲座、比赛、组队？自己发一条，同学就能报名</text>
-      <text class="notice-go">发布 ›</text>
+
+    <!-- 发布入口：讲座 / 比赛 / 组队都是「有人发起、有人报名」的事 -->
+    <view class="card hub-publish tap pressable" bindtap="goAddEvent">
+      <view class="hub-publish__icon">
+        <image class="hub-publish__icon-img" src="/assets/icons/megaphone--campus.svg" mode="aspectFit" />
+      </view>
+      <view class="hub-publish__body">
+        <view class="hub-publish__title">有活动想发起？</view>
+        <view class="hub-publish__sub">讲座、比赛和组队都可以发布</view>
+      </view>
+      <view class="hub-publish__go">
+        <text class="hub-publish__go-text">发布</text>
+        <image class="hub-publish__go-icon" src="/assets/icons/chevron-right--campus.svg" mode="aspectFit" />
+      </view>
     </view>
 
     <!-- 官网同步条：同学最想知道的就是「官方那批有多新」 -->
-    <view class="sync-bar">
-      <view class="sync-left">
-        <view class="sync-title">🏛️ 官网活动 {{officialCount}} 条</view>
-        <view class="sync-sub">{{lastSync ? ('上次更新 ' + lastSync) : '还没同步过，点右边抓一次'}}</view>
+    <view class="card hub-sync">
+      <view class="hub-sync__main">
+        <view class="hub-sync__title">
+          <image class="hub-sync__icon" src="/assets/icons/graduation-cap--campus.svg" mode="aspectFit" />
+          <text class="truncate">学校官网活动 {{officialCount}} 条</text>
+        </view>
+        <view class="hub-sync__sub truncate">{{lastSync ? ('上次更新 ' + lastSync) : '还没同步过，点右边抓一次'}}</view>
       </view>
-      <view class="sync-btn tap {{syncing ? 'on' : ''}}" bindtap="onSync">{{syncing ? '同步中…' : '更新'}}</view>
+      <view
+        class="hub-sync__btn {{syncing ? 'on spin' : 'tap pressable'}}"
+        bindtap="onSync"
+      >
+        <image class="hub-sync__btn-icon" src="/assets/icons/refresh--campus.svg" mode="aspectFit" />
+        <text>{{syncing ? '同步中…' : '更新'}}</text>
+      </view>
     </view>
 
+    <!-- 骨架屏：只为「第一次进来、列表还没到」这一秒兜底 -->
     <view wx:if="{{eventLoading}}" class="sk-wrap">
       <view class="sk-card">
-        <view class="sk-line sk-title"></view>
-        <view class="sk-line sk-mid"></view>
+        <view class="skeleton sk-line sk-title"></view>
+        <view class="skeleton sk-line sk-mid"></view>
       </view>
       <view class="sk-card">
-        <view class="sk-line sk-title"></view>
-        <view class="sk-line sk-short"></view>
+        <view class="skeleton sk-line sk-title"></view>
+        <view class="skeleton sk-line sk-short"></view>
       </view>
     </view>
 
     <view wx:elif="{{events.length === 0}}" class="empty">
-      <view class="empty-icon">🎪</view>
-      <view>还没有人发起活动，你可以是第一个</view>
-      <view class="empty-hint">讲座、竞赛、组队、社团活动都发这里</view>
+      <image class="empty-art" src="/assets/icons/megaphone--muted.svg" mode="aspectFit" />
+      <view class="empty-title">还没有人发起活动</view>
+      <view class="empty-desc">讲座、竞赛、组队、社团活动都发这里，你可以是第一个</view>
     </view>
 
-    <view wx:else class="ev-wrap">
-      <view wx:if="{{events.length}}" class="filt-row">
-        <view class="filt-chip {{evFilter === 'all' ? 'on' : ''}} tap" data-f="all" bindtap="onEvFilter">全部 {{eventCount}}</view>
-        <view class="filt-chip {{evFilter === 'official' ? 'on' : ''}} tap" data-f="official" bindtap="onEvFilter">🏛️ 官网发布 {{officialCount}}</view>
-        <view class="filt-chip {{evFilter === 'student' ? 'on' : ''}} tap" data-f="student" bindtap="onEvFilter">🙋 同学发起 {{studentCount}}</view>
+    <view wx:else class="hub-events">
+      <!-- 官网的和同学发的性质不同，得能分开看，所以过滤条放列表最上面 -->
+      <view class="hub-filt">
+        <view
+          class="hub-filt__chip {{evFilter === 'all' ? 'on' : ''}} tap pressable"
+          data-f="all"
+          bindtap="onEvFilter"
+        >全部 {{eventCount}}</view>
+        <view
+          class="hub-filt__chip {{evFilter === 'official' ? 'on' : ''}} tap pressable"
+          data-f="official"
+          bindtap="onEvFilter"
+        >学校官网 {{officialCount}}</view>
+        <view
+          class="hub-filt__chip {{evFilter === 'student' ? 'on' : ''}} tap pressable"
+          data-f="student"
+          bindtap="onEvFilter"
+        >同学发起 {{studentCount}}</view>
       </view>
 
-      <view wx:if="{{events.length && !shownOfficial.length && !shownStudent.length}}" class="filt-empty">
+      <view wx:if="{{events.length && !shownOfficial.length && !shownStudent.length}}" class="hub-filt__empty">
         这一类还没有内容，换个分类看看
       </view>
 
-      <view wx:if="{{shownOfficial.length}}" class="sec-head">—— 学校官网发布 ——</view>
-      <view
-        wx:for="{{shownOfficial}}"
-        wx:key="id"
-        class="card ev-item tap-card"
-        data-id="{{item.id}}"
-        bindtap="goEvent"
-      >
-        <view class="ev-top">
-          <view class="ev-type">{{item.typeIcon}} {{item.typeLabel}}</view>
-          <view wx:if="{{item.source}}" class="ev-src">{{item.source}}</view>
-          <view class="ev-link tap" data-i="{{index}}" catchtap="onOfficial">原文 ›</view>
+      <view wx:if="{{shownOfficial.length}}" class="hub-sec">
+        <view class="hub-sec__head">
+          <image class="hub-sec__icon" src="/assets/icons/graduation-cap--campus.svg" mode="aspectFit" />
+          <text class="truncate">学校官网发布</text>
         </view>
 
-        <view class="ev-title">{{item.title}}</view>
-        <view wx:if="{{item.start}}" class="ev-row">🕘 {{item.start}}</view>
-        <view wx:if="{{item.location}}" class="ev-row">📍 {{item.location}}</view>
-        <view wx:if="{{item.desc && item.desc.length < 60}}" class="ev-desc">{{item.desc}}</view>
+        <!-- 官网活动：主色浅底标签 + 校方来源 + 原文出口 -->
+        <view
+          wx:for="{{shownOfficial}}"
+          wx:key="id"
+          class="card ev pressable"
+          data-id="{{item.id}}"
+          bindtap="goEvent"
+        >
+          <view class="ev__top">
+            <text class="tag ev__tag--official">学校官网</text>
+            <text wx:if="{{item.source}}" class="ev__src truncate">{{item.source}}</text>
+            <view class="ev__link tap pressable" data-i="{{index}}" catchtap="onOfficial">
+              <text>原文</text>
+              <image class="ev__link-icon" src="/assets/icons/chevron-right--brand.svg" mode="aspectFit" />
+            </view>
+          </view>
+
+          <view class="ev__title">{{item.title}}</view>
+          <view wx:if="{{item.start}}" class="ev__row">
+            <image class="ev__row-icon" src="/assets/icons/clock--muted.svg" mode="aspectFit" />
+            <text class="truncate">{{item.start}}</text>
+          </view>
+          <view wx:if="{{item.location}}" class="ev__row">
+            <image class="ev__row-icon" src="/assets/icons/map-pin--muted.svg" mode="aspectFit" />
+            <text class="truncate">{{item.location}}</text>
+          </view>
+          <view wx:if="{{item.desc && item.desc.length < 60}}" class="ev__desc clamp2">{{item.desc}}</view>
+
+          <view class="ev__foot">
+            <view wx:if="{{item.joinedCount > 0}}" class="ev__stat">
+              <image class="ev__stat-icon" src="/assets/icons/users-round--campus.svg" mode="aspectFit" />
+              <text class="truncate">{{item.countText}}</text>
+            </view>
+            <view class="ev__more">
+              <text class="ev__more-text">查看详情</text>
+              <image class="ev__foot-icon" src="/assets/icons/chevron-right--campus.svg" mode="aspectFit" />
+            </view>
+          </view>
+        </view>
       </view>
 
-      <view wx:if="{{shownStudent.length}}" class="sec-head">—— 同学发起 ——</view>
-      <view
-        wx:for="{{shownStudent}}"
-        wx:key="id"
-        class="card ev-item tap-card"
-        data-id="{{item.id}}"
-        bindtap="goEvent"
-      >
-        <view class="ev-top">
-          <view class="ev-type">{{item.typeIcon}} {{item.typeLabel}}</view>
-          <view wx:if="{{item.joined}}" class="ev-joined">已报名</view>
-          <view wx:elif="{{item.isMine}}" class="ev-mine">我发布的</view>
+      <view wx:if="{{shownStudent.length}}" class="hub-sec">
+        <view class="hub-sec__head">
+          <image class="hub-sec__icon" src="/assets/icons/megaphone--campus.svg" mode="aspectFit" />
+          <text class="truncate">同学发起</text>
         </view>
 
-        <view class="ev-title">{{item.title}}</view>
-        <view wx:if="{{item.start}}" class="ev-row">🕘 {{item.start}}</view>
-        <view wx:if="{{item.location}}" class="ev-row">📍 {{item.location}}</view>
-        <view wx:if="{{item.desc}}" class="ev-desc">{{item.desc}}</view>
+        <!-- 同学活动：校园绿浅底标签，人数 / 报名状态代替「原文」 -->
+        <view
+          wx:for="{{shownStudent}}"
+          wx:key="id"
+          class="card ev pressable"
+          data-id="{{item.id}}"
+          bindtap="goEvent"
+        >
+          <view class="ev__top">
+            <text class="tag tag--campus ev__tag">同学发起</text>
+            <text wx:if="{{item.joined}}" class="ev__badge ev__badge--joined">已报名</text>
+            <text wx:elif="{{item.isMine}}" class="ev__badge">我发布的</text>
+          </view>
 
-        <view class="ev-foot">
-          <text class="muted">{{item.countText}}</text>
+          <view class="ev__title">{{item.title}}</view>
+          <view wx:if="{{item.start}}" class="ev__row">
+            <image class="ev__row-icon" src="/assets/icons/clock--muted.svg" mode="aspectFit" />
+            <text class="truncate">{{item.start}}</text>
+          </view>
+          <view wx:if="{{item.location}}" class="ev__row">
+            <image class="ev__row-icon" src="/assets/icons/map-pin--muted.svg" mode="aspectFit" />
+            <text class="truncate">{{item.location}}</text>
+          </view>
+          <view wx:if="{{item.desc}}" class="ev__desc clamp2">{{item.desc}}</view>
+
+          <view class="ev__foot">
+            <view class="ev__stat">
+              <image class="ev__stat-icon" src="/assets/icons/users-round--campus.svg" mode="aspectFit" />
+              <text class="truncate">{{item.countText}}</text>
+            </view>
+            <view class="ev__more">
+              <text class="ev__more-text">查看详情</text>
+              <image class="ev__foot-icon" src="/assets/icons/chevron-right--campus.svg" mode="aspectFit" />
+            </view>
+          </view>
         </view>
       </view>
     </view>
 
-    <view class="fab tap" bindtap="goAddEvent">＋</view>
+    <!-- 悬浮发布入口：tab 页的原生 tabBar 之上，位置固定在右下角 -->
+    <view class="fab hub-fab tap pressable" bindtap="goAddEvent">
+      <image class="hub-fab__icon" src="/assets/icons/plus--white.svg" mode="aspectFit" />
+    </view>
   </block>
 
   <!-- ============ 校历 ============ -->
   <block wx:elif="{{tab === 'calendar'}}">
-    <view class="next-card">
-      <view class="next-label">最近一个节点</view>
-      <view class="next-text">{{calNext}}</view>
+    <view class="cal-hero">
+      <view class="cal-hero__head">
+        <image class="cal-hero__icon" src="/assets/icons/calendar-days--white.svg" mode="aspectFit" />
+        <text>最近一个节点</text>
+      </view>
+      <view class="cal-hero__text">{{calNext}}</view>
     </view>
 
     <view wx:if="{{calList.length === 0}}" class="empty">
-      <view class="empty-icon">📅</view>
-      <view>校历还没取到，进来一次就会自动同步</view>
+      <image class="empty-art" src="/assets/icons/calendar-days--muted.svg" mode="aspectFit" />
+      <view class="empty-title">校历还没取到</view>
+      <view class="empty-desc">进来一次就会自动同步</view>
     </view>
 
-    <view wx:else>
+    <view wx:else class="cal-list">
       <view
         wx:for="{{calList}}"
         wx:key="id"
-        class="card cal-item {{item.past ? 'past' : ''}}"
+        class="cal-item {{item.past ? 'past' : ''}}"
       >
-        <view class="cal-left">
-          <view class="cal-date">{{item.date}}</view>
-          <view class="cal-days">{{item.daysText}}</view>
-        </view>
-        <view class="cal-right">
-          <view class="cal-name">{{item.typeIcon}} {{item.name}}</view>
-          <view wx:if="{{item.note}}" class="cal-note">{{item.note}}</view>
+        <view class="cal-item__dot"></view>
+        <view class="card cal-item__body">
+          <view class="cal-item__main">
+            <view class="cal-item__name clamp2">{{item.name}}</view>
+            <view class="cal-item__date">{{item.date}}</view>
+            <view wx:if="{{item.note}}" class="cal-item__note">{{item.note}}</view>
+          </view>
+          <view wx:if="{{item.daysText}}" class="cal-item__days">
+            <image class="cal-item__days-icon" src="/assets/icons/clock--campus.svg" mode="aspectFit" />
+            <text class="truncate">{{item.daysText}}</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <view class="more-row tap" bindtap="goCalendarFull">
-      <text>编辑校历 / 导入官方校历</text>
-      <text class="more-go">›</text>
+    <view class="hub-more tap pressable" bindtap="goCalendarFull">
+      <image class="hub-more__icon" src="/assets/icons/edit--campus.svg" mode="aspectFit" />
+      <text class="hub-more__text">编辑校历 / 导入官方校历</text>
+      <image class="hub-more__go" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
     </view>
   </block>
 
   <!-- ============ 地点地图 ============ -->
   <block wx:elif="{{tab === 'places'}}">
-    <view class="cat-row">
-      <view
-        wx:for="{{placeCats}}"
-        wx:for-item="c"
-        wx:key="*this"
-        class="cat-chip {{placeCatMap[c] ? 'on' : ''}} tap"
-        data-c="{{c}}"
-        bindtap="onPlaceCat"
-      >{{c}}</view>
+    <view class="hub-cats no-scrollbar">
+      <scroll-view class="hub-cats__scroll" scroll-x="true" show-scrollbar="{{false}}">
+        <view class="chip-row">
+          <view
+            wx:for="{{placeCats}}"
+            wx:for-item="c"
+            wx:key="*this"
+            class="hub-chip {{placeCatMap[c] ? 'hub-chip--on' : ''}} {{placeCatMap[c] ? '' : 'tap pressable'}}"
+            data-c="{{c}}"
+            bindtap="onPlaceCat"
+          >{{c}}</view>
+        </view>
+      </scroll-view>
     </view>
 
     <view wx:if="{{placeLoading && placeList.length === 0}}" class="empty">
-      <view class="empty-icon">📍</view>
-      <view>地点加载中…</view>
+      <image class="empty-art" src="/assets/icons/map-pin--muted.svg" mode="aspectFit" />
+      <view class="empty-title">地点加载中…</view>
     </view>
-
     <view wx:elif="{{placeList.length === 0}}" class="empty">
-      <view class="empty-icon">📍</view>
-      <view>这个分类下还没有地点</view>
+      <image class="empty-art" src="/assets/icons/map-pin--muted.svg" mode="aspectFit" />
+      <view class="empty-title">这个分类下还没有地点</view>
     </view>
 
-    <view wx:else>
+    <view wx:else class="pl-list">
       <view
         wx:for="{{placeList}}"
         wx:key="id"
-        class="card pl-item tap"
+        class="card pl pressable {{placeCat === item.category ? 'on' : ''}}"
         data-i="{{index}}"
         bindtap="onPlaceOpen"
       >
-        <view class="pl-icon">{{item.catIcon}}</view>
-        <view class="pl-body">
-          <view class="pl-name">{{item.name}}</view>
-          <view wx:if="{{item.desc}}" class="pl-desc">{{item.desc}}</view>
+        <view class="pl__icon">
+          <image
+            class="pl__icon-img"
+            src="/assets/icons/map-pin--{{placeCat === item.category ? 'campus' : 'muted'}}.svg"
+            mode="aspectFit"
+          />
         </view>
-        <text class="pl-go">导航 ›</text>
+        <view class="pl__body">
+          <view class="pl__name truncate">{{item.name}}</view>
+          <view class="pl__meta">
+            <text wx:if="{{item.category}}" class="pl__cat">{{item.category}}</text>
+            <text wx:if="{{item.desc}}" class="pl__desc truncate">{{item.desc}}</text>
+          </view>
+        </view>
+        <view class="pl__go">
+          <text class="pl__go-text">导航</text>
+          <image class="pl__go-icon" src="/assets/icons/chevron-right--campus.svg" mode="aspectFit" />
+        </view>
       </view>
     </view>
 
-    <view class="more-row tap" bindtap="goPlacesFull">
-      <text>添加一个地点 / 校准坐标</text>
-      <text class="more-go">›</text>
+    <view class="hub-more tap pressable" bindtap="goPlacesFull">
+      <image class="hub-more__icon" src="/assets/icons/map-pinned--campus.svg" mode="aspectFit" />
+      <text class="hub-more__text">添加一个地点 / 校准坐标</text>
+      <image class="hub-more__go" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
     </view>
   </block>
 

@@ -12,3 +12,7 @@ release/
 商砖小站-Web高保真原型-*.zip
 商砖小站-Web高保真原型-*.zip.sha256
 *.bundle
+
+# 微信开发者工具写在本机的项目状态（编译设置、预览条件等），每台机器不一样，不该进仓库
+miniprogram/*/project.private.config.json
+miniprogram/project.private.config.json

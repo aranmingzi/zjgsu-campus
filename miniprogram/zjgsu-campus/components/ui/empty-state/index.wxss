@@ -1,0 +1,49 @@
+/* components/ui/empty-state/index.wxss */
+.ui-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 48rpx;
+  text-align: center;
+}
+
+.ui-empty__icon-wrap {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 40rpx;
+  background: #eef1f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28rpx;
+}
+
+.ui-empty__icon { width: 56rpx; height: 56rpx; }
+
+.ui-empty__title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #172033;
+}
+
+.ui-empty__desc {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #6f7b91;
+  line-height: 1.7;
+}
+
+.ui-empty__btn {
+  margin-top: 32rpx;
+  min-height: 88rpx;
+  padding: 0 48rpx;
+  line-height: 88rpx;
+  border-radius: 999rpx;
+  background: #eff4ff;
+  color: #2047c9;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+}
+.ui-empty__btn::after { border: none; }
+.ui-empty__btn--hover { opacity: 0.72; }

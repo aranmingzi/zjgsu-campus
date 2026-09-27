@@ -2,7 +2,6 @@
 const store = require('../../../utils/store.js');
 const moderation = require('../../../utils/moderation.js');
 const userApi = require('../../../utils/user.js');
-const cloud = require('../../../utils/cloud.js');
 
 // 给每条留言先算好「我能不能删」「我举报过没」。
 // WXML 的 {{}} 里调不了函数（写了整页都会崩），所以这些标记必须在这里算好再交给模板。
@@ -33,7 +32,10 @@ Page({
     favorited: false,
     canChat: false,
     // 内容被自动删除后：本地那份也跟着没，页面得给个说得清的收尾，不能继续挂着旧内容
-    gone: false
+    gone: false,
+    // 按 id 压根没取到内容（被删/下架不是自己的/链接失效）。
+    // 上一版这里什么都不做，页面就是一片空白、按钮也全无响应，用户只会以为程序坏了
+    missing: false
   },
 
   onLoad(options) {
@@ -66,7 +68,11 @@ Page({
   });
       // 信息墙的标题栏应该叫主题，不然用户点进来以为走错页了
       wx.setNavigationBarTitle({ title: post.kind === 'topic' ? (post.board + ' · 信息墙') : post.board });
+      return;
     }
+    // 帖子取不到（被删 / 被下架且不是自己 / id 失效）时，不能让页面停在空白：
+    // 正文空着、点赞收藏点了也没反应，看着就是程序坏了。这里必须给一句说清的话和一个出口
+    this.setData({ gone: false, missing: true });
   },
 
   onFavorite() {

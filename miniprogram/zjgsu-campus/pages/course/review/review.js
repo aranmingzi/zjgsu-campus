@@ -10,6 +10,8 @@ const searchCore = require('../../../utils/search.js');
 Page({
   data: {
     id: '',
+    // 自定义导航条（app-header）的标题；下面 onLoad 里复用了原本给原生导航条算的那串文案
+    navTitle: '写评价',
     course: null,
     score: 5,
     content: '',
@@ -45,6 +47,8 @@ Page({
 
     this.setData({
       id: options.id,
+      // 一行：同一个标题串同时喂给 app-header（原生导航条在 custom 模式下不显示）
+      navTitle: options.reviewId ? '修改评价' : '评价《' + (course ? course.name : '') + '》',
       course,
       courseName: course ? course.name : '',
       // 老师名三个来源：URL 里带过来的 > 课程自带的任课老师 > 空。

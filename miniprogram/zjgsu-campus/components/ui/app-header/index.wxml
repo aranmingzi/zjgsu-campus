@@ -1,0 +1,43 @@
+<!-- components/ui/app-header/index.wxml
+     浅色自定义导航：状态栏 + 胶囊按钮 + 标题 + 返回 -->
+<view class="app-header {{dark ? 'app-header--dark' : ''}}" style="padding-top:{{nav.statusBarHeight}}px;">
+  <view class="app-header__status" style="height:{{nav.statusBarHeight}}px;">
+    <text class="app-header__time">{{now || '09:41'}}</text>
+    <view class="app-header__sys">
+      <text class="app-header__signal">▮▮▮</text>
+      <text class="app-header__net">5G</text>
+      <view class="app-header__battery"><view class="app-header__battery-fill" /></view>
+    </view>
+  </view>
+
+  <view class="app-header__bar" style="height:{{nav.navBarHeight}}px;">
+    <view class="app-header__side">
+      <view
+        wx:if="{{showBack}}"
+        class="app-header__back pressable"
+        bindtap="onBack"
+        hover-class="app-header__back--active"
+        hover-stay-time="80"
+      >
+        <image class="app-header__back-icon" src="/assets/icons/chevron-left--ink.svg" mode="aspectFit" />
+      </view>
+      <view
+        wx:if="{{dark}}"
+        class="app-header__back app-header__back--glass"
+        bindtap="onBack"
+      >
+        <image class="app-header__back-icon" src="/assets/icons/chevron-left--white.svg" mode="aspectFit" />
+      </view>
+    </view>
+
+    <view class="app-header__title-wrap" style="padding-right:{{nav.capsuleRight}}px;">
+      <text class="app-header__title">{{title}}</text>
+    </view>
+
+    <view class="app-header__side app-header__side--right">
+      <view class="app-header__more pressable" bindtap="onMore">
+        <image class="app-header__more-icon" src="/assets/icons/more-horizontal--{{dark ? 'white' : 'ink'}}.svg" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+</view>

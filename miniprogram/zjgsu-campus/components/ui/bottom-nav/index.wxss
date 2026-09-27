@@ -1,0 +1,48 @@
+/* components/ui/bottom-nav/index.wxss */
+.bottom-nav {
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  border-top: 2rpx solid #e8edf5;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  min-height: 104rpx;
+}
+
+.bottom-nav__icon-wrap {
+  width: 80rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  transition: background-color 0.2s ease;
+}
+
+.bottom-nav__item--on .bottom-nav__icon-wrap {
+  background: #eff4ff;
+}
+
+.bottom-nav__icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.bottom-nav__label {
+  font-size: 22rpx;
+  color: #98a3b8;
+  line-height: 1.3;
+}
+
+.bottom-nav__item--on .bottom-nav__label {
+  color: #2b5aed;
+  font-weight: 600;
+}

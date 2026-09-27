@@ -1,0 +1,7 @@
+<!-- components/ui/base-card/index.wxml -->
+<view
+  class="ui-card {{padded ? 'ui-card--padded' : ''}} {{clickable ? 'ui-card--clickable' : ''}} {{flat ? 'ui-card--flat' : ''}} {{flush ? 'ui-card--flush' : ''}}"
+  hover-class="{{clickable ? 'ui-card--hover' : ''}}"
+  hover-stay-time="90"
+  bindtap="onTap"
+  ><slot /></view>

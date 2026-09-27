@@ -9,8 +9,6 @@
 // （那两页有地图选点、审核员编辑这些用不上的复杂逻辑，不往这里搬）。
 const eventApi = require('../../utils/event.js');
 const userApi = require('../../utils/user.js');
-// 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置（论坛、闲置、活动三个板块共用）
-const bannerApi = require('../../utils/banner.js');
 
 const TABS = [
   { key: 'events', label: '活动信息' },
@@ -28,8 +26,8 @@ function tabMap(cur) {
 const PLACE_CATS = ['教学楼', '食堂', '宿舍', '快递', '运动', '其他'];
 
 function placeCatIcon(c) {
-  return c === '教学楼' ? '🏫' : (c === '食堂' ? '🍚' : (c === '宿舍' ? '🛏️'
-    : (c === '快递' ? '📦' : (c === '运动' ? '⚽' : '📍'))));
+  return c === '教学楼' ? 'graduation-cap' : (c === '食堂' ? 'utensils' : (c === '宿舍' ? 'home️'
+    : (c === '快递' ? 'inbox' : (c === '运动' ? 'dumbbell' : 'pin'))));
 }
 
 // 倒计时天数：WXML 的 {{}} 里不能调方法，天数必须在这里算好
@@ -81,17 +79,11 @@ Page({
     placeCat: '全部',
     placeCatMap: {},
     placeList: [],
-    placeLoading: true,
-
-    /* 顶部 Banner 轮播：4 秒自动切；手指一碰立刻停，抬手恢复 */
-    banner: [],
-    bannerIdx: 0,
-    bannerAutoplay: true
+    placeLoading: true
   },
 
   onLoad() {
     this.setData({ placeCatMap: this.buildPlaceCatMap('全部') });
-    this.loadBanner();
     this.loadEvents();
     // 悄咪咪补一次同步：定时的管每天 07:30，白天打开小程序的人也该看到最新的活动。
     // 排在列表加载之后，不挡首屏、不弹任何东西，失败就当没发生过。
@@ -101,42 +93,6 @@ Page({
   onShow() {
     // 从发布活动页 / 活动详情页退回来时刷新，刚发的不该看不到
     if (this.data.loaded.events) this.loadEvents();
-    this.loadBanner();
-  },
-
-  /* ---------------- 顶部 Banner 轮播 ---------------- */
-
-  // 数据随 onShow 刷新：刚发的寻物 / 闲置、刚被顶起来的树洞，回来就该看到新的
-  loadBanner() {
-    this.setData({ banner: bannerApi.getBannerItems(), bannerIdx: 0, bannerAutoplay: true });
-  },
-
-  // 手指触碰轮播立即停：自动切换和拖动抢一个 swiper，触摸期间把 autoplay 关掉
-  onBannerTouchStart() {
-    if (!this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: false });
-  },
-
-  // 抬手 / 划出轮播区域就恢复自动切换
-  onBannerTouchEnd() {
-    if (this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: true });
-  },
-  onBannerTouchCancel() {
-    this.onBannerTouchEnd();
-  },
-
-  // swiper 自滚也会触发 change：只用来同步指示点
-  onBannerChange(e) {
-    const cur = e.detail.current;
-    if (cur === this.data.bannerIdx) return;
-    this.setData({ bannerIdx: cur });
-  },
-
-  onBannerTap(e) {
-    const b = this.data.banner[e.currentTarget.dataset.idx];
-    if (!b || !b.url) return;
-    wx.navigateTo({ url: b.url });
   },
 
   buildPlaceCatMap(cur) {
@@ -165,7 +121,7 @@ Page({
       if (n) list = eventApi.getEvents();
     } catch (e) {}
     const decorated = list.map((e) => Object.assign({}, e, {
-      typeIcon: e.official ? '🏛️' : eventApi.typeIcon(e.type),
+      typeIcon: e.official ? 'shield-check️' : eventApi.typeIcon(e.type),
       typeLabel: e.official ? '官方' : eventApi.typeLabel(e.type),
       // 人数上限：写了就显示「已报名 3/20」，没写就不显示，免得看着像限制人数
       countText: e.capacity > 0 ? ('已报名 ' + (e.joinedCount || 0) + '/' + e.capacity) : ('' + (e.joinedCount || 0) + ' 人已报名')
@@ -300,7 +256,7 @@ Page({
       days: daysNum(it.date),
       daysText: daysText(it.date),
       past: daysNum(it.date) < 0,
-      typeIcon: it.type === 'exam' ? '📝' : (it.type === 'term' ? '🎓' : '📌')
+      typeIcon: it.type === 'exam' ? 'file-text' : (it.type === 'term' ? 'graduation-cap' : 'pin')
     })).sort((a, b) => a.days - b.days);
     const next = decorated.filter((d) => d.days >= 0)[0];
     this.setData({

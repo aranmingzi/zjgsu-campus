@@ -1,48 +1,53 @@
-<view class="container">
-  <view wx:if="{{loading}}" class="sk-wrap">
-    <view class="sk-row">
-      <view class="sk-avatar"></view>
-      <view style="flex:1">
-        <view class="sk-line sk-short"></view>
-        <view class="sk-line sk-mid"></view>
+<!-- pages/user/chats —— 私信会话列表。
+     时间/未读/首字这些展示字段全在 JS 里算好，模板只负责摆，这里不动任何逻辑。
+     下拉刷新（enablePullDownRefresh + onPullDownRefresh）原样保留。 -->
+<app-header title="私信" showBack />
+
+<view class="container cs">
+  <!-- 骨架屏：用 app.wxss 的 .skeleton 语义类 -->
+  <view wx:if="{{loading}}" class="card cs-sk">
+    <view class="cs-sk-row">
+      <view class="skeleton cs-sk-avatar"></view>
+      <view class="cs-sk-body">
+        <view class="skeleton cs-sk-line cs-sk-line--short"></view>
+        <view class="skeleton cs-sk-line cs-sk-line--mid"></view>
       </view>
     </view>
-    <view class="sk-row">
-      <view class="sk-avatar"></view>
-      <view style="flex:1">
-        <view class="sk-line sk-short"></view>
-        <view class="sk-line sk-mid"></view>
+    <view class="cs-sk-row">
+      <view class="skeleton cs-sk-avatar"></view>
+      <view class="cs-sk-body">
+        <view class="skeleton cs-sk-line cs-sk-line--short"></view>
+        <view class="skeleton cs-sk-line cs-sk-line--mid"></view>
       </view>
     </view>
   </view>
 
-  <view wx:elif="{{list.length === 0}}" class="empty">
-    <view class="empty-icon">💬</view>
-    <view>还没有和同学聊过天</view>
-    <view class="empty-hint">遇到合得来的同学，打个招呼认识一下</view>
-    <view class="empty-btn tap" bindtap="goFind">去找同学</view>
-  </view>
+  <block wx:elif="{{list.length === 0}}">
+    <empty-state icon="message-circle" iconColor="faint"
+      title="还没有和同学聊过天" description="遇到合得来的同学，打个招呼认识一下" />
+    <base-button block variant="secondary" bindtap="goFind">去找同学</base-button>
+  </block>
 
-  <view wx:else class="chat-list">
+  <view wx:else class="card card--flush cs-list">
     <view
       wx:for="{{list}}"
       wx:key="peer"
-      class="chat-item tap"
+      class="cs-item tap"
       data-peer="{{item.peer}}"
       data-name="{{item.nickName}}"
       bindtap="openChat"
     >
-      <view class="avatar-wrap">
-        <image wx:if="{{item.avatarUrl}}" class="avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
-        <view wx:else class="avatar avatar-text">{{item.avatarText}}</view>
-        <view wx:if="{{item.unread}}" class="dot"></view>
+      <view class="cs-avatar-wrap">
+        <image wx:if="{{item.avatarUrl}}" class="cs-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+        <view wx:else class="cs-avatar cs-avatar--text">{{item.avatarText}}</view>
+        <view wx:if="{{item.unread}}" class="cs-dot"></view>
       </view>
-      <view class="chat-main">
-        <view class="chat-top">
-          <text class="chat-name">{{item.nickName}}</text>
-          <text class="chat-time">{{item.timeText}}</text>
+      <view class="cs-main">
+        <view class="cs-top">
+          <text class="cs-name truncate">{{item.nickName}}</text>
+          <text class="cs-time">{{item.timeText}}</text>
         </view>
-        <view class="chat-last">{{item.lastTextCut}}</view>
+        <view class="cs-last truncate">{{item.lastTextCut}}</view>
       </view>
     </view>
   </view>

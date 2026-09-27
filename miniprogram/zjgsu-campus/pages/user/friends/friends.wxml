@@ -1,83 +1,102 @@
-<view class="container">
-  <view class="tabs">
-    <view class="tab {{tab === 'friends' ? 'on' : ''}} tap" data-tab="friends" bindtap="onTab">同学 {{friends.length}}</view>
-    <view class="tab {{tab === 'requests' ? 'on' : ''}} tap" data-tab="requests" bindtap="onTab">请求 {{requests.length}}</view>
-    <view class="tab {{tab === 'search' ? 'on' : ''}} tap" data-tab="search" bindtap="onTab">找同学</view>
-    <view class="tab {{tab === 'blocked' ? 'on' : ''}} tap" data-tab="blocked" bindtap="onTab">黑名单 {{blocks.length}}</view>
+<!-- pages/user/friends —— 我的同学（好友 / 请求 / 找同学 / 黑名单）
+     页签用 app.wxss 的分段控件，搜索图标换成线性 outline 图标（不再用 emoji）。
+     云函数参数、分页（reloadAll）、storage key 全部沿用，只是换了呈现。 -->
+<app-header title="我的同学" showBack />
+
+<view class="container fr">
+  <view class="segmented fr-tabs">
+    <view class="segmented-item {{tab === 'friends' ? 'segmented-item-on' : ''}} tap"
+          data-tab="friends" bindtap="onTab">同学 {{friends.length}}</view>
+    <view class="segmented-item {{tab === 'requests' ? 'segmented-item-on' : ''}} tap"
+          data-tab="requests" bindtap="onTab">请求 {{requests.length}}</view>
+    <view class="segmented-item {{tab === 'search' ? 'segmented-item-on' : ''}} tap"
+          data-tab="search" bindtap="onTab">找同学</view>
+    <view class="segmented-item {{tab === 'blocked' ? 'segmented-item-on' : ''}} tap"
+          data-tab="blocked" bindtap="onTab">黑名单 {{blocks.length}}</view>
   </view>
 
   <!-- 我的同学 -->
   <block wx:if="{{tab === 'friends'}}">
-    <view wx:if="{{friends.length === 0}}" class="empty">
-      <view>还没有同学好友</view>
-      <view class="empty-sm">去「找同学」按昵称或学院搜一下吧</view>
-    </view>
-    <view wx:for="{{friends}}" wx:key="openid" class="card person tap" data-openid="{{item.openid}}" bindtap="goCard">
-      <view class="avatar">{{item.avatarText}}</view>
-      <view class="p-info">
-        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
-        <view wx:if="{{item.contactValue}}" class="p-contact">{{item.contactText}}：{{item.contactValue}}</view>
-        <view wx:else class="muted">还没填联系方式</view>
+    <empty-state wx:if="{{friends.length === 0}}" icon="users" iconColor="faint"
+      title="还没有同学好友" description="去「找同学」按昵称或学院搜一下吧" />
+    <view class="card fr-person tap" wx:for="{{friends}}" wx:key="openid"
+          data-openid="{{item.openid}}" bindtap="goCard">
+      <view class="fr-avatar">{{item.avatarText}}</view>
+      <view class="fr-info">
+        <view class="fr-name truncate">{{item.nickName}}<text wx:if="{{item.college}}" class="fr-college"> · {{item.college}}</text></view>
+        <view wx:if="{{item.contactValue}}" class="fr-contact truncate">{{item.contactText}}：{{item.contactValue}}</view>
+        <view wx:else class="muted truncate">还没填联系方式</view>
       </view>
-      <text class="arrow">›</text>
+      <image class="fr-arrow" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
     </view>
-    <view class="btn-ghost tap" bindtap="onEditProfile">管理我的联系方式</view>
+    <base-button class="fr-more" variant="ghost" block size="sm" bindtap="onEditProfile">管理我的联系方式</base-button>
   </block>
 
   <!-- 收到的请求 -->
   <block wx:if="{{tab === 'requests'}}">
-    <view wx:if="{{requests.length === 0}}" class="empty">暂时没有新请求</view>
-    <view wx:for="{{requests}}" wx:key="id" class="card person">
-      <view class="avatar">{{item.avatarText}}</view>
-      <view class="p-info">
-        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
-        <view wx:if="{{item.message}}" class="p-contact">「{{item.message}}」</view>
-        <view class="muted">{{item.time}}</view>
+    <empty-state wx:if="{{requests.length === 0}}" icon="inbox" iconColor="faint"
+      title="暂时没有新请求" description="别人想认识你的时候会出现在这里" />
+    <view class="card fr-req" wx:for="{{requests}}" wx:key="id">
+      <view class="fr-person">
+        <view class="fr-avatar">{{item.avatarText}}</view>
+        <view class="fr-info">
+          <view class="fr-name truncate">{{item.nickName}}<text wx:if="{{item.college}}" class="fr-college"> · {{item.college}}</text></view>
+          <view wx:if="{{item.message}}" class="fr-contact truncate">「{{item.message}}」</view>
+          <view class="muted">{{item.time}}</view>
+        </view>
       </view>
-      <view class="req-actions">
-        <view class="btn-primary mini-yes tap" data-id="{{item.id}}" bindtap="onAccept">通过</view>
-        <view class="btn-ghost mini-no tap" data-id="{{item.id}}" bindtap="onReject">忽略</view>
+      <view class="fr-ops">
+        <base-button class="fr-op" variant="primary" size="sm" data-id="{{item.id}}" bindtap="onAccept">通过</base-button>
+        <base-button class="fr-op" variant="ghost" size="sm" data-id="{{item.id}}" bindtap="onReject">忽略</base-button>
       </view>
     </view>
-    <view wx:if="{{requests.length > 0}}" class="tip">对方通过之后，你就能在「同学」里看到 TA 的联系方式。</view>
+    <view wx:if="{{requests.length > 0}}" class="fr-tip">
+      <image class="fr-tip-icon" src="/assets/icons/clock--muted.svg" mode="aspectFit" />
+      <text>对方通过之后，你就能在「同学」里看到 TA 的联系方式。</text>
+    </view>
   </block>
 
   <!-- 找同学 -->
   <block wx:if="{{tab === 'search'}}">
-    <view class="search-bar">
-      <text class="search-icon">🔍</text>
-      <input placeholder="输入昵称或学院名" value="{{keyword}}" bindinput="onKeyword" bindconfirm="doSearch" />
-      <view class="do-search tap" bindtap="doSearch">搜索</view>
+    <view class="search-bar fr-search">
+      <image class="fr-search-icon" src="/assets/icons/search--muted.svg" mode="aspectFit" />
+      <input class="fr-search-input" placeholder="输入昵称或学院名" value="{{keyword}}"
+             bindinput="onKeyword" bindconfirm="doSearch" />
+      <view class="fr-do tap" bindtap="doSearch">搜索</view>
     </view>
-    <view wx:if="{{keyword}}" class="mode-row">
-      <view class="mode-chip tap {{searchMode === 'exact' ? 'on' : ''}}" data-m="exact" bindtap="onSearchMode">精准</view>
-      <view class="mode-chip tap {{searchMode === 'fuzzy' ? 'on' : ''}}" data-m="fuzzy" bindtap="onSearchMode">模糊</view>
+
+    <view wx:if="{{keyword}}" class="chip-row fr-modes no-scrollbar">
+      <view class="chip tap {{searchMode === 'exact' ? 'chip-on' : ''}}" data-m="exact" bindtap="onSearchMode">精准</view>
+      <view class="chip tap {{searchMode === 'fuzzy' ? 'chip-on' : ''}}" data-m="fuzzy" bindtap="onSearchMode">模糊</view>
     </view>
-    <view wx:if="{{keyword && results.length === 0 && !searching}}" class="empty">没找到这位同学</view>
-    <view wx:for="{{results}}" wx:key="openid" class="card person tap" data-openid="{{item.openid}}" bindtap="goCard">
-      <view class="avatar">{{item.avatarText}}</view>
-      <view class="p-info">
-        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
-        <view wx:if="{{item.motto}}" class="muted">{{item.motto}}</view>
-        <view wx:else class="muted">点击查看名片</view>
+
+    <empty-state wx:if="{{keyword && results.length === 0 && !searching}}" icon="search" iconColor="faint"
+      title="没找到这位同学" description="换个昵称、学院名，或者切到「模糊」再试一次" />
+    <view wx:elif="{{results.length > 0}}" class="fr-tip fr-tip--top">找到 {{results.length}} 位同学</view>
+
+    <view class="card fr-person tap" wx:for="{{results}}" wx:key="openid"
+          data-openid="{{item.openid}}" bindtap="goCard">
+      <view class="fr-avatar">{{item.avatarText}}</view>
+      <view class="fr-info">
+        <view class="fr-name truncate">{{item.nickName}}<text wx:if="{{item.college}}" class="fr-college"> · {{item.college}}</text></view>
+        <view wx:if="{{item.motto}}" class="muted truncate">{{item.motto}}</view>
+        <view wx:else class="muted truncate">点击查看名片</view>
       </view>
-      <text class="arrow">›</text>
+      <image class="fr-arrow" src="/assets/icons/chevron-right--faint.svg" mode="aspectFit" />
     </view>
   </block>
 
   <!-- 黑名单 -->
   <block wx:if="{{tab === 'blocked'}}">
-    <view wx:if="{{blocks.length === 0}}" class="empty">
-      <view>黑名单是空的</view>
-      <view class="empty-sm">遇到想静一静的人，去他的名片点「拉黑 TA」</view>
-    </view>
-    <view wx:for="{{blocks}}" wx:key="openid" class="card person">
-      <view class="avatar">{{item.avatarText}}</view>
-      <view class="p-info">
-        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
-        <view class="muted">已拉黑，TA 无法给你发消息</view>
+    <empty-state wx:if="{{blocks.length === 0}}" icon="shield-check" iconColor="faint"
+      title="黑名单是空的" description="遇到想静一静的人，去他的名片点「拉黑 TA」" />
+    <view class="card fr-person" wx:for="{{blocks}}" wx:key="openid">
+      <view class="fr-avatar fr-avatar--blocked">{{item.avatarText}}</view>
+      <view class="fr-info">
+        <view class="fr-name truncate">{{item.nickName}}<text wx:if="{{item.college}}" class="fr-college"> · {{item.college}}</text></view>
+        <view class="muted truncate">已拉黑，TA 无法给你发消息</view>
       </view>
-      <view class="btn-ghost mini-no tap" data-openid="{{item.openid}}" catchtap="onUnblock">解除</view>
+      <base-button class="fr-op" variant="ghost" size="sm" data-openid="{{item.openid}}" catchtap="onUnblock">解除</base-button>
     </view>
   </block>
 </view>

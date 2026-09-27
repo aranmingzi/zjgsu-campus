@@ -19,9 +19,9 @@ const KEY = 'zjgsu_market';
 
 // 三种类型的中文名与配色，列表页 / 发布页共用
 const TYPES = {
-  lost: { label: '寻物', icon: '🔍', hint: '我丢了东西，捡到的同学联系我' },
-  found: { label: '招领', icon: '📦', hint: '我捡到了东西，丢的同学来认领' },
-  sell: { label: '闲置', icon: '🛍️', hint: '分享你的闲置物品信息，可注明参考价' }
+  lost: { label: '寻物', icon: 'search', hint: '我丢了东西，捡到的同学联系我' },
+  found: { label: '招领', icon: 'inbox', hint: '我捡到了东西，丢的同学来认领' },
+  sell: { label: '闲置', icon: 'shopping-bag️', hint: '分享你的闲置物品信息，可注明参考价' }
 };
 
 function read(key, fallback) {
@@ -43,10 +43,10 @@ function typeLabel(type) {
 // 闲置分类：教材是开学季最强需求，单独拆一栏出来。
 // 个人主体不能做在线交易，所以这里只做「信息发布 + 私信联系」，不碰钱。
 const CATEGORIES = [
-  { key: 'book', label: '教材', icon: '📚' },
-  { key: 'digital', label: '数码', icon: '💻' },
-  { key: 'life', label: '生活', icon: '🧴' },
-  { key: 'other', label: '其他', icon: '📦' }
+  { key: 'book', label: '教材', icon: 'book-open' },
+  { key: 'digital', label: '数码', icon: 'laptop' },
+  { key: 'life', label: '生活', icon: 'life-buoy' },
+  { key: 'other', label: '其他', icon: 'inbox' }
 ];
 
 function categoryLabel(key) {
@@ -56,7 +56,7 @@ function categoryLabel(key) {
 
 function categoryIcon(key) {
   const hit = CATEGORIES.filter((c) => c.key === key)[0];
-  return hit ? hit.icon : '📦';
+  return hit ? hit.icon : 'inbox';
 }
 
 /* ---------------- 发布 ---------------- */

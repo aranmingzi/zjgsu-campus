@@ -51,7 +51,7 @@ Page({
     this.setData({
       list: (list || []).map((r) => Object.assign({}, r, {
         // WXML 里不能调方法，这些派生字段都在这里算好
-        catIcon: r.category === '笔记' ? '📒' : (r.category === '真题' ? '📄' : (r.category === '讲义' ? '📚' : '📦')),
+        catIcon: r.category === '笔记' ? 'notebook-pen' : (r.category === '真题' ? 'file-text' : (r.category === '讲义' ? 'book-open' : 'inbox')),
         ext: String(r.fileName || '').split('.').pop().toUpperCase() || '文件'
       })),
       loading: false

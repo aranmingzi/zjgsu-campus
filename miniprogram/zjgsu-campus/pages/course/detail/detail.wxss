@@ -1,277 +1,391 @@
-.course-meta {
-  margin: 10rpx 0 14rpx;
+/* pages/course/detail —— 课程决策页。
+   类名一律 dp-*；app.wxss 里已有的 .card / .title-lg / .muted / .tag 直接复用。 */
+
+.dp-page {
+  padding-bottom: 200rpx; /* 给固定底栏的「写评价」留位 */
 }
-/* 课程类型行：类型标签 + 纠错入口放一行，纠错入口做成链接的样式，
-   不抢「写评价」这些主按钮的戏 */
-.ctype-line {
+
+/* ---------- 决策卡 ---------- */
+.dp-decision {
+  padding-bottom: 24rpx;
+}
+.dp-meta {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+}
+
+/* 课程类型行：类型标签 + 纠错链接，纠错不该抢主按钮的戏 */
+.dp-ctype {
   display: flex;
   align-items: center;
-  margin-bottom: 16rpx;
+  margin-top: 16rpx;
 }
-.ctype-badge {
-  display: inline-block;
+.dp-ctype-badge {
   font-size: 20rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 6rpx;
-  padding: 4rpx 14rpx;
+  color: #2047c9;
+  background: #eff4ff;
+  border-radius: 8rpx;
+  padding: 6rpx 18rpx;
 }
-.ctype-edit {
-  font-size: 22rpx;
-  color: #8a9099;
-  margin-left: 16rpx;
-  text-decoration: underline;
+.dp-ctype-edit {
+  margin-left: 20rpx;
+  font-size: 24rpx;
+  color: #6f7b91;
 }
-.builtin-badge {
+.dp-builtin {
   display: inline-block;
-  font-size: 22rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
+  margin-top: 12rpx;
+  font-size: 20rpx;
+  color: #2047c9;
+  background: #eff4ff;
   border-radius: 8rpx;
   padding: 4rpx 14rpx;
-  margin-bottom: 16rpx;
 }
-.score-line {
+
+.dp-score {
   display: flex;
   align-items: center;
-  margin-bottom: 16rpx;
+  margin-top: 20rpx;
+  flex-wrap: wrap;
 }
-.big-score {
-  font-size: 48rpx;
+.dp-score-num {
+  font-size: 56rpx;
   font-weight: 700;
-  color: #ff9f1c;
-  margin-right: 16rpx;
+  color: #d98c0b;
+  line-height: 1.1;
+  margin-right: 18rpx;
 }
-.outline {
-  margin-top: 18rpx;
-  background: #f7f8fa;
-  border-radius: 14rpx;
-  padding: 20rpx 22rpx;
-}
-.outline-head {
+.dp-stars {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 26rpx;
-  color: #1f2329;
+  min-width: 0;
 }
-.outline-arrow { color: #8a9099; font-size: 24rpx; }
-.outline-body {
+.dp-star-icon {
+  font-size: 28rpx;
+  color: #e0e5ee;
+  margin-right: 2rpx;
+}
+.dp-star-icon { width: 28rpx; height: 28rpx; }
+.dp-score-count {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+}
+
+/* 评分分布：5 行细条，宽度用百分比，不用任何浏览器专属函数 */
+.dp-dist {
+  margin-top: 20rpx;
+}
+.dp-dist-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.dp-dist-star {
+  width: 68rpx;
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #6f7b91;
+}
+.dp-dist-bar {
+  flex: 1;
+  height: 14rpx;
+  min-width: 0;
+  background: #f0f1f3;
+  border-radius: 999rpx;
+  overflow: hidden;
+}
+.dp-dist-fill {
+  height: 100%;
+  background: #d98c0b;
+  border-radius: 999rpx;
+}
+.dp-dist-count {
+  width: 48rpx;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 22rpx;
+  color: #98a3b8;
+}
+
+/* 标签热度 */
+.dp-heat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+.dp-heat-item {
+  font-size: 24rpx;
+  color: #6f7b91;
+  background: #f6f8fb;
+  border-radius: 999rpx;
+  padding: 8rpx 22rpx;
+}
+.dp-heat-item--top {
+  color: #2047c9;
+  background: #eff4ff;
+  font-weight: 600;
+}
+
+.dp-summary {
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background: #f2f6fd;
+  color: #2b5aed;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+/* 课程大纲：默认收起 */
+.dp-outline {
+  margin-top: 20rpx;
+  padding: 24rpx;
+  border-radius: 24rpx;
+  background: #f6f8fb;
+}
+.dp-outline-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dp-outline-arrow { font-size: 24rpx; }
+.dp-outline-body {
+  margin-top: 14rpx;
   font-size: 26rpx;
   color: #4b5159;
   line-height: 1.75;
-  margin-top: 12rpx;
 }
 
-.tag-row {
-  margin-top: 6rpx;
+/* 收藏 / 删除 / 申请删除：胶囊热区 88rpx，删除用红底以示破坏性 */
+.dp-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 24rpx;
 }
-
-.act-row { margin-top: 22rpx; }
-.act {
-  display: inline-block;
-  font-size: 26rpx;
-  color: #1a5fb4;
-  background: #eef3fb;
+.dp-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88rpx;
+  padding: 0 32rpx;
   border-radius: 999rpx;
-  padding: 16rpx 40rpx;
-  margin-right: 16rpx;
+  background: #eff4ff;
+  color: #2047c9;
+  font-size: 26rpx;
+  font-weight: 600;
 }
-.act-on {
-  color: #854f0b;
-  background: #faeeda;
+.dp-act-on {
+  color: #128a56;
+  background: #e9f8f1;
 }
-/* 删除自建课程：红底以示「这是破坏性操作」，和收藏拉开距离 */
-.act-danger {
-  color: #c0392b;
-  background: #fdecea;
+.dp-act-danger {
+  color: #dd4b55;
+  background: #fff0f1;
 }
-.act-sub { font-size: 22rpx; color: #9a6b62; }
-.req-hint {
-  margin-top: 14rpx;
+.dp-act-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+}
+.dp-act-sub {
+  margin-left: 6rpx;
+  font-size: 22rpx;
+  font-weight: 400;
+}
+.dp-req-hint {
+  margin-top: 16rpx;
+  font-size: 22rpx;
   line-height: 1.7;
+}
+
+/* ---------- 分段 ---------- */
+.dp-tabs {
+  margin: 8rpx 0 20rpx;
+}
+
+/* ---------- 老师档 ---------- */
+.dp-tch {
+  display: flex;
+  align-items: center;
+}
+.dp-tch-left {
+  flex: 1;
+  min-width: 0;
+}
+.dp-tch-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dp-tch-meta {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+}
+.dp-tch-verified {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8rpx;
+  color: #128a56;
+}
+.dp-tch-check {
+  width: 26rpx;
+  height: 26rpx;
+  margin-right: 6rpx;
+}
+.dp-tch-sub {
+  margin-top: 4rpx;
   font-size: 22rpx;
 }
-.section-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  margin: 12rpx 4rpx 16rpx;
+/* 320 宽度下给左边的姓名留出空间：右栏只按内容宽，不抢 */
+.dp-tch-right {
+  flex-shrink: 0;
+  max-width: 220rpx;
+  margin-left: 16rpx;
+  text-align: right;
 }
-.review-head {
+.dp-tch-stars {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8rpx;
+  justify-content: flex-end;
+  min-height: 40rpx;
 }
-.rv-name {
+.dp-star-none {
+  font-size: 22rpx;
+  color: #98a3b8;
+}
+.dp-tch-scores {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8rpx;
+}
+.dp-tch-score {
+  font-size: 26rpx;
+  color: #d98c0b;
+}
+.dp-tch-score--muted { color: #6f7b91; }
+.dp-tip {
+  margin-top: 4rpx;
+  font-size: 24rpx;
+}
+
+/* ---------- 评价列表 ---------- */
+.dp-empty {
+  padding: 48rpx 32rpx;
+  text-align: center;
+}
+.dp-empty-icon {
+  width: 96rpx;
+  height: 96rpx;
+  margin-bottom: 16rpx;
+}
+.dp-empty .empty-desc {
+  margin-top: 8rpx;
+}
+
+.dp-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.dp-review-name {
+  font-size: 28rpx;
   font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.rv-content {
-  margin: 10rpx 0;
-  color: #2b3138;
+.dp-review-badge {
+  margin-left: 10rpx;
+  font-size: 20rpx;
+  font-weight: 400;
+  color: #2047c9;
+  background: #eff4ff;
+  border-radius: 8rpx;
+  padding: 2rpx 10rpx;
 }
-.detail-page {
-  padding-bottom: 170rpx;
+.dp-review-op {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
-.fixed-bar {
-  position: fixed;
+.dp-review-time { font-size: 22rpx; }
+.dp-op {
+  margin-left: 24rpx;
+  font-size: 24rpx;
+  color: #2b5aed;
+}
+.dp-op-danger { color: #dd4b55; }
+
+.dp-review-score {
+  margin-left: 12rpx;
+  font-size: 24rpx;
+  color: #d98c0b;
+}
+.dp-review-content {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: #172033;
+  line-height: 1.7;
+}
+.dp-review-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+.dp-more {
+  padding: 20rpx 0 8rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #2b5aed;
+}
+
+/* ---------- 固定底栏 ---------- */
+.dp-bar {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
-  padding: 16rpx 24rpx;
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
-}
-.fixed-bar .btn-primary {
-  width: 100%;
-  margin: 0;
+  background: #ffffff;
+  border-top: 2rpx solid #e8edf5;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
 }
 
-/* 决策卡：评分分布 + 标签热度 */
-.decision {
-  border-left: 8rpx solid #1a5fb4;
+/* ---------- 「这门课找不到了」兜底 ---------- */
+.dp-nf {
+  text-align: center;
+  padding: 56rpx 36rpx 48rpx;
 }
-.dist-row {
-  margin: 8rpx 0 14rpx;
-}
-.dist-item {
+.dp-nf-icon {
+  width: 112rpx;
+  height: 112rpx;
+  margin: 0 auto 24rpx;
   display: flex;
   align-items: center;
-  margin-bottom: 8rpx;
+  justify-content: center;
+  border-radius: 40rpx;
+  background: #f6f8fb;
 }
-.dist-star {
-  width: 60rpx;
-  font-size: 22rpx;
-  color: #6b7280;
-}
-.dist-bar {
-  flex: 1;
-  height: 16rpx;
-  background: #f0f1f3;
-  border-radius: 8rpx;
-  overflow: hidden;
-  margin: 0 12rpx;
-}
-.dist-fill {
-  height: 100%;
-  background: #ffb84d;
-  border-radius: 8rpx;
-}
-.dist-count {
-  width: 30rpx;
-  font-size: 22rpx;
-  color: #b0b6be;
-}
-.heat-row {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12rpx;
-}
-.heat {
-  display: inline-block;
-  font-size: 24rpx;
-  color: #4b5159;
-  background: #f5f7fa;
-  border-radius: 8rpx;
-  padding: 10rpx 20rpx;
-  margin: 0 12rpx 10rpx 0;
-}
-.heat-top {
-  color: #1a5fb4;
-  background: #eef3fb;
-  font-weight: 600;
-}
-.summary {
+.dp-nf-icon image { width: 56rpx; height: 56rpx; }
+.dp-nf-title { font-size: 34rpx; }
+.dp-nf-desc {
+  margin-top: 14rpx;
   font-size: 26rpx;
-  color: #1a5fb4;
-  background: #f2f6fd;
-  border-radius: 10rpx;
-  padding: 16rpx 20rpx;
-  margin-bottom: 12rpx;
-  line-height: 1.6;
+  line-height: 1.7;
 }
-.rv-badge {
-  font-size: 20rpx;
-  font-weight: 400;
-  color: #1a5fb4;
-  background: #eef3fb;
-  border-radius: 6rpx;
-  padding: 2rpx 10rpx;
-  margin-left: 10rpx;
-}
-.rv-right {
+.dp-nf-acts {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16rpx;
+  margin-top: 32rpx;
 }
-.rv-op {
-  font-size: 24rpx;
-  color: #1a5fb4;
-  margin-left: 18rpx;
+.dp-nf-hint {
+  margin-top: 24rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
 }
-.rv-op.danger {
-  color: #d9534f;
-}
-.rv-score {
-  font-size: 24rpx;
-  color: #ff9f1c;
-  margin-left: 10rpx;
-}
-.more-btn {
-  text-align: center;
-  color: #1a5fb4;
-  font-size: 26rpx;
-  padding: 20rpx 0;
-}
-
-/* 课程评价 / 老师评价 分段 */
-.sub-tabs {
-  display: flex;
-  background: #e9edf3;
-  border-radius: 999rpx;
-  padding: 6rpx;
-  margin: 8rpx 0 20rpx;
-}
-.sub-tab {
-  flex: 1;
-  text-align: center;
-  font-size: 25rpx;
-  color: #6b7280;
-  padding: 12rpx 0;
-  border-radius: 999rpx;
-}
-.sub-tab.on {
-  color: #1a5fb4;
-  font-weight: 600;
-  background: #fff;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
-}
-
-.tip-line {
-  font-size: 23rpx;
-  color: #9aa0a6;
-  margin: -6rpx 0 12rpx;
-}
-
-.tch-item { display: flex; align-items: center; }
-.tch-left { flex: 1; }
-.tch-name { font-size: 30rpx; font-weight: 600; }
-.tch-verified { color: #0f8b5f; margin-right: 8rpx; }
-.tch-right { text-align: right; margin-left: 16rpx; }
-.tch-sub { font-size: 22rpx; margin-top: 4rpx; }
-.tch-scores { margin-top: 6rpx; }
-.tch-score { font-size: 27rpx; color: #ff9f1c; margin-left: 8rpx; }
-.star-none { font-size: 23rpx; color: #c2c7cd; }
-.stars.small .star { font-size: 24rpx; }
-
-.empty-icon { font-size: 56rpx; }
-.empty-hint { font-size: 24rpx; color: #c6cbd2; margin-top: 10rpx; }
-
-/* 「这门课找不到了」兜底页：样式上要像一张正经的空状态卡，
-   不能让同学以为是页面崩了，得看得出这里有路可走 */
-.nf-card { text-align: center; padding: 60rpx 36rpx 50rpx; }
-.nf-icon { font-size: 72rpx; }
-.nf-title { font-size: 34rpx; font-weight: 600; margin-top: 18rpx; }
-.nf-desc { font-size: 26rpx; line-height: 1.7; margin-top: 14rpx; }
-.nf-acts { margin-top: 34rpx; }
-.act-primary { color: #fff; background: #1a5fb4; }
-.nf-hint { font-size: 23rpx; line-height: 1.7; margin-top: 22rpx; }

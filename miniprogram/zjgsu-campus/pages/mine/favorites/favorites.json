@@ -1,3 +1,8 @@
 {
-  "navigationBarTitleText": "我的收藏"
+  "navigationBarTitleText": "我的收藏",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "empty-state": "/components/ui/empty-state/index"
+  }
 }

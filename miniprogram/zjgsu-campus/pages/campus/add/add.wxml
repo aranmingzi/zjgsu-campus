@@ -1,50 +1,98 @@
-<view class="container">
+<app-header title="发起校园活动" showBack />
+
+<view class="container add-page">
+
   <view class="card">
-    <view class="label">活动类型</view>
-    <view class="type-row">
+    <view class="add-label">
+      <text>活动类型</text>
+    </view>
+    <view class="add-types">
       <view
         wx:for="{{types}}"
         wx:key="key"
-        class="type-chip {{typeMap[item.key] ? 'on' : ''}} tap"
+        class="add-type {{typeMap[item.key] ? 'on' : ''}} tap pressable"
         data-k="{{item.key}}"
         bindtap="onType"
-      >{{item.icon}} {{item.label}}</view>
+      >
+        <image
+          wx:if="{{item.key === 'lecture'}}"
+          class="add-type__icon"
+          src="/assets/icons/ticket--campus.svg"
+          mode="aspectFit"
+        />
+        <image
+          wx:elif="{{item.key === 'contest'}}"
+          class="add-type__icon"
+          src="/assets/icons/award--campus.svg"
+          mode="aspectFit"
+        />
+        <image
+          wx:elif="{{item.key === 'team'}}"
+          class="add-type__icon"
+          src="/assets/icons/users-round--campus.svg"
+          mode="aspectFit"
+        />
+        <image
+          wx:elif="{{item.key === 'other'}}"
+          class="add-type__icon"
+          src="/assets/icons/megaphone--campus.svg"
+          mode="aspectFit"
+        />
+        <text class="add-type__label">{{item.label}}</text>
+        <image
+          class="add-type__check"
+          src="/assets/icons/check--{{typeMap[item.key] ? 'campus' : 'faint'}}.svg"
+          mode="aspectFit"
+        />
+      </view>
     </view>
 
-    <view class="label">活动名字 <text class="req">*</text></view>
+    <view class="add-label">
+      <text>活动名字</text>
+      <text class="add-req">*</text>
+    </view>
     <input
-      class="input"
+      class="add-input"
       placeholder="例如：ACM 校赛串讲"
+      placeholder-class="add-ph"
       value="{{form.title}}"
       maxlength="40"
       data-k="title"
       bindinput="onInput"
     />
 
-    <view class="label">时间</view>
-    <view class="time-row">
-      <picker mode="date" value="{{form.date}}" bindchange="onDate">
-        <view class="picker {{form.date ? '' : 'ph'}}">📅 {{form.date || '选日期'}}</view>
+    <view class="add-label">时间</view>
+    <view class="add-time">
+      <picker class="add-time__cell" mode="date" value="{{form.date}}" bindchange="onDate">
+        <view class="add-picker {{form.date ? '' : 'ph'}}">
+          <image class="add-picker__icon" src="/assets/icons/calendar-days--campus.svg" mode="aspectFit" />
+          <text class="truncate">{{form.date || '选日期'}}</text>
+        </view>
       </picker>
-      <picker mode="time" value="{{form.time}}" bindchange="onTime">
-        <view class="picker {{form.time ? '' : 'ph'}}">🕘 {{form.time || '选时间'}}</view>
+      <picker class="add-time__cell" mode="time" value="{{form.time}}" bindchange="onTime">
+        <view class="add-picker {{form.time ? '' : 'ph'}}">
+          <image class="add-picker__icon" src="/assets/icons/clock--campus.svg" mode="aspectFit" />
+          <text class="truncate">{{form.time || '选时间'}}</text>
+        </view>
       </picker>
     </view>
 
-    <view class="label">地点</view>
+    <view class="add-label">地点</view>
     <input
-      class="input"
+      class="add-input"
       placeholder="例如：A 教学楼 301"
+      placeholder-class="add-ph"
       value="{{form.location}}"
       maxlength="40"
       data-k="location"
       bindinput="onInput"
     />
 
-    <view class="label">人数上限（可不填，最多 500）</view>
+    <view class="add-label">人数上限（可不填，最多 500）</view>
     <input
-      class="input"
+      class="add-input"
       placeholder="不填不限人数"
+      placeholder-class="add-ph"
       value="{{form.capacity}}"
       type="number"
       maxlength="3"
@@ -52,10 +100,11 @@
       bindinput="onInput"
     />
 
-    <view class="label">联系方式（报名后才公开）</view>
+    <view class="add-label">联系方式（报名后才公开）</view>
     <input
-      class="input"
+      class="add-input"
       placeholder="微信号 / 手机号 / QQ"
+      placeholder-class="add-ph"
       value="{{form.contact}}"
       maxlength="40"
       data-k="contact"
@@ -64,19 +113,29 @@
   </view>
 
   <view class="card">
-    <view class="label">活动详情</view>
+    <view class="add-label">活动详情</view>
     <textarea
-      class="textarea"
+      class="add-textarea"
       placeholder="讲什么、怎么参加、要不要带东西、有没有奖励……写清楚同学才敢报"
+      placeholder-class="add-ph"
       value="{{form.desc}}"
       maxlength="500"
       data-k="desc"
       bindinput="onInput"
-      auto-height
+      auto-height="{{true}}"
+      show-confirm-bar="{{false}}"
     />
-    <view class="count">{{form.desc.length}}/500</view>
+    <view class="add-count">{{form.desc.length}}/500</view>
   </view>
 
-  <button class="btn-primary" bindtap="onSubmit">发布活动</button>
-  <view class="tip">发布后会显示在「校园 → 活动信息」，全校同学都能看到并报名</view>
+  <button
+    class="btn-primary add-submit {{submitting ? 'btn-disabled' : ''}}"
+    hover-class="add-submit--hover"
+    hover-stay-time="80"
+    disabled="{{submitting}}"
+    bindtap="onSubmit"
+  >{{submitting ? '发布中…' : '发布活动'}}</button>
+
+  <view class="add-tip">发布后会显示在「校园 → 活动信息」，全校同学都能看到并报名</view>
+
 </view>

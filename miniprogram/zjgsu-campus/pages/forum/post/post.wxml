@@ -1,103 +1,216 @@
-<view class="container">
+<!-- pages/forum/post/post.wxml —— 发帖器：普通帖 / 只发主题 / 发起投票 -->
+<app-header title="发布内容" showBack />
+
+<view class="container composer">
   <view class="card">
-    <view class="label">选择板块<text class="label-sub">不选就发到「闲聊」</text></view>
-    <view class="board-grid">
-      <view wx:for="{{boards}}" wx:key="*this" class="board-chip {{board === item ? 'on' : ''}} tap" data-b="{{item}}" bindtap="onBoard">{{item}}</view>
+    <view class="composer__label">
+      <text>选择板块</text>
+      <text class="composer__hint">不选就发到「闲聊」</text>
     </view>
-    <!-- 社团同好 / 活动组队：明确说可以留联系方式。
-         不写明的话没人敢贴群号，这个板块就白开了 -->
-    <view wx:if="{{contactOk}}" class="contact-ok">✓ 这个板块可以留群号和联系方式，拉人进群是正常内容，不会被当广告</view>
+    <view class="composer__boards">
+      <view wx:for="{{boards}}" wx:key="*this" class="composer__board {{board === item ? 'on' : ''}} tap" data-b="{{item}}" bindtap="onBoard">{{item}}</view>
+    </view>
+    <!-- 社团同好 / 活动组队：明确说可以留联系方式 -->
+    <view wx:if="{{contactOk}}" class="composer__notice">
+      <image class="composer__notice-icon" src="/assets/icons/shield-check--campus.svg" mode="aspectFit" />
+      <text>这个板块可以留群号和联系方式，拉人进群是正常内容，不会被当广告</text>
+    </view>
   </view>
 
-  <!-- 课程评价板块：发帖时绑定课程，方便按课区分和查看 -->
+  <!-- 课程评价板块：发帖时绑定课程 -->
   <view class="card" wx:if="{{isCourseBoard}}">
-    <view class="label">关联课程</view>
-    <view wx:if="{{courseName}}" class="picked-course">
-      <text>📖 {{courseName}}</text>
-      <text class="clear-course tap" bindtap="clearCourse">更换</text>
+    <view class="composer__label"><text>关联课程</text></view>
+    <view wx:if="{{courseName}}" class="composer__picked">
+      <image class="composer__picked-icon" src="/assets/icons/book-open--brand.svg" mode="aspectFit" />
+      <text class="composer__picked-text">{{courseName}}</text>
+      <text class="composer__picked-clear tap" bindtap="clearCourse">更换</text>
     </view>
     <block wx:else>
-      <input class="field" placeholder="搜索课程名，如 中级财务会计" value="{{courseKeyword}}" bindinput="onCourseSearch" />
-      <view wx:if="{{courseResults.length}}" class="course-pick">
-        <view wx:for="{{courseResults}}" wx:key="id" class="course-item tap" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="pickCourse">
-          <view class="ci-name">{{item.name}}</view>
-          <view class="muted ci-college">{{item.college}}</view>
+      <input class="composer__field" placeholder="搜索课程名，如 中级财务会计" value="{{courseKeyword}}" bindinput="onCourseSearch" />
+      <view wx:if="{{courseResults.length}}" class="composer__pick">
+        <view wx:for="{{courseResults}}" wx:key="id" class="composer__pick-item tap" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="pickCourse">
+          <view class="composer__pick-name">{{item.name}}</view>
+          <view class="muted composer__pick-college">{{item.college}}</view>
         </view>
       </view>
-      <view wx:elif="{{courseKeyword && !courseResults.length}}" class="muted ci-none">
+      <view wx:elif="{{courseKeyword && !courseResults.length}}" class="muted composer__pick-none">
         没找到？这门课可以由同学添加：先在「课程评价」页添加后再回来选，或直接在下方留课程名
       </view>
     </block>
   </view>
 
   <view class="card">
-    <view class="label">配图（最多 6 张，可选）</view>
-    <view class="img-grid">
-      <view wx:for="{{images}}" wx:key="*this" class="img-cell">
-        <image class="img-preview tap" src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewImage"></image>
-        <view class="img-del tap" data-i="{{index}}" catchtap="removeImage">×</view>
-      </view>
-      <view wx:if="{{images.length < 6}}" class="img-cell add tap" bindtap="chooseImages">＋</view>
-    </view>
-  </view>
-
-  <!-- 帖子类型：普通帖 vs 主题帖（只发标题，信息收在评论区）。
-       想找「浙工商同好群」这种东西的时候，正文是没人看的，
-       要的是标题下那一串别人留的群号 —— 得让同学能明确选出这个形 -->
-  <view class="card">
-    <view class="label">帖子形式</view>
-    <view class="kind-row">
-      <view class="kind-item {{kind === 'normal' ? 'on' : ''}} tap" data-kind="normal" bindtap="onKind">
-        <view class="kind-name">普通帖</view>
-        <view class="muted kind-sub">标题 + 正文</view>
-      </view>
-      <view class="kind-item {{kind === 'topic' ? 'on' : ''}} tap" data-kind="topic" bindtap="onKind">
-        <view class="kind-name">只发主题</view>
-        <view class="muted kind-sub">只写标题，信息留给评论区</view>
-      </view>
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="label">标题</view>
-    <input class="field" placeholder="{{kind === 'topic' ? '想找什么？一句话说清，如 浙工商同好群' : '一句话说清你的主题'}}" value="{{title}}" bindinput="onTitle" maxlength="30" />
-  </view>
-
-  <!-- 普通帖写正文；主题帖反过来 —— 正文框换成说明，
-       让「点开发现是一篇长文」和「点开发现是个空壳」这两种落差都不再发生 -->
-  <view class="card" wx:if="{{kind === 'topic'}}">
-    <view class="label">正文<text class="label-sub">这个主题不需要</text></view>
-    <view class="topic-box">
-      <view class="topic-line">✓ 只发主题的意思是：标题写清楚你要找什么，</view>
-      <view class="topic-line">具体的群号、地点、报名方式，留给评论区里想参与的同学补充。</view>
-      <view class="topic-line">发完在这条主题下留言就行，看得见这条主题的同学都能看到。</view>
-    </view>
-    <view wx:if="{{topicTip}}" class="topic-tip">{{topicTip}}</view>
-  </view>
-
-  <view class="card" wx:else>
-    <view class="label">正文</view>
-    <textarea class="textarea" placeholder="闲置分享、失物寻物、组队计划…" value="{{content}}" bindinput="onContent" maxlength="500" />
-    <view class="counter">{{content.length}}/500</view>
-  </view>
-
-  <!-- 匿名发布（树洞）：87% 的大学生用过匿名墙，这是论坛缺的那块 -->
-  <view class="card anon-card">
-    <view class="anon-row tap" bindtap="toggleAnonymous">
-      <view class="anon-left">
-        <text class="anon-icon">🎭</text>
-        <view>
-          <view class="anon-title">匿名发布</view>
-          <view class="muted anon-sub">别人只看到「匿名·xxxx」，头像不显示</view>
+    <view class="composer__label"><text>配图（最多 6 张，可选）</text></view>
+    <view class="composer__imgs">
+      <view wx:for="{{images}}" wx:key="*this" class="composer__img-cell">
+        <image class="composer__img tap" src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewImage"></image>
+        <view class="composer__img-del tap" data-i="{{index}}" catchtap="removeImage">
+          <image class="composer__img-del-icon" src="/assets/icons/x--white.svg" mode="aspectFit" />
         </view>
       </view>
-      <view class="switch {{anonymous ? 'on' : ''}}">
-        <view class="switch-dot"></view>
+      <view wx:if="{{images.length < 6}}" class="composer__img-cell composer__add tap" bindtap="chooseImages">
+        <image class="composer__add-icon" src="/assets/icons/image--faint.svg" mode="aspectFit" />
+        <text class="composer__add-text">加图</text>
       </view>
     </view>
-    <view wx:if="{{anonTip}}" class="anon-tip">{{anonTip}}</view>
   </view>
 
-  <button class="btn-ghost draft-btn tap" bindtap="onSaveDraft">存草稿</button>
-  <button class="btn-primary tap" bindtap="submit">发布帖子</button>
+  <!-- 帖子形式：三选一，切换靠 WXSS 的 max-height + opacity + transform 过渡，不硬跳 -->
+  <view class="card">
+    <view class="composer__label"><text>帖子形式</text></view>
+    <view class="composer__kinds">
+      <view class="composer__kind {{kind === 'normal' ? 'on' : ''}} tap" data-kind="normal" bindtap="onKind">
+        <image class="composer__kind-icon" src="{{kind === 'normal' ? '/assets/icons/file-text--forum.svg' : '/assets/icons/file-text--muted.svg'}}" mode="aspectFit" />
+        <view class="composer__kind-name">普通帖</view>
+        <view class="muted composer__kind-sub">标题 + 正文</view>
+      </view>
+      <view class="composer__kind {{kind === 'topic' ? 'on' : ''}} tap" data-kind="topic" bindtap="onKind">
+        <image class="composer__kind-icon" src="{{kind === 'topic' ? '/assets/icons/list-checks--forum.svg' : '/assets/icons/list-checks--muted.svg'}}" mode="aspectFit" />
+        <view class="composer__kind-name">只发主题</view>
+        <view class="muted composer__kind-sub">信息留给评论区</view>
+      </view>
+      <view class="composer__kind {{kind === 'vote' ? 'on' : ''}} tap" data-kind="vote" bindtap="onKind">
+        <image class="composer__kind-icon" src="{{kind === 'vote' ? '/assets/icons/vote--forum.svg' : '/assets/icons/vote--muted.svg'}}" mode="aspectFit" />
+        <view class="composer__kind-name">发起投票</view>
+        <view class="muted composer__kind-sub">收集大家选择</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <input class="composer__field composer__title-field" placeholder="{{kind === 'vote' ? '填写投票标题，最多 30 字' : '一句话说清你的主题'}}" value="{{title}}" bindinput="onTitle" maxlength="30" />
+
+    <!-- 正文：普通帖和投票帖都能写，收起时走过渡动画 -->
+    <view class="collapse {{kind === 'topic' ? '' : 'collapse--open'}}">
+      <view class="collapse__inner">
+        <view class="composer__label"><text>正文</text></view>
+        <textarea class="composer__textarea" placeholder="闲置分享、失物寻物、组队计划…" value="{{content}}" bindinput="onContent" maxlength="500" auto-height="{{true}}" />
+        <view class="composer__counter">{{content.length}}/500</view>
+      </view>
+    </view>
+
+    <!-- 只发主题：正文框换成说明 -->
+    <view class="collapse collapse--topic {{kind === 'topic' ? 'collapse--open' : ''}}">
+      <view class="collapse__inner">
+        <view class="composer__label">
+          <text>正文</text>
+          <text class="composer__hint">这个主题不需要</text>
+        </view>
+        <view class="composer__topic-box">
+          <view class="composer__topic-line">
+            <image class="composer__topic-icon" src="/assets/icons/check--brand.svg" mode="aspectFit" />
+            <text>只发主题的意思是：标题写清楚你要找什么，</text>
+          </view>
+          <view class="composer__topic-line">具体的群号、地点、报名方式，留给评论区里想参与的同学补充。</view>
+          <view class="composer__topic-line">发完在这条主题下留言就行，看得见这条主题的同学都能看到。</view>
+        </view>
+        <view wx:if="{{topicTip}}" class="composer__topic-tip">{{topicTip}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 投票设置：选中「发起投票」时展开，400ms 过渡，不是硬切 -->
+  <view class="collapse collapse--vote {{kind === 'vote' ? 'collapse--open' : ''}}">
+    <view class="collapse__inner">
+      <view class="card vote-panel">
+        <view class="vote-panel__head">
+          <view class="vote-panel__badge">
+            <image class="vote-panel__badge-icon" src="/assets/icons/vote--white.svg" mode="aspectFit" />
+          </view>
+          <view class="vote-panel__text">
+            <view class="vote-panel__title">投票设置</view>
+            <view class="muted vote-panel__sub">至少填写 2 个选项，最多 8 个</view>
+          </view>
+        </view>
+
+        <view class="vote-panel__block">
+          <view class="vote-panel__block-head">
+            <text class="muted">投票选项</text>
+            <text class="faint">{{voteOptions.length}}/8</text>
+          </view>
+          <view wx:for="{{voteOptions}}" wx:key="id" class="vote-row">
+            <view class="vote-row__grip">
+              <image class="vote-row__grip-icon" src="/assets/icons/menu--faint.svg" mode="aspectFit" />
+            </view>
+            <input class="vote-row__input" placeholder="选项 {{index + 1}}" maxlength="30" value="{{item.label}}" data-i="{{index}}" bindinput="onVoteOption" />
+            <view class="vote-row__btn {{index === 0 ? 'vote-row__btn--off' : ''}} tap" data-i="{{index}}" data-d="-1" bindtap="moveVoteOption">
+              <image class="vote-row__btn-icon" src="/assets/icons/arrow-up--faint.svg" mode="aspectFit" />
+            </view>
+            <view class="vote-row__btn {{index === voteOptions.length - 1 ? 'vote-row__btn--off' : ''}} tap" data-i="{{index}}" data-d="1" bindtap="moveVoteOption">
+              <image class="vote-row__btn-icon" src="/assets/icons/arrow-down--faint.svg" mode="aspectFit" />
+            </view>
+            <view class="vote-row__btn vote-row__btn--del {{voteOptions.length <= 2 ? 'vote-row__btn--off' : ''}} tap" data-i="{{index}}" bindtap="removeVoteOption">
+              <image class="vote-row__btn-icon" src="/assets/icons/trash-2--danger.svg" mode="aspectFit" />
+            </view>
+          </view>
+          <view class="vote-panel__add {{voteOptions.length >= 8 ? 'vote-panel__add--off' : ''}} tap" bindtap="addVoteOption">
+            <image class="vote-panel__add-icon" src="/assets/icons/plus--brand.svg" mode="aspectFit" />
+            <text>添加选项</text>
+          </view>
+        </view>
+
+        <view class="vote-panel__block">
+          <text class="muted">投票类型</text>
+          <view class="vote-panel__seg">
+            <view class="vote-panel__seg-item {{voteMultiple === false ? 'on' : ''}} tap" data-m="false" bindtap="onVoteMode">
+              <text class="vote-panel__seg-name">单选</text>
+              <text class="faint vote-panel__seg-hint">只能选一项</text>
+            </view>
+            <view class="vote-panel__seg-item {{voteMultiple === true ? 'on' : ''}} tap" data-m="true" bindtap="onVoteMode">
+              <text class="vote-panel__seg-name">多选</text>
+              <text class="faint vote-panel__seg-hint">可选择多项</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="vote-panel__block">
+          <text class="muted">截止时间</text>
+          <view class="vote-panel__chips">
+            <view class="pill {{voteDeadline === 24 ? 'pill-on' : ''}} tap" data-h="24" bindtap="onVoteDeadline">24 小时</view>
+            <view class="pill {{voteDeadline === 72 ? 'pill-on' : ''}} tap" data-h="72" bindtap="onVoteDeadline">3 天</view>
+            <view class="pill {{voteDeadline === 168 ? 'pill-on' : ''}} tap" data-h="168" bindtap="onVoteDeadline">7 天</view>
+          </view>
+        </view>
+
+        <view class="vote-panel__block">
+          <view class="vote-panel__row tap" bindtap="onVoteAnonymous">
+            <image class="vote-panel__row-icon" src="/assets/icons/shield-check--brand.svg" mode="aspectFit" />
+            <view class="vote-panel__row-text">
+              <view class="vote-panel__row-title">匿名投票</view>
+              <view class="faint vote-panel__row-sub">开启后不公开投票者身份，服务端仍保留防刷标识</view>
+            </view>
+            <view class="switch {{voteAnonymous ? 'switch--on' : ''}}">
+              <view class="switch__dot"></view>
+            </view>
+          </view>
+        </view>
+
+        <view class="vote-panel__foot {{voteFilled >= 2 ? 'vote-panel__foot--ok' : 'vote-panel__foot--warn'}}">
+          {{voteFilled >= 2 ? '已填写 ' + voteFilled + ' 个有效选项，可以发布' : '至少填写 2 个选项，当前 ' + voteFilled + '/2'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 匿名发布（树洞） -->
+  <view class="card anon-card">
+    <view class="anon-card__row tap" bindtap="toggleAnonymous">
+      <view class="anon-card__icon">
+        <image class="anon-card__icon-img" src="{{anonymous ? '/assets/icons/eye-off--white.svg' : '/assets/icons/eye-off--muted.svg'}}" mode="aspectFit" />
+      </view>
+      <view class="anon-card__main">
+        <view class="anon-card__title">匿名发布</view>
+        <view class="muted anon-card__sub">别人只看到「匿名·xxxx」，头像不显示</view>
+      </view>
+      <view class="switch {{anonymous ? 'switch--on' : ''}}">
+        <view class="switch__dot"></view>
+      </view>
+    </view>
+    <view wx:if="{{anonTip}}" class="anon-card__tip">{{anonTip}}</view>
+  </view>
+
+  <view class="composer__actions">
+    <button class="composer__draft tap" bindtap="onSaveDraft">存草稿</button>
+    <button class="composer__submit {{submitting ? 'composer__submit--off' : ''}} tap" bindtap="submit" disabled="{{submitting}}">{{submitting ? '发布中…' : '发布帖子'}}</button>
+  </view>
 </view>

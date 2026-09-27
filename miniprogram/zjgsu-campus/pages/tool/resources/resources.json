@@ -1,4 +1,8 @@
 {
   "navigationBarTitleText": "学习资料",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index",
+    "empty-state": "/components/ui/empty-state/index"
+  }
 }

@@ -1,132 +1,166 @@
-<view class="container">
-  <view class="card">
-    <view class="f-label">我要发的是</view>
-    <view class="type-row">
+<!-- pages/market/edit/edit.wxml —— 发布失物 / 招领 / 二手 -->
+<app-header title="发布信息" showBack />
+
+<view class="container e-page">
+  <base-card padded>
+    <view class="e-label">我要发的是</view>
+    <view class="e-types">
       <view
         wx:for="{{types}}"
         wx:key="key"
-        class="type {{typeMap[item.key] ? 'on' : ''}} tap"
+        class="e-type {{typeMap[item.key] ? 'on' : ''}} pressable"
+        hover-class="e-type--hover"
+        hover-stay-time="80"
         data-k="{{item.key}}"
         bindtap="onType"
-      >{{item.icon}} {{item.label}}</view>
+      >
+        <image class="e-type__icon" src="{{'/assets/icons/' + (typeMap[item.key] ? 'check--market' : 'tag--faint') + '.svg'}}" mode="aspectFit" />
+        <text>{{item.label}}</text>
+      </view>
     </view>
-  </view>
+  </base-card>
 
-  <view class="card">
+  <base-card padded>
     <input
-      class="f-input"
+      class="e-input"
       placeholder="一句话说清，如「校园卡」"
+      placeholder-class="e-placeholder"
       value="{{title}}"
       data-k="title"
       maxlength="40"
       bindinput="onInput"
     />
     <textarea
-      class="f-textarea"
+      class="e-area"
       placeholder="什么时候在哪、有什么特征、希望对方怎么做"
+      placeholder-class="e-placeholder"
       value="{{desc}}"
       data-k="desc"
       maxlength="500"
       bindinput="onInput"
       auto-height
-    >
-    </textarea>
-    <view class="f-counter">{{desc.length}}/500</view>
-  </view>
+    ></textarea>
+    <view class="e-counter">{{desc.length}}/500</view>
+  </base-card>
 
-  <!-- 一卡一件事：地点（+价格）一张、联系方式一张，和页面其他卡的节奏一致。
-       以前三件事挤一张卡，靠淡线分隔，怎么看都糊 -->
-  <view class="card">
-    <view class="f-label">在哪里</view>
+  <!-- 一卡一件事：地点（+价格）一张、联系方式一张 -->
+  <base-card padded>
+    <view class="e-label">在哪里</view>
     <input
-      class="f-input"
+      class="e-input"
       placeholder="比如「教学楼」「健身房门口」"
+      placeholder-class="e-placeholder"
       value="{{location}}"
       data-k="location"
       maxlength="40"
       bindinput="onInput"
     />
-    <view wx:if="{{showPrice}}" class="f-line">
-      <text class="f-prefix">¥</text>
+    <view wx:if="{{showPrice}}" class="e-line">
+      <text class="e-prefix">¥</text>
       <input
-        class="f-input f-price"
+        class="e-input e-price"
         placeholder="参考价，可接受面议就留空"
+        placeholder-class="e-placeholder"
         value="{{price}}"
         data-k="price"
         maxlength="20"
         bindinput="onInput"
       />
     </view>
-  </view>
+  </base-card>
 
-  <view class="card">
-    <view class="f-label">怎么联系你</view>
+  <base-card padded>
+    <view class="e-label">怎么联系你</view>
     <input
-      class="f-input"
+      class="e-input"
       placeholder="手机号 / 微信号，找到你"
+      placeholder-class="e-placeholder"
       value="{{contact}}"
       data-k="contact"
       maxlength="40"
       bindinput="onInput"
     />
-    <view class="ct-row">
+    <view class="e-chips">
       <view
         wx:for="{{contactTypes}}"
         wx:key="key"
-        class="ct {{contactTypeMap[item.key] ? 'on' : ''}} tap"
+        class="e-chip {{contactTypeMap[item.key] ? 'on' : ''}} pressable"
+        hover-class="e-chip--hover"
+        hover-stay-time="80"
         data-k="{{item.key}}"
         bindtap="onContactType"
       >{{item.label}}</view>
     </view>
-    <view class="f-privacy">联系方式只在这条信息里公开</view>
-  </view>
+    <view class="e-privacy">联系方式只在这条信息里公开</view>
+  </base-card>
 
   <!-- 闲置分类 + 教材对应的课程名（只在「闲置分享」时出现） -->
-  <view wx:if="{{showCategory}}" class="card">
-    <view class="f-label">这是什么类型的闲置</view>
-    <view class="ct-row">
+  <base-card padded wx:if="{{showCategory}}">
+    <view class="e-label">这是什么类型的闲置</view>
+    <view class="e-chips">
       <view
         wx:for="{{cats}}"
         wx:for-item="c"
         wx:key="key"
-        class="ct {{catMap[c.key] ? 'on' : ''}} tap"
+        class="e-chip {{catMap[c.key] ? 'on' : ''}} pressable"
+        hover-class="e-chip--hover"
+        hover-stay-time="80"
         data-k="{{c.key}}"
         bindtap="onCategory"
-      >{{c.icon}} {{c.label}}</view>
+      >{{c.label}}</view>
     </view>
-    <view wx:if="{{category === 'book'}}" class="f-line">
+    <view wx:if="{{category === 'book'}}" class="e-line">
       <input
-        class="f-input"
+        class="e-input"
         placeholder="课程名，如「中级财务会计」"
+        placeholder-class="e-placeholder"
         value="{{courseName}}"
         data-k="courseName"
         maxlength="30"
         bindinput="onInput"
       />
     </view>
-  </view>
+  </base-card>
 
-  <view class="card">
-    <view class="f-label">图片（选填，最多 6 张）</view>
-    <view class="img-grid">
-      <view
-        wx:for="{{images}}"
-        wx:key="*this"
-        class="img-cell"
-      >
-        <image class="img" src="{{item}}" mode="aspectFill"></image>
-        <view class="img-del tap" data-i="{{index}}" catchtap="removeImage">✕</view>
+  <base-card padded>
+    <view class="e-label">图片（选填，最多 6 张）</view>
+    <view class="e-grid">
+      <view wx:for="{{images}}" wx:key="*this" class="e-cell">
+        <image class="e-img" src="{{item}}" mode="aspectFill"></image>
+        <view
+          class="e-del hit pressable"
+          hover-class="e-del--hover"
+          hover-stay-time="80"
+          data-i="{{index}}"
+          catchtap="removeImage"
+        >
+          <image src="/assets/icons/x--white.svg" mode="aspectFit" />
+        </view>
       </view>
-      <view wx:if="{{images.length < 6}}" class="img-cell add tap" bindtap="chooseImages">＋</view>
+      <view
+        wx:if="{{images.length < 6}}"
+        class="e-cell e-cell--add pressable"
+        hover-class="e-cell--add--hover"
+        hover-stay-time="80"
+        bindtap="chooseImages"
+      >
+        <image src="/assets/icons/image--muted.svg" mode="aspectFit" />
+        <text class="e-cell__hint">{{images.length}}/6</text>
+      </view>
     </view>
+  </base-card>
+
+  <!-- 存草稿（次）1 份 + 发布（主）2 份并排：主操作一眼可见 -->
+  <view class="e-foot">
+    <button class="e-draft pressable" hover-class="e-draft--hover" hover-stay-time="80" bindtap="onDraft">存草稿</button>
+    <button
+      class="e-submit pressable"
+      hover-class="e-submit--hover"
+      hover-stay-time="80"
+      disabled="{{uploading}}"
+      bindtap="onSubmit"
+    >{{uploading ? '上传中…' : '发布'}}</button>
   </view>
 
-  <view class="card f-foot">
-    <view class="f-btns">
-      <button class="btn-ghost f-draft tap" bindtap="onDraft">存草稿</button>
-      <button class="btn-primary f-submit tap" bindtap="onSubmit" disabled="{{uploading}}">
-        {{uploading ? '上传中…' : '发布'}}
-      </button>
-    </view>
-  </view>
+  <view class="e-gap"></view>
 </view>

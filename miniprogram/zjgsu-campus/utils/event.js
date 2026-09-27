@@ -13,10 +13,10 @@ const KEY = 'zjgsu_events';
 // 四种活动类型。选这几个是因为它们都是「有明确时间地点、会有人想一起去」的事，
 // 顺便 / 吐槽这类内容更适合丢进论坛
 const TYPES = {
-  lecture: { label: '讲座', icon: '🎟️', hint: '讲座 / 宣讲 / 经验交流会' },
-  contest: { label: '比赛', icon: '🏆', hint: '学科竞赛 / 演讲比赛 / 答辩' },
-  team: { label: '组队', icon: '🤝', hint: '大创 / 挑战杯 / 数学建模找队友' },
-  other: { label: '其他', icon: '📣', hint: '社团活动 / 志愿活动 / 聚餐' }
+  lecture: { label: '讲座', icon: 'megaphone️', hint: '讲座 / 宣讲 / 经验交流会' },
+  contest: { label: '比赛', icon: 'award', hint: '学科竞赛 / 演讲比赛 / 答辩' },
+  team: { label: '组队', icon: 'users-round', hint: '大创 / 挑战杯 / 数学建模找队友' },
+  other: { label: '其他', icon: 'sparkles', hint: '社团活动 / 志愿活动 / 聚餐' }
 };
 
 function typeLabel(type) {
@@ -24,7 +24,7 @@ function typeLabel(type) {
 }
 
 function typeIcon(type) {
-  return (TYPES[type] && TYPES[type].icon) || '📣';
+  return (TYPES[type] && TYPES[type].icon) || 'sparkles';
 }
 
 function read(key, fallback) {
@@ -45,13 +45,8 @@ function nowText() {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
 }
 
-function call(action, payload) {
-  if (!cloud.cfg.USE_CLOUD || !cloud.ensureCloud()) return Promise.resolve(null);
-  return wx.cloud.callFunction({
-    name: 'user',
-    data: Object.assign({ action: action }, payload || {})
-  }).then((res) => (res && res.result) || null).catch(() => null);
-}
+// 云函数统一入口在 cloud.js，这里只转发
+const call = cloud.callFunction;
 
 /* ---------------- 发布 ---------------- */
 

@@ -1,3 +1,7 @@
 {
-  "navigationBarTitleText": "活动详情"
+  "navigationBarTitleText": "活动详情",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-header": "/components/ui/app-header/index"
+  }
 }

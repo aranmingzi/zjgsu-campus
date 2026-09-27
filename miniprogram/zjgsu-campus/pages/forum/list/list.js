@@ -4,9 +4,6 @@ const store = require('../../../utils/store.js');
 const moderation = require('../../../utils/moderation.js');
 const userApi = require('../../../utils/user.js');
 // 全站同一套精准 / 模糊内核：帖子标题打错字也该搜得到
-const searchCore = require('../../../utils/search.js');
-// 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置（论坛、闲置、活动三个板块共用）
-const bannerApi = require('../../../utils/banner.js');
 
 const COURSE_BOARD = '课程评价';
 const PAGE_SIZE = store.PAGE.SIZE;
@@ -15,11 +12,11 @@ const PAGE_SIZE = store.PAGE.SIZE;
 // 「最多评论」是信息墙专用的入口：找同好群的人不会去翻最新，
 // 他要的是「已经聚了最多人的那一个」—— 喊了三个月没人的群不该排在他前面
 const SORT_OPTIONS = [
-  { k: 'latest', icon: '🕐', label: '最新' },
-  { k: 'hot', icon: '🔥', label: '热门' },
-  { k: 'likes', icon: '👍', label: '最多赞' },
-  { k: 'dislikes', icon: '👎', label: '最多踩' },
-  { k: 'comments', icon: '💬', label: '最多留言' }
+  { k: 'latest', icon: 'clock', label: '最新' },
+  { k: 'hot', icon: 'flame', label: '热门' },
+  { k: 'likes', icon: 'thumbs-up', label: '最多赞' },
+  { k: 'dislikes', icon: 'thumbs-down', label: '最多踩' },
+  { k: 'comments', icon: 'message-circle', label: '最多留言' }
 ];
 
 Page({
@@ -53,10 +50,6 @@ Page({
     // 被举报暂停展示的内容条数。不进主列表，但要给同学一个能进来补举报的口子 ——
     // 没有这个口子，第 4、5 票就收不到，「5 人举报自动删除」永远触发不了
     hiddenCount: 0,
-    // 顶部 Banner 轮播：4 秒自动切；手指一碰立刻停，抬手恢复
-    banner: [],
-    bannerIdx: 0,
-    bannerAutoplay: true
   },
 
   onLoad() {
@@ -85,43 +78,8 @@ Page({
 
   onShow() {
     this.load();
-    this.loadBanner();
   },
 
-  /* ---------------- 顶部 Banner 轮播 ---------------- */
-
-  // 数据随 onShow 刷新：刚发的寻物 / 闲置、刚被顶起来的树洞，回来就该看到新的
-  loadBanner() {
-    this.setData({ banner: bannerApi.getBannerItems(), bannerIdx: 0, bannerAutoplay: true });
-  },
-
-  // 手指触碰轮播立即停：自动切换和拖动抢一个 swiper，触摸期间把 autoplay 关掉
-  onBannerTouchStart() {
-    if (!this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: false });
-  },
-
-  // 抬手 / 划出轮播区域就恢复自动切换
-  onBannerTouchEnd() {
-    if (this.data.bannerAutoplay) return;
-    this.setData({ bannerAutoplay: true });
-  },
-  onBannerTouchCancel() {
-    this.onBannerTouchEnd();
-  },
-
-  // swiper 自滚也会触发 change：只用来同步指示点
-  onBannerChange(e) {
-    const cur = e.detail.current;
-    if (cur === this.data.bannerIdx) return;
-    this.setData({ bannerIdx: cur });
-  },
-
-  onBannerTap(e) {
-    const b = this.data.banner[e.currentTarget.dataset.idx];
-    if (!b || !b.url) return;
-    wx.navigateTo({ url: b.url });
-  },
 
   load() {
     // 搜索态下 load 必须走搜索，否则触底加载会把「搜出来的结果」换成不带关键词的完整列表

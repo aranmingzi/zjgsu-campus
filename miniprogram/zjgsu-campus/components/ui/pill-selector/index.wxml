@@ -1,0 +1,16 @@
+<!-- components/ui/pill-selector/index.wxml -->
+<!-- items / labels 由 JS 展开成 displayItems（{ value, text }），
+     模板只负责展示，不再调用任何组件方法。 -->
+<scroll-view scroll-x class="ui-pill no-scrollbar" show-scrollbar="{{false}}">
+  <view class="ui-pill__row">
+    <view
+      wx:for="{{displayItems}}"
+      wx:key="value"
+      class="ui-pill__item {{value === item.value ? 'ui-pill__item--on ui-pill__item--' + accent : ''}}"
+      data-v="{{item.value}}"
+      bindtap="onTap"
+      hover-class="ui-pill__item--hover"
+      hover-stay-time="80"
+    >{{item.text}}</view>
+  </view>
+</scroll-view>

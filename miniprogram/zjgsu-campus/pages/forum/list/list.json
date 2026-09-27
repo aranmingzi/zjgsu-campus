@@ -1,6 +1,8 @@
 {
   "navigationBarTitleText": "论坛",
-  "usingComponents": {},
+  "usingComponents": {
+    "treehole-entry": "/components/ui/treehole-entry/index"
+  },
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "dark"
 }

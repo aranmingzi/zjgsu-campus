@@ -150,6 +150,11 @@ Page({
     wx.navigateTo({ url: '/pages/mine/favorites/favorites' });
   },
 
+  // 去树洞卡：Web 版 MineHomeView 的入口指向 /forum/hole，这里补一个同名跳转
+  onHole() {
+    wx.navigateTo({ url: '/pages/forum/hole/hole' });
+  },
+
   onDrafts() {
     wx.navigateTo({ url: '/pages/mine/drafts/drafts' });
   },

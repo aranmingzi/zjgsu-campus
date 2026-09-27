@@ -1,88 +1,136 @@
-/* pages/course/teacher/teacher —— 老师评价页 */
+/* pages/course/teacher —— 老师评价页。类名一律 tc-*，
+   .card / .title-lg / .title-md / .muted 这些来自 app.wxss。 */
+.tc-page {
+  padding-bottom: 200rpx;
+}
 
-.head { text-align: center; }
-.t-name { font-size: 40rpx; font-weight: 600; }
-.t-meta { margin-top: 8rpx; }
-.t-verified { font-size: 23rpx; color: #0f8b5f; }
-.t-score-line {
+.tc-head {
+  text-align: center;
+}
+.tc-meta {
+  margin-top: 8rpx;
+}
+.tc-verified {
+  display: inline-flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #128a56;
+}
+.tc-check {
+  width: 26rpx;
+  height: 26rpx;
+  margin-right: 8rpx;
+}
+.tc-score {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 16rpx;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
 }
-.t-avg {
-  font-size: 48rpx;
-  font-weight: 600;
-  color: #ff9f1c;
-  margin-right: 12rpx;
+.tc-avg {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #d98c0b;
+  line-height: 1.1;
+  margin-right: 14rpx;
 }
-
-.section-title {
-  font-size: 27rpx;
-  color: #6b7280;
-  margin: 8rpx 0 14rpx;
-}
-
-.review-head {
+.tc-stars {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8rpx;
 }
-.rv-name { font-size: 26rpx; color: #3d434b; }
-.rv-time { font-size: 23rpx; }
-.rv-course {
-  font-size: 26rpx;
-  font-weight: 600;
-  color: #1a5fb4;
+.tc-star-icon {
+  margin-right: 2rpx;
 }
-.rv-content {
-  font-size: 27rpx;
-  color: #3d434b;
+.tc-star-icon { width: 28rpx; height: 28rpx; }
+.tc-scored {
+  margin-left: 14rpx;
+  font-size: 24rpx;
+}
+.tc-course-line {
+  width: 100%;
   margin-top: 10rpx;
-  white-space: pre-wrap;
+  font-size: 22rpx;
+  color: #6f7b91;
 }
 
-.t-course-line {
-  font-size: 23rpx;
-  color: #8a9099;
-  margin-top: 8rpx;
+.tc-section {
+  margin: 8rpx 4rpx 16rpx;
+  font-size: 30rpx;
+}
+
+.tc-empty {
+  padding: 48rpx 32rpx;
+  text-align: center;
+}
+.tc-empty-icon {
+  width: 96rpx;
+  height: 96rpx;
+  margin-bottom: 16rpx;
 }
 
 /* 一条评价里两档分：老师分 / 课程分行排列，谁跟谁对不上就不会看错 */
-.rv-scores {
+.tc-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.tc-review-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tc-review-course {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2b5aed;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tc-review-time {
+  flex-shrink: 0;
+  font-size: 22rpx;
+}
+.tc-scores {
   display: flex;
   flex-direction: column;
-  gap: 6rpx;
-  margin-top: 8rpx;
+  gap: 8rpx;
+  margin-top: 14rpx;
 }
-.rv-score-row {
+.tc-score-row {
   display: flex;
   align-items: center;
 }
-.rv-score-label {
-  font-size: 22rpx;
-  color: #9aa0a6;
+.tc-score-label {
   width: 56rpx;
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #98a3b8;
 }
-.rv-score-text {
-  font-size: 24rpx;
-  color: #ff9f1c;
-  margin-left: 10rpx;
+.tc-score-text {
+  margin-left: 12rpx;
+  font-size: 26rpx;
+  color: #d98c0b;
+}
+.tc-review-content {
+  margin-top: 14rpx;
+  font-size: 28rpx;
+  color: #172033;
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 
-.stars.small .star { font-size: 24rpx; }
-
-.empty-icon { font-size: 56rpx; }
-
-.fixed-bar {
-  position: fixed;
+.tc-bar {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
-  border-top: 1rpx solid #eef0f3;
-  padding: 18rpx 32rpx calc(18rpx + env(safe-area-inset-bottom));
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+  border-top: 2rpx solid #e8edf5;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
 }
-.fixed-bar .btn-primary { margin: 0; }

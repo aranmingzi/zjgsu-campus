@@ -1,0 +1,126 @@
+/* components/ui/app-header/index.wxss
+   浅色自定义导航（Web 版 AppHeader.vue 的原生版）。
+   高度全部由 JS 注入的 nav.* 驱动，不用 clamp / vh 之类的浏览器特性。 */
+
+.app-header {
+  position: relative;
+  z-index: 50;
+  background: #ffffff;
+  border-bottom: 2rpx solid #e8edf5;
+}
+
+.app-header--dark {
+  background: #11142e;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- 状态栏 ---------- */
+.app-header__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+}
+
+.app-header__time {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #172033;
+}
+.app-header--dark .app-header__time { color: #ffffff; }
+
+.app-header__sys {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.app-header__signal,
+.app-header__net {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #172033;
+}
+.app-header--dark .app-header__signal,
+.app-header--dark .app-header__net { color: #ffffff; }
+
+.app-header__battery {
+  width: 40rpx;
+  height: 20rpx;
+  box-sizing: border-box;
+  border: 2rpx solid currentColor;
+  border-radius: 6rpx;
+  padding: 2rpx;
+  color: #172033;
+}
+.app-header--dark .app-header__battery { color: #ffffff; }
+
+.app-header__battery-fill {
+  width: 75%;
+  height: 100%;
+  background: currentColor;
+  border-radius: 2rpx;
+}
+
+/* ---------- 标题栏 ---------- */
+.app-header__bar {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.app-header__side {
+  display: flex;
+  align-items: center;
+  min-width: 88rpx;
+  padding-left: 16rpx;
+}
+.app-header__side--right {
+  justify-content: flex-end;
+  padding-left: 0;
+  padding-right: 16rpx;
+}
+
+/* 标题用绝对定位居中，避开左右热区的挤压 —— 320/375/430 都不跑偏 */
+.app-header__title-wrap {
+  position: absolute;
+  left: 88rpx;
+  right: 88rpx;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.app-header__title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #172033;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app-header--dark .app-header__title { color: #ffffff; }
+
+.app-header__back,
+.app-header__more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 999rpx;
+}
+
+.app-header__back--active { background: #f1f3f7; }
+
+.app-header__back--glass { background: rgba(255, 255, 255, 0.1); }
+
+.app-header__back-icon,
+.app-header__more-icon {
+  width: 40rpx;
+  height: 40rpx;
+}

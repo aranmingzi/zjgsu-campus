@@ -9,6 +9,8 @@ const userApi = require('../../../utils/user.js');
 Page({
   data: {
     name: '',
+    // 自定义导航条（app-header）的标题，同一份名字不再调一次 setNavigationBarTitle
+    navTitle: '老师评价',
     courseId: '',
     courseName: '',
     reviews: [],
@@ -63,6 +65,7 @@ Page({
     } catch (e) {}
 
     this.setData({
+      navTitle: name || '老师评价',
       reviews: here.map((r) => this.decorateReview(r)),
       otherReviews: other.slice(0, 10).map((r) => this.decorateReview(r)),
       courseName: here.length && here[0].courseName ? here[0].courseName : '',
