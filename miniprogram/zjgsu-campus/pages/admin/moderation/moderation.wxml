@@ -1,0 +1,190 @@
+<view class="container">
+  <view class="mod-head">
+    <view class="head-title">内容审核</view>
+    <view class="head-sub">待处理 {{pending}} 条</view>
+  </view>
+
+  <view class="tab-bar">
+    <view class="tab {{tab === 'reports' ? 'on' : ''}} tap" data-tab="reports" bindtap="switchTab">举报{{pending ? ' (' + pending + ')' : ''}}</view>
+    <view class="tab {{tab === 'pin' ? 'on' : ''}} tap" data-tab="pin" bindtap="switchTab">置顶{{pinnedCount ? ' (' + pinnedCount + ')' : ''}}</view>
+    <view class="tab {{tab === 'notice' ? 'on' : ''}} tap" data-tab="notice" bindtap="switchTab">通知与数据</view>
+  </view>
+
+  <!-- 已经进审核员名单：日常只需要看队列顶上那个「全部驳回」 -->
+  <view wx:if="{{tab === 'reports' && isMod}}" class="setup-done">
+    你是审核员。日常只需要看队列顶上那个「全部驳回」，一键清完就收工。
+    <view class="auto-note">
+      <view>举报会先自动处置一轮，你只需要看系统拿不准的那些：</view>
+      <view>· 同一条内容 <text class="hl">24 小时内被 5 人举报</text> → 直接删除（人多本身就说明问题）</view>
+      <view>· <text class="hl">2 人指认广告 / 隐私 / 违规交易，且有人写清了可查证的线索</text>（链接、联系方式、金额、时间地点）→ 直接删除</view>
+      <view>· 2 人指认同样这几类，但只说「是广告」没给事实 →<text class="hl">先下架</text>，进下面的队列等你判</view>
+      <view>· 3 人举报（一般原因）→ 先下架，进队列等你判</view>
+      <view class="hl-note">冷启动期（全站举报还很冷清）会自动把人数门槛放宽：
+        下架 3→2 人，直接删除 5→3 人，另外「1 人 + 内容命中屏蔽词 + 他写了可查线索」也算数
+        —— 起步阶段总得有个不靠人多的通道。社团招新、同好群这类正常社交内容永远不会被自动删除。</view>
+      <view>已经处置完的不会再出现在下面的队列里。被暂停展示的内容也不会从全校消失 ——
+        论坛列表顶部「因举报暂停展示」就是它们的入口，同学还能进去补充举报，第 4、5 票从那里投。</view>
+    </view>
+  </view>
+
+  <!-- 成为审核员只能在服务端配名单。
+       之前这里是「点一下我自己就是审核员」，上线后等于给每个用户发了一把删全校内容的钥匙。 -->
+  <view wx:elif="{{tab === 'reports'}}" class="setup-card">
+    <view class="setup-title">成为审核员</view>
+    <view class="setup-step">
+      <text class="step-no">1</text>
+      <text class="step-txt">把下面这个身份 ID 填进云函数「user」的环境变量 MODERATORS，多个用英文逗号隔开</text>
+    </view>
+    <view class="setup-step">
+      <text class="step-no">2</text>
+      <text class="step-txt">重新进一次本页就成了。真上线之后建议只填你自己一个 ID</text>
+    </view>
+    <view class="setup-btn tap" bindtap="onCopyOpenid">
+      {{myOpenid ? '复制我的身份 ID' : '还没拿到身份，等一秒再点'}}
+    </view>
+    <view class="setup-id">当前身份 ID：{{myOpenid || '读取中…'}}</view>
+    <!-- 两边判定分开摆：不一致 = 环境变量没生效；一致但不认 = ID 本身配错了。
+         比一句笼统的「你还不是审核员」有用得多 -->
+    <view class="setup-diag">
+      <view class="diag-line">前端名单（config.js）：{{localOk ? '✓ 有你' : '✗ 没有你'}}</view>
+      <view class="diag-line">云函数（环境变量）：{{diagDone ? (isMod ? '✓ 认你' : '✗ 不认你') : '检查中…'}}</view>
+      <view wx:if="{{diagHint}}" class="diag-hint">{{diagHint}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{needSetup && setupSteps.length}}" class="guide">
+    <view class="guide-title">还需要你在控制台点几下（照着做，两分钟）</view>
+    <view wx:for="{{setupSteps}}" wx:key="*this" class="guide-row">{{item}}</view>
+    <view class="guide-row guide-row-dim">
+      建集合：开发者工具 → 云开发 → 数据库 → 点「+」→ 输集合名 → 权限选「所有用户可读，仅创建者可写」→ 确定 → 回来下拉刷新
+    </view>
+  </view>
+
+  <view wx:if="{{needSetup && setupSteps.length === 0 && !isMod}}" class="guide">
+    <view class="guide-title">云函数可能还没部署</view>
+    <view class="guide-row">
+      在开发者工具里右键 cloudfunctions\user →「上传并部署：云端安装依赖」，等提示部署成功后，回来下拉刷新这个页面。
+    </view>
+  </view>
+
+  <view wx:if="{{tip}}" class="tip">{{tip}}</view>
+
+  <!-- ============ 置顶管理 ============ -->
+  <view wx:if="{{tab === 'pin'}}">
+    <view class="sec-title">置顶帖子 <text class="sec-sub">最多同时 3 条，置顶帖在所有排序里都排最前</text></view>
+    <view wx:if="{{!isMod && myOpenid}}" class="setup-btn tap" bindtap="onCopyOpenid">复制我的身份 ID，填进 MODERATORS</view>
+    <view wx:if="{{isMod && !pinList.length}}" class="empty">本地还没有帖子缓存，先切回「举报」或者进一次论坛。</view>
+    <view wx:for="{{pinList}}" wx:key="id" class="card pin-row">
+      <view class="pin-main">
+        <view class="pin-title">{{item.title}}</view>
+        <view class="muted pin-meta">{{item.board}} · {{item.time}} · 👍 {{item.likes}} · 💬 {{item.comments}}</view>
+      </view>
+      <view class="pin-btn {{item.pinned ? 'on' : ''}} tap" data-id="{{item.id}}" catchtap="togglePin">
+        {{item.pinned ? '取消' : '置顶'}}
+      </view>
+    </view>
+    <view wx:if="{{isMod}}" class="bottom-note">置顶是运营位，别贪多：最多 3 条，多了学生反而不点。</view>
+  </view>
+
+  <!-- ============ 通知与数据 ============ -->
+  <view wx:if="{{tab === 'notice'}}">
+    <view class="sec-title">订阅消息模板 ID</view>
+    <view class="guide">
+      <view class="guide-row">
+        1. mp 后台 → 功能 → 订阅消息 → 公共模板库：评论类选「评论回复通知」，私信类选「新信件提醒」
+      </view>
+      <view class="guide-row">
+        2. 关键词勾选顺序：评论 = 回复者→原评论→回复内容→时间；私信 = 提醒内容→温馨提示→更新时间
+      </view>
+      <view class="guide-row">
+        3. 提交后到「我的模板」→ 详情里复制模板 ID，粘到下面的框里保存。留空只是收不到提醒，其他功能照常
+      </view>
+    </view>
+    <view class="guide-row guide-row-dim tap" bindtap="copyTemplateGuide">不知道去哪找？点这里看图文说明</view>
+
+    <view class="cfg-card">
+      <view class="cfg-label">回复提醒模板 ID</view>
+      <input
+        class="cfg-input"
+        placeholder="「评论回复通知」模板 ID"
+        value="{{submsgInput.reply}}"
+        data-k="reply"
+        bindinput="onCfgInput"
+      />
+      <view wx:if="{{submsgFromEnv.reply}}" class="cfg-hint">检测到环境变量里已配了回复模板，上面留空就用它的。</view>
+
+      <view class="cfg-label">私信提醒模板 ID</view>
+      <input
+        class="cfg-input"
+        placeholder="「新信件提醒」模板 ID"
+        value="{{submsgInput.chat}}"
+        data-k="chat"
+        bindinput="onCfgInput"
+      />
+      <view wx:if="{{submsgFromEnv.chat}}" class="cfg-hint">检测到环境变量里已配了私信模板，上面留空就用它的。</view>
+    </view>
+
+    <view wx:if="{{cfgTip}}" class="tip">{{cfgTip}}</view>
+    <view class="setup-btn tap" bindtap="saveCfg">保存模板 ID</view>
+
+    <view class="sec-title">校历数据</view>
+    <view class="guide-row">
+      当前校历已按教务处官方通知内置：期中 11/2、四六级口语 11/21、四六级笔试 12/12、考研初试 12/26、期末 1/4、寒假 1/18。
+    </view>
+    <view class="setup-btn tap" bindtap="importCalendar">一键导入官方校历</view>
+    <view class="bottom-note">改过校历节点、或者学校出了新通知，点上面这条会整体替换成官方版本。</view>
+  </view>
+
+  <!-- ============ 举报队列 ============ -->
+  <block wx:if="{{tab === 'reports'}}">
+  <view wx:if="{{isMod && pending > 0}}" class="batch-bar">
+    <view class="batch-main tap" bindtap="rejectAll">证据不足，全部驳回</view>
+    <view class="batch-sub tap" bindtap="rejectChecked">
+      只驳回已选（{{checked.length}}）
+    </view>
+  </view>
+
+  <view wx:if="{{isMod && queue.length === 0}}" class="empty">队列已清空，这段时间不需要人工介入。</view>
+
+  <view wx:for="{{queue}}" wx:key="repId" wx:for-item="item" class="card rep-card">
+    <view class="rep-top">
+      <view class="rep-check tap" data-rep="{{item.repId}}" catchtap="toggleCheck">
+        <text wx:if="{{checkedMap[item.repId]}}">✓</text>
+      </view>
+      <text class="rep-reason">{{item.reason}}</text>
+      <text wx:if="{{item.reviewOnly}}" class="rep-tag">{{abuseBadge || '观察期'}}</text>
+      <text class="rep-time">{{item.time}}</text>
+    </view>
+
+    <view class="rep-body">
+      <text class="rep-who">{{item.targetNick}} · {{item.targetType === 'review' ? '课程评价' : '论坛帖子'}}</text>
+      <view wx:if="{{item.title}}" class="rep-title">{{item.title}}</view>
+      <view class="rep-desc">{{item.desc}}</view>
+      <view wx:if="{{item.detail}}" class="rep-detail">举报说明：{{item.detail}}</view>
+    </view>
+
+    <view class="rep-ops">
+      <view
+        wx:if="{{item.contentStatus === 'hidden'}}"
+        class="op restore tap"
+        data-item="{{item}}"
+        catchtap="restoreOne"
+      >恢复展示</view>
+      <view class="op danger tap" data-item="{{item}}" catchtap="confirmOne">确认违规</view>
+      <view class="op tap" data-rep="{{item.repId}}" catchtap="toggleCheck">
+        {{checkedMap[item.repId] ? '取消勾选' : '勾选驳回'}}
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{isMod && queue.length > 0}}" class="bottom-note">
+    勾选后可用「只驳回已选」批量清掉同一类的举报。默认「全部驳回」最省事，
+    只有确实违规的才用「确认违规」。
+    <view wx:if="{{hasAbuse}}" class="hl-note">
+      带「{{abuseBadge || '观察期'}}」标签的这几条来自正在观察期的同学 ——
+      系统没拿它们自动处置过，是等你自己判的。驳回会计数，但只要有一条你判「确认违规」，
+      他的观察期当场就解除了，不用一直背着。
+    </view>
+  </view>
+  </block>
+</view>

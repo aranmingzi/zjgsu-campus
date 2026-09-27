@@ -1,0 +1,211 @@
+.profile {
+  display: flex;
+  align-items: center;
+  padding-top: 40rpx;
+}
+
+.avatar-wrap { position: relative; margin-right: 28rpx; flex-shrink: 0; }
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a5fb4, #4a86d6);
+  color: #fff;
+  font-size: 52rpx;
+  text-align: center;
+  line-height: 140rpx;
+}
+.avatar-img { width: 140rpx; height: 140rpx; border-radius: 50%; }
+.badge {
+  position: absolute;
+  bottom: -10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a5fb4;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 2rpx 14rpx;
+  border-radius: 999rpx;
+  white-space: nowrap;
+  max-width: 240rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-info { flex: 1; min-width: 0; }
+.edit-hint { font-size: 24rpx; color: #1a5fb4; margin-top: 10rpx; }
+
+.relation {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 0;
+}
+.rel-item { flex: 1; text-align: center; }
+.rel-num { font-size: 44rpx; font-weight: 600; color: #1f2329; line-height: 1.2; }
+.rel-num.hot { color: #e8590c; }
+.rel-label { font-size: 24rpx; color: #8a9099; margin-top: 6rpx; }
+.rel-line { width: 1rpx; height: 60rpx; background: #f0f1f3; }
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title-op {
+  font-size: 24rpx;
+  font-weight: 400;
+  color: #d9534f;
+  padding: 4rpx 16rpx;
+  background: #fdecec;
+  border-radius: 8rpx;
+}
+.empty-sm {
+  color: #b0b6be;
+  font-size: 24rpx;
+  text-align: center;
+  padding: 24rpx 0;
+}
+.mini-item {
+  padding: 18rpx 0;
+  border-top: 1rpx solid #f0f1f3;
+}
+.mini-item:first-of-type {
+  border-top: none;
+  padding-top: 4rpx;
+}
+.mini-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 课程评价那行：课名 + 星级挤在一侧，右边留给删除按钮 */
+.mini-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.mini-name { font-weight: 600; }
+.mini-content {
+  color: #4b5159;
+  font-size: 26rpx;
+  margin-top: 6rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-board {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 8rpx;
+  padding: 4rpx 14rpx;
+  margin-left: 12rpx;
+}
+.mini-del {
+  margin-left: auto;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  color: #d9534f;
+  background: #fdecec;
+  border-radius: 8rpx;
+}
+
+.tip { text-align: center; font-size: 22rpx; color: #b0b6be; padding: 10rpx 0 30rpx; }
+/* 身份没拿到的警示条：必须是页面里最扎眼的东西，
+   同学在体验版发不出去时，第一眼就得知道问题不在自己 */
+.id-alert {
+  background: #fdecec;
+  border: 1rpx solid #f5c2c2;
+  border-radius: 16rpx;
+  padding: 22rpx 26rpx;
+  margin: 0 0 24rpx;
+}
+.id-alert-title { color: #c0392b; font-size: 28rpx; font-weight: 600; }
+.id-alert-hint { color: #a86a6a; font-size: 23rpx; margin-top: 8rpx; line-height: 1.5; }
+.hidden-tag {
+  color: #a86a1c !important;
+  background: #fdf6e6 !important;
+}
+.mini-restore {
+  font-size: 23rpx;
+  color: #a86a1c;
+  background: #fdf6e6;
+  border-radius: 8rpx;
+  padding: 8rpx 14rpx;
+  margin: 8rpx 0 6rpx;
+}
+.auth-tip {
+  display: flex;
+  align-items: center;
+  background: #faeeda;
+  padding: 24rpx 28rpx;
+}
+.auth-icon { font-size: 44rpx; margin-right: 20rpx; }
+.auth-text { flex: 1; }
+.auth-title { font-size: 28rpx; color: #633806; font-weight: 500; }
+.auth-sub { font-size: 22rpx; color: #854f0b; margin-top: 6rpx; line-height: 1.5; }
+
+/* 常用入口 */
+.entry-card { padding: 6rpx 0; }
+.entry-item {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 28rpx;
+}
+.entry-line { height: 1rpx; background: #f0f1f3; margin: 0 28rpx; }
+.entry-icon { font-size: 34rpx; margin-right: 20rpx; }
+.entry-name { font-size: 28rpx; color: #1f2329; }
+.entry-hint {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: #b0b6be;
+  margin-right: 16rpx;
+}
+.entry-dot {
+  margin-left: auto;
+  margin-right: 16rpx;
+  background: #e24b4a;
+  color: #fff;
+  font-size: 20rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  padding: 0 10rpx;
+  flex-shrink: 0;
+}
+.entry-go { color: #c4c9d0; font-size: 30rpx; }
+
+/* 应用说明入口：新用户的第一落脚点，用主题色标题把它跟下面的普通入口区分开 */
+.app-guide {
+  background: linear-gradient(135deg, #eef4fd, #ffffff);
+}
+.ag-head {
+  display: flex;
+  align-items: center;
+}
+.ag-icon { font-size: 32rpx; margin-right: 12rpx; }
+.ag-title { font-size: 30rpx; font-weight: 600; color: #1a5fb4; flex: 1; }
+.ag-go { color: #b0b6be; font-size: 32rpx; }
+.ag-hint { font-size: 22rpx; color: #8a9099; margin-top: 8rpx; }
+
+.demo-card { margin-top: 8rpx; padding: 24rpx 28rpx; }
+.demo-title { font-size: 28rpx; color: #8a9099; }
+.demo-hint { font-size: 22rpx; color: #b0b6be; margin-top: 8rpx; line-height: 1.6; }
+
+.mod-card { padding: 6rpx 0; }
+.mod-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 28rpx;
+}
+.mod-title { font-size: 30rpx; font-weight: 600; }
+.mod-hint { font-size: 24rpx; color: #1a5fb4; }

@@ -1,0 +1,103 @@
+<view class="container">
+  <view class="card">
+    <view class="label">选择板块<text class="label-sub">不选就发到「闲聊」</text></view>
+    <view class="board-grid">
+      <view wx:for="{{boards}}" wx:key="*this" class="board-chip {{board === item ? 'on' : ''}} tap" data-b="{{item}}" bindtap="onBoard">{{item}}</view>
+    </view>
+    <!-- 社团同好 / 活动组队：明确说可以留联系方式。
+         不写明的话没人敢贴群号，这个板块就白开了 -->
+    <view wx:if="{{contactOk}}" class="contact-ok">✓ 这个板块可以留群号和联系方式，拉人进群是正常内容，不会被当广告</view>
+  </view>
+
+  <!-- 课程评价板块：发帖时绑定课程，方便按课区分和查看 -->
+  <view class="card" wx:if="{{isCourseBoard}}">
+    <view class="label">关联课程</view>
+    <view wx:if="{{courseName}}" class="picked-course">
+      <text>📖 {{courseName}}</text>
+      <text class="clear-course tap" bindtap="clearCourse">更换</text>
+    </view>
+    <block wx:else>
+      <input class="field" placeholder="搜索课程名，如 中级财务会计" value="{{courseKeyword}}" bindinput="onCourseSearch" />
+      <view wx:if="{{courseResults.length}}" class="course-pick">
+        <view wx:for="{{courseResults}}" wx:key="id" class="course-item tap" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="pickCourse">
+          <view class="ci-name">{{item.name}}</view>
+          <view class="muted ci-college">{{item.college}}</view>
+        </view>
+      </view>
+      <view wx:elif="{{courseKeyword && !courseResults.length}}" class="muted ci-none">
+        没找到？这门课可以由同学添加：先在「课程评价」页添加后再回来选，或直接在下方留课程名
+      </view>
+    </block>
+  </view>
+
+  <view class="card">
+    <view class="label">配图（最多 6 张，可选）</view>
+    <view class="img-grid">
+      <view wx:for="{{images}}" wx:key="*this" class="img-cell">
+        <image class="img-preview tap" src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewImage"></image>
+        <view class="img-del tap" data-i="{{index}}" catchtap="removeImage">×</view>
+      </view>
+      <view wx:if="{{images.length < 6}}" class="img-cell add tap" bindtap="chooseImages">＋</view>
+    </view>
+  </view>
+
+  <!-- 帖子类型：普通帖 vs 主题帖（只发标题，信息收在评论区）。
+       想找「浙工商同好群」这种东西的时候，正文是没人看的，
+       要的是标题下那一串别人留的群号 —— 得让同学能明确选出这个形 -->
+  <view class="card">
+    <view class="label">帖子形式</view>
+    <view class="kind-row">
+      <view class="kind-item {{kind === 'normal' ? 'on' : ''}} tap" data-kind="normal" bindtap="onKind">
+        <view class="kind-name">普通帖</view>
+        <view class="muted kind-sub">标题 + 正文</view>
+      </view>
+      <view class="kind-item {{kind === 'topic' ? 'on' : ''}} tap" data-kind="topic" bindtap="onKind">
+        <view class="kind-name">只发主题</view>
+        <view class="muted kind-sub">只写标题，信息留给评论区</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">标题</view>
+    <input class="field" placeholder="{{kind === 'topic' ? '想找什么？一句话说清，如 浙工商同好群' : '一句话说清你的主题'}}" value="{{title}}" bindinput="onTitle" maxlength="30" />
+  </view>
+
+  <!-- 普通帖写正文；主题帖反过来 —— 正文框换成说明，
+       让「点开发现是一篇长文」和「点开发现是个空壳」这两种落差都不再发生 -->
+  <view class="card" wx:if="{{kind === 'topic'}}">
+    <view class="label">正文<text class="label-sub">这个主题不需要</text></view>
+    <view class="topic-box">
+      <view class="topic-line">✓ 只发主题的意思是：标题写清楚你要找什么，</view>
+      <view class="topic-line">具体的群号、地点、报名方式，留给评论区里想参与的同学补充。</view>
+      <view class="topic-line">发完在这条主题下留言就行，看得见这条主题的同学都能看到。</view>
+    </view>
+    <view wx:if="{{topicTip}}" class="topic-tip">{{topicTip}}</view>
+  </view>
+
+  <view class="card" wx:else>
+    <view class="label">正文</view>
+    <textarea class="textarea" placeholder="闲置分享、失物寻物、组队计划…" value="{{content}}" bindinput="onContent" maxlength="500" />
+    <view class="counter">{{content.length}}/500</view>
+  </view>
+
+  <!-- 匿名发布（树洞）：87% 的大学生用过匿名墙，这是论坛缺的那块 -->
+  <view class="card anon-card">
+    <view class="anon-row tap" bindtap="toggleAnonymous">
+      <view class="anon-left">
+        <text class="anon-icon">🎭</text>
+        <view>
+          <view class="anon-title">匿名发布</view>
+          <view class="muted anon-sub">别人只看到「匿名·xxxx」，头像不显示</view>
+        </view>
+      </view>
+      <view class="switch {{anonymous ? 'on' : ''}}">
+        <view class="switch-dot"></view>
+      </view>
+    </view>
+    <view wx:if="{{anonTip}}" class="anon-tip">{{anonTip}}</view>
+  </view>
+
+  <button class="btn-ghost draft-btn tap" bindtap="onSaveDraft">存草稿</button>
+  <button class="btn-primary tap" bindtap="submit">发布帖子</button>
+</view>

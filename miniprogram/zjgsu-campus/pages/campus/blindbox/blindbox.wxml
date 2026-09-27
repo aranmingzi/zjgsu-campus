@@ -1,0 +1,107 @@
+<view class="container">
+
+  <!-- 规则卡：三句话说清这个功能，别让同学对着按钮猜 -->
+  <view class="card bb-head">
+    <view class="bb-title">🫙 校园盲盒 · 漂流瓶</view>
+    <view class="bb-sub">匿名扔一句心里话进海里，随机被一位同学捞到。</view>
+    <view class="bb-rules">
+      <text>· 每天能捞 {{daily}} 次，捞到吐槽、分享或匿名提问</text>
+      <text>· 捞到时看不到是谁 —— 回复之后才会解锁对方的院系</text>
+    </view>
+  </view>
+
+  <!-- 今日次数 + 捞瓶 -->
+  <view class="card bb-pool">
+    <view class="bb-count">
+      <text class="bb-count-num">{{left === null ? daily : left}}</text>
+      <text class="bb-count-unit">/ {{daily}} 次 · 今日剩余</text>
+    </view>
+    <view class="bb-fetch-btn tap {{fetching || (left !== null && left <= 0) ? 'off' : ''}}" bindtap="onFetch">
+      {{fetching ? '撒网中…' : (left !== null && left <= 0 ? '明天再来' : '🎣 捞一个')}}
+    </view>
+  </view>
+
+  <!-- 云端连不上（多半是云函数还没部署新版）时给一句实话 -->
+  <view wx:if="{{cloudMsg}}" class="cloud-msg">{{cloudMsg}}</view>
+
+  <!-- 捞到的瓶子：回复区 + 解锁院系 -->
+  <view wx:if="{{bottle}}" class="card bb-bottle">
+    <view class="bb-bottle-top">
+      <text class="bb-bottle-kind">{{bottle.kind === '分享' ? '🎁' : (bottle.kind === '提问' ? '❓' : '💢')}} {{bottle.kind}}</text>
+      <view wx:if="{{bottle.locked}}" class="bb-lock">🔒 院系未解锁</view>
+      <view wx:else class="bb-lock bb-lock-on">🏷️ 来自 {{bottle.ownerCollege || '未填写'}} 的同学</view>
+    </view>
+    <view class="bb-bottle-content">{{bottle.content}}</view>
+
+    <block wx:if="{{bottle.locked}}">
+      <textarea
+        class="bb-reply"
+        placeholder="回一句话，回复后解锁院系"
+        value="{{replyText}}"
+        bindinput="onReplyInput"
+        maxlength="300"
+        auto-height="{{true}}"
+        show-confirm-bar="{{false}}"
+      />
+      <view class="bb-bottle-ops">
+        <view class="bb-op tap" bindtap="onPutBack">放回去</view>
+        <view class="bb-op main tap {{replying ? 'off' : ''}}" bindtap="onReply">{{replying ? '发送中…' : '回复并解锁'}}</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="bb-unlocked {{justUnlocked ? 'pop' : ''}}">🎉 你已解锁：这位同学来自 {{bottle.ownerCollege || '未填写'}}</view>
+      <view class="bb-bottle-ops">
+        <view class="bb-op main tap" bindtap="onPutBack">好的，放回去</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 扔瓶子 -->
+  <view class="card bb-throw">
+    <view class="bb-throw-title">往海里扔一个</view>
+    <scroll-view class="bb-kinds" scroll-x="true">
+      <view
+        wx:for="{{kinds}}"
+        wx:key="key"
+        class="chip {{throwKindMap[item.key] ? 'chip-on' : ''}} tap"
+        data-k="{{item.key}}"
+        bindtap="onPickKind"
+      >{{item.icon}} {{item.key}}</view>
+    </scroll-view>
+    <view class="bb-throw-hint muted">{{throwKindMap['吐槽'] ? kinds[0].hint : (throwKindMap['分享'] ? kinds[1].hint : kinds[2].hint)}}</view>
+    <textarea
+      class="bb-content"
+      placeholder="写一句想说的（500 字内）"
+      value="{{throwContent}}"
+      bindinput="onThrowInput"
+      maxlength="500"
+      auto-height="{{true}}"
+      show-confirm-bar="{{false}}"
+    />
+    <view class="bb-throw-btn tap {{throwing || !throwContent ? 'off' : ''}}" bindtap="onThrow">
+      {{throwing ? '扔出去啦…' : '🫙 扔进海里'}}
+    </view>
+    <view class="muted bb-throw-note">扔出去就收不回来了，会匿名漂到某个同学手里。违反校规的内容会被拦截。</view>
+  </view>
+
+  <!-- 我的瓶子：我扔的 + 收到的回复（回复人院系已解锁） -->
+  <view class="more-row tap" bindtap="onToggleMine">
+    <text>我的瓶子（{{mine.length}}）{{mineOpen ? ' ▴' : ' ▾'}}</text>
+    <text class="more-go">›</text>
+  </view>
+  <block wx:if="{{mineOpen}}">
+    <view wx:if="{{mine.length === 0}}" class="empty-sm">还没扔过瓶子，扔一个试试</view>
+    <view wx:for="{{mine}}" wx:key="id" wx:for-item="b" class="card bb-mine">
+      <view class="bb-mine-top">
+        <text class="bb-bottle-kind">{{b.kind === '分享' ? '🎁' : (b.kind === '提问' ? '❓' : '💢')}} {{b.kind}}</text>
+        <text class="muted bb-mine-replies">{{b.replies.length}} 条回复</text>
+      </view>
+      <view class="bb-bottle-content">{{b.content}}</view>
+      <view wx:for="{{b.replies}}" wx:key="id" wx:for-item="r" class="bb-reply-item">
+        <view class="bb-reply-content">{{r.content}}</view>
+        <view class="muted bb-reply-meta">来自 {{r.college || '未填写'}} 的同学</view>
+      </view>
+    </view>
+  </block>
+
+</view>

@@ -1,0 +1,83 @@
+<view class="container">
+  <view class="tabs">
+    <view class="tab {{tab === 'friends' ? 'on' : ''}} tap" data-tab="friends" bindtap="onTab">同学 {{friends.length}}</view>
+    <view class="tab {{tab === 'requests' ? 'on' : ''}} tap" data-tab="requests" bindtap="onTab">请求 {{requests.length}}</view>
+    <view class="tab {{tab === 'search' ? 'on' : ''}} tap" data-tab="search" bindtap="onTab">找同学</view>
+    <view class="tab {{tab === 'blocked' ? 'on' : ''}} tap" data-tab="blocked" bindtap="onTab">黑名单 {{blocks.length}}</view>
+  </view>
+
+  <!-- 我的同学 -->
+  <block wx:if="{{tab === 'friends'}}">
+    <view wx:if="{{friends.length === 0}}" class="empty">
+      <view>还没有同学好友</view>
+      <view class="empty-sm">去「找同学」按昵称或学院搜一下吧</view>
+    </view>
+    <view wx:for="{{friends}}" wx:key="openid" class="card person tap" data-openid="{{item.openid}}" bindtap="goCard">
+      <view class="avatar">{{item.avatarText}}</view>
+      <view class="p-info">
+        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
+        <view wx:if="{{item.contactValue}}" class="p-contact">{{item.contactText}}：{{item.contactValue}}</view>
+        <view wx:else class="muted">还没填联系方式</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+    <view class="btn-ghost tap" bindtap="onEditProfile">管理我的联系方式</view>
+  </block>
+
+  <!-- 收到的请求 -->
+  <block wx:if="{{tab === 'requests'}}">
+    <view wx:if="{{requests.length === 0}}" class="empty">暂时没有新请求</view>
+    <view wx:for="{{requests}}" wx:key="id" class="card person">
+      <view class="avatar">{{item.avatarText}}</view>
+      <view class="p-info">
+        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
+        <view wx:if="{{item.message}}" class="p-contact">「{{item.message}}」</view>
+        <view class="muted">{{item.time}}</view>
+      </view>
+      <view class="req-actions">
+        <view class="btn-primary mini-yes tap" data-id="{{item.id}}" bindtap="onAccept">通过</view>
+        <view class="btn-ghost mini-no tap" data-id="{{item.id}}" bindtap="onReject">忽略</view>
+      </view>
+    </view>
+    <view wx:if="{{requests.length > 0}}" class="tip">对方通过之后，你就能在「同学」里看到 TA 的联系方式。</view>
+  </block>
+
+  <!-- 找同学 -->
+  <block wx:if="{{tab === 'search'}}">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input placeholder="输入昵称或学院名" value="{{keyword}}" bindinput="onKeyword" bindconfirm="doSearch" />
+      <view class="do-search tap" bindtap="doSearch">搜索</view>
+    </view>
+    <view wx:if="{{keyword}}" class="mode-row">
+      <view class="mode-chip tap {{searchMode === 'exact' ? 'on' : ''}}" data-m="exact" bindtap="onSearchMode">精准</view>
+      <view class="mode-chip tap {{searchMode === 'fuzzy' ? 'on' : ''}}" data-m="fuzzy" bindtap="onSearchMode">模糊</view>
+    </view>
+    <view wx:if="{{keyword && results.length === 0 && !searching}}" class="empty">没找到这位同学</view>
+    <view wx:for="{{results}}" wx:key="openid" class="card person tap" data-openid="{{item.openid}}" bindtap="goCard">
+      <view class="avatar">{{item.avatarText}}</view>
+      <view class="p-info">
+        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
+        <view wx:if="{{item.motto}}" class="muted">{{item.motto}}</view>
+        <view wx:else class="muted">点击查看名片</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </block>
+
+  <!-- 黑名单 -->
+  <block wx:if="{{tab === 'blocked'}}">
+    <view wx:if="{{blocks.length === 0}}" class="empty">
+      <view>黑名单是空的</view>
+      <view class="empty-sm">遇到想静一静的人，去他的名片点「拉黑 TA」</view>
+    </view>
+    <view wx:for="{{blocks}}" wx:key="openid" class="card person">
+      <view class="avatar">{{item.avatarText}}</view>
+      <view class="p-info">
+        <view class="p-name">{{item.nickName}}<text wx:if="{{item.college}}" class="p-college"> · {{item.college}}</text></view>
+        <view class="muted">已拉黑，TA 无法给你发消息</view>
+      </view>
+      <view class="btn-ghost mini-no tap" data-openid="{{item.openid}}" catchtap="onUnblock">解除</view>
+    </view>
+  </block>
+</view>

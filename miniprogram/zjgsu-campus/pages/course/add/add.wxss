@@ -1,0 +1,41 @@
+.label {
+  font-weight: 600;
+  margin-bottom: 18rpx;
+}
+.req {
+  color: #e5484d;
+  margin-left: 8rpx;
+}
+.field {
+  font-size: 30rpx;
+  /* 定高修复：input 只给 padding 不给高度会截字 */
+  height: 88rpx;
+  padding: 0;
+}
+.picker {
+  font-size: 30rpx;
+  padding: 8rpx 0;
+  color: #1f2329;
+}
+.hint {
+  font-size: 23rpx;
+  color: #8a9099;
+  margin-top: 10rpx;
+}
+.tip-card {
+  background: #eef3fb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+.tip-title {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #1a5fb4;
+  margin-bottom: 10rpx;
+}
+.tip-text {
+  font-size: 25rpx;
+  color: #4b5159;
+  line-height: 1.7;
+}

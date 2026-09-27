@@ -1,0 +1,88 @@
+/* pages/course/teacher/teacher —— 老师评价页 */
+
+.head { text-align: center; }
+.t-name { font-size: 40rpx; font-weight: 600; }
+.t-meta { margin-top: 8rpx; }
+.t-verified { font-size: 23rpx; color: #0f8b5f; }
+.t-score-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16rpx;
+}
+.t-avg {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #ff9f1c;
+  margin-right: 12rpx;
+}
+
+.section-title {
+  font-size: 27rpx;
+  color: #6b7280;
+  margin: 8rpx 0 14rpx;
+}
+
+.review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.rv-name { font-size: 26rpx; color: #3d434b; }
+.rv-time { font-size: 23rpx; }
+.rv-course {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1a5fb4;
+}
+.rv-content {
+  font-size: 27rpx;
+  color: #3d434b;
+  margin-top: 10rpx;
+  white-space: pre-wrap;
+}
+
+.t-course-line {
+  font-size: 23rpx;
+  color: #8a9099;
+  margin-top: 8rpx;
+}
+
+/* 一条评价里两档分：老师分 / 课程分行排列，谁跟谁对不上就不会看错 */
+.rv-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  margin-top: 8rpx;
+}
+.rv-score-row {
+  display: flex;
+  align-items: center;
+}
+.rv-score-label {
+  font-size: 22rpx;
+  color: #9aa0a6;
+  width: 56rpx;
+}
+.rv-score-text {
+  font-size: 24rpx;
+  color: #ff9f1c;
+  margin-left: 10rpx;
+}
+
+.stars.small .star { font-size: 24rpx; }
+
+.empty-icon { font-size: 56rpx; }
+
+.fixed-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-top: 1rpx solid #eef0f3;
+  padding: 18rpx 32rpx calc(18rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+.fixed-bar .btn-primary { margin: 0; }

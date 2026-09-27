@@ -1,0 +1,83 @@
+<view class="container">
+  <!-- 顶部：最近一个还没到的节点 -->
+  <view class="card next-card">
+    <view class="next-label">下一个节点</view>
+    <view class="next-text">{{nextText}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中…</view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <view class="empty-icon">📅</view>
+    <view>还没有校历节点</view>
+  </view>
+
+  <view wx:else class="card">
+    <view class="section-title">全部节点</view>
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="cal-item {{item.past ? 'past' : ''}}"
+    >
+      <view class="cal-left">
+        <text class="cal-icon">{{item.typeIcon}}</text>
+        <view class="cal-main">
+          <view class="cal-name">{{item.name}}</view>
+          <view class="muted cal-date">{{item.date}}</view>
+          <view wx:if="{{item.note}}" class="muted cal-note">{{item.note}}</view>
+        </view>
+      </view>
+      <view class="cal-right">
+        <view wx:if="{{item.past}}" class="cal-days past-days">{{item.daysText}}</view>
+        <view wx:else class="cal-days">{{item.daysText}}</view>
+        <view wx:if="{{isMod}}" class="cal-del tap" data-id="{{item.id}}" catchtap="onRemove">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 审核员编辑区 -->
+  <view wx:if="{{isMod}}" class="card">
+    <view class="mod-head tap" bindtap="onEditToggle">
+      <text class="mod-title">审核员：{{editing ? '收起编辑' : '添加 / 修改节点'}}</text>
+      <text class="mod-go">{{editing ? '▲' : '▼'}}</text>
+    </view>
+    <block wx:if="{{editing}}">
+      <input
+        class="field"
+        placeholder="节点名，如「期末考试周」"
+        value="{{form.name}}"
+        data-k="name"
+        bindinput="onFormInput"
+        maxlength="30"
+      />
+      <view class="type-row">
+        <view
+          wx:for="{{types}}"
+          wx:for-item="t"
+          wx:key="key"
+          class="type {{typeMap[t.key] ? 'on' : ''}} tap"
+          data-k="{{t.key}}"
+          bindtap="onFormType"
+        >{{t.icon}} {{t.label}}</view>
+      </view>
+      <picker mode="date" value="{{form.date}}" bindchange="onFormDate">
+        <view class="field picker-field">
+          {{form.date || '选择日期'}}
+        </view>
+      </picker>
+      <input
+        class="field"
+        placeholder="选填，如「以通知为准」"
+        value="{{form.note}}"
+        data-k="note"
+        bindinput="onFormInput"
+        maxlength="60"
+      />
+      <button class="btn-primary tap" bindtap="onSubmit">保存节点</button>
+    </block>
+  </view>
+
+  <view class="tip-box">
+    日期以学校通知为准。发现对不上的，点「我的 → 审核」里的审核员入口就能改。
+  </view>
+</view>

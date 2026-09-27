@@ -1,0 +1,73 @@
+/* pages/campus/add/add —— 发布活动表单 */
+
+.label {
+  font-size: 25rpx;
+  color: #6b7280;
+  margin: 24rpx 0 10rpx;
+}
+.label:first-child { margin-top: 0; }
+.req { color: #d9534f; }
+
+.type-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.type-chip {
+  font-size: 24rpx;
+  color: #5b636d;
+  background: #f2f4f7;
+  border-radius: 999rpx;
+  padding: 12rpx 26rpx;
+  margin: 0 14rpx 14rpx 0;
+}
+.type-chip.on {
+  color: #1a5fb4;
+  background: #e8f0fd;
+  border: 1rpx solid #1a5fb4;
+}
+
+.input {
+  background: #f7f8fa;
+  border-radius: 14rpx;
+  padding: 20rpx 22rpx;
+  font-size: 28rpx;
+  color: #1f2329;
+  min-height: 72rpx;
+  box-sizing: border-box;
+}
+
+.time-row { display: flex; }
+.time-row .picker {
+  flex: 1;
+  background: #f7f8fa;
+  border-radius: 14rpx;
+  padding: 20rpx 22rpx;
+  font-size: 28rpx;
+  margin-right: 16rpx;
+  box-sizing: border-box;
+}
+.time-row .picker:last-child { margin-right: 0; }
+.time-row .picker.ph { color: #b0b6be; }
+
+.textarea {
+  background: #f7f8fa;
+  border-radius: 14rpx;
+  padding: 20rpx 22rpx;
+  font-size: 28rpx;
+  min-height: 200rpx;
+  box-sizing: border-box;
+  width: 100%;
+}
+.count {
+  text-align: right;
+  font-size: 22rpx;
+  color: #b0b6be;
+  margin-top: 8rpx;
+}
+
+.tip {
+  font-size: 23rpx;
+  color: #9aa0a6;
+  text-align: center;
+  margin: 20rpx 0 40rpx;
+}

@@ -1,0 +1,332 @@
+/* pages/tool/memo/memo.wxss —— 我的备忘 */
+
+page {
+  background: #f4f5f7;
+}
+
+/* ---------- 顶部统计 ---------- */
+
+.memo-top {
+  display: flex;
+  margin: 24rpx 24rpx 0;
+  padding: 34rpx 0;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #1a5fb4, #3582e8);
+  color: #fff;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 56rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* 连续天数是这个页面唯一能让人上瘾的数字，给它点暖色 */
+.stat-num.hot {
+  color: #ffdf85;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  opacity: 0.85;
+  margin-top: 10rpx;
+}
+
+.memo-tip {
+  margin: 20rpx 24rpx 0;
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+  color: #7a5b12;
+  background: #fff8e6;
+  border-left: 6rpx solid #ffc53d;
+  border-radius: 10rpx;
+}
+
+/* ---------- 空态介绍 ---------- */
+
+.memo-intro {
+  margin: 24rpx 24rpx 0;
+  padding: 36rpx 28rpx;
+  text-align: center;
+}
+
+.intro-icon {
+  font-size: 64rpx;
+}
+
+.intro-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2329;
+  margin-top: 12rpx;
+}
+
+.intro-sub {
+  font-size: 26rpx;
+  color: #8a9099;
+  line-height: 1.7;
+  margin-top: 12rpx;
+}
+
+.intro-btn {
+  display: inline-block;
+  margin-top: 24rpx;
+  padding: 16rpx 48rpx;
+  font-size: 28rpx;
+  color: #fff;
+  background: #1a5fb4;
+  border-radius: 999rpx;
+}
+
+/* ---------- 搜索 ---------- */
+
+.memo-search {
+  display: flex;
+  align-items: center;
+  margin: 24rpx 24rpx 0;
+  padding: 0 20rpx;
+  height: 72rpx;
+  background: #fff;
+  border-radius: 12rpx;
+}
+
+.search-icon {
+  margin-right: 12rpx;
+  font-size: 26rpx;
+}
+
+/* input 不给固定高度会被默认的 1.4rem 拦腰截字，必须定高 */
+.search-input {
+  flex: 1;
+  height: 72rpx;
+  font-size: 28rpx;
+  color: #1f2329;
+}
+
+.search-ph {
+  color: #b6bcc5;
+}
+
+.search-clear {
+  font-size: 26rpx;
+  color: #1a5fb4;
+  padding-left: 16rpx;
+}
+
+/* ---------- 日期分组 ---------- */
+
+.day-head {
+  display: flex;
+  align-items: baseline;
+  margin: 28rpx 28rpx 12rpx;
+}
+
+.day-date {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2329;
+}
+
+.day-week {
+  font-size: 24rpx;
+  color: #8a9099;
+  margin-left: 14rpx;
+}
+
+/* ---------- 条目 ---------- */
+
+.memo-item {
+  display: flex;
+  align-items: center;
+  margin: 0 24rpx 16rpx;
+  padding: 24rpx;
+}
+
+.memo-mood {
+  font-size: 44rpx;
+  margin-right: 20rpx;
+}
+
+.memo-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.memo-text {
+  font-size: 30rpx;
+  color: #1f2329;
+  line-height: 1.6;
+  /* 一条最多露两行，剩下的进编辑页看 */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.memo-meta {
+  font-size: 24rpx;
+  color: #9aa0a6;
+  margin-top: 10rpx;
+}
+
+.memo-del {
+  font-size: 24rpx;
+  color: #b6bcc5;
+  padding-left: 16rpx;
+}
+
+/* ---------- 悬浮按钮 ---------- */
+
+/* 备忘页的「＋ 写一条」是带字的胶囊，跟全局那个纯圆形的 .fab 长得不一样。
+   这里用 .fab-text 而不叫 .fab —— 之前同名会整块覆盖掉 app.wxss 里的 .fab，
+   后代选择器都盖不住，看着像全局按钮坏了。同名 = 覆盖，改名 = 只在备忘页生效。 */
+.fab-text {
+  position: fixed;
+  right: 32rpx;
+  bottom: 60rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  padding: 0 40rpx;
+  font-size: 30rpx;
+  color: #fff;
+  background: #1a5fb4;
+  border-radius: 999rpx;
+  box-shadow: 0 8rpx 24rpx rgba(26, 95, 180, 0.35);
+}
+
+/* ---------- 底部弹层 ---------- */
+
+.mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 28rpx 32rpx 40rpx;
+}
+
+.sheet-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2329;
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-top: 28rpx;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #6b7280;
+  margin: 28rpx 0 16rpx;
+}
+
+.form-picker {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 20rpx;
+  font-size: 30rpx;
+  color: #1a5fb4;
+  background: #f2f6fd;
+  border-radius: 12rpx;
+  text-align: right;
+}
+
+.mood-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mood {
+  flex: 1;
+  padding: 16rpx 0;
+  text-align: center;
+  border-radius: 12rpx;
+  background: #f7f8fa;
+}
+
+.mood.on {
+  background: #e8f1fd;
+  border: 2rpx solid #1a5fb4;
+}
+
+.mood-icon {
+  font-size: 40rpx;
+}
+
+.mood-name {
+  display: block;
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-top: 4rpx;
+}
+
+.mood.on .mood-name {
+  color: #1a5fb4;
+}
+
+.memo-input {
+  width: 100%;
+  box-sizing: border-box;
+  /* textarea 同样必须定高，否则默认高度会把字压掉一半 */
+  height: 260rpx;
+  padding: 20rpx;
+  font-size: 30rpx;
+  color: #1f2329;
+  background: #f7f8fa;
+  border-radius: 12rpx;
+}
+
+.memo-ph {
+  color: #b6bcc5;
+}
+
+.sheet-ops {
+  display: flex;
+  margin-top: 32rpx;
+}
+
+.sheet-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #6b7280;
+  background: #f7f8fa;
+  border-radius: 12rpx;
+}
+
+.sheet-btn.primary {
+  color: #fff;
+  background: #1a5fb4;
+  margin-left: 24rpx;
+}
+
+.bottom-note {
+  margin: 16rpx 28rpx 140rpx;
+  font-size: 24rpx;
+  color: #9aa0a6;
+  line-height: 1.7;
+}

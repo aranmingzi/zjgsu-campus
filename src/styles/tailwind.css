@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color: #172033;
+    background: #edf1f7;
+    font-family:
+      Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+      sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+    margin: 0;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    color: #ffffff;
+    background: #2b5aed;
+  }
+}
+
+@layer components {
+  .page-scroll {
+    @apply min-h-full bg-canvas px-4 pb-28 pt-3;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .section-label {
+    @apply text-xs font-medium text-faint;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pressable {
+    @apply transition duration-150 active:scale-[0.97];
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

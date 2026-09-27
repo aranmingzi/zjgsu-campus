@@ -1,0 +1,175 @@
+<view class="container detail-page" wx:if="{{course}}">  <view class="card decision">
+    <view class="title-lg">{{course.name}}</view>
+    <view class="muted course-meta">{{course.college}} · {{course.major}} · {{course.credit}} 学分</view>
+
+    <!-- 课程类型 + 纠错入口：官网目录不带「课程性质」，类型是按课名猜的，
+         猜错难免（「实验心理学」因为带「心理」被当成通识课）。
+         与其让人对着错误标签骂，不如给一个当场改掉的口子 -->
+    <view class="ctype-line">
+      <text class="ctype-badge">{{course.ctype || '专业必修'}}</text>
+      <text class="ctype-edit tap" bindtap="onEditType">类型不对？改一下</text>
+    </view>
+    <view wx:if="{{course.builtin === false}}" class="builtin-badge">同学共建课程</view>
+
+    <view class="score-line">
+      <text class="big-score">{{course.avgScore}}</text>
+      <view class="stars">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= course.starOn ? 'on' : ''}}">★</text>
+      </view>
+      <text class="muted">{{course.reviewCount}} 人评价</text>
+    </view>
+
+    <!-- 评分分布：一眼看出「是不是普遍好评」 -->
+    <view wx:if="{{course.reviewCount}}" class="dist-row">
+      <view wx:for="{{course.dist}}" wx:key="star" class="dist-item">
+        <text class="dist-star">{{item.star}}星</text>
+        <view class="dist-bar"><view class="dist-fill" style="width: {{item.count / course.reviewCount * 100}}%"></view></view>
+        <text class="dist-count">{{item.count}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{course.tags.length}}" class="heat-row">
+      <text wx:for="{{course.tags}}" wx:key="name" class="heat {{index === 0 ? 'heat-top' : ''}} tap" data-t="{{item.name}}" bindtap="onTag">大家都在说：{{item.name}} · {{item.count}}</text>
+    </view>
+
+    <view wx:if="{{course.summary}}" class="summary">{{course.summary}}</view>
+
+    <!-- 课程大纲：默认收起。多数人来这儿是为了看评分，不是先读简介 -->
+    <view class="outline tap" bindtap="toggleOutline">
+      <view class="outline-head">
+        <text>课程大纲</text>
+        <text class="outline-arrow">{{outlineOpen ? '收起' : '展开'}} ›</text>
+      </view>
+      <view wx:if="{{outlineOpen}}" class="outline-body">{{course.description}}</view>
+    </view>
+
+    <view class="tag-row">
+      <text wx:for="{{course.tags}}" wx:key="*this" wx:for-item="t" class="tag">{{t}}</text>
+    </view>
+
+    <view class="act-row">
+      <view class="act {{favorited ? 'act-on' : ''}} tap" bindtap="onFavorite">⭐ {{favorited ? '已收藏' : '收藏这门课'}}</view>
+      <view wx:if="{{isMineCourse}}" class="act act-danger tap" bindtap="onRemoveCourse">🗑 删除这门课</view>
+      <!-- 别人误加的课：加课人不管了，这门课就永远删不掉。给一条申请通道 -->
+      <view
+        wx:elif="{{course.builtin === false}}"
+        class="act act-danger tap"
+        bindtap="onRequestRemove"
+      >{{reqMine ? '已申请删除' : '申请删除这门课'}}<text wx:if="{{reqVotes}}" class="act-sub">（{{reqVotes}}/{{reqNeed}} 人同意）</text></view>
+    </view>
+    <view wx:if="{{course.builtin === false && !isMineCourse && !reqMine}}" class="muted req-hint">
+      这门课是别的同学加的，你删不掉。如果它确实是误加的（名字重复、根本不存在），
+      可以申请删除：凑够 {{reqNeed}} 人同意、或者审核员出手，就会清掉。
+    </view>
+    <view wx:if="{{reqMine}}" class="muted req-hint">
+      你已申请删除，正在等其他人同意（{{reqVotes}}/{{reqNeed}}）。审核员也可以直接删掉。
+    </view>
+  </view>
+
+  <!-- 课程评价 / 老师评价 两个分段 -->
+  <view class="sub-tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="sub-tab {{tabMap[item.key] ? 'on' : ''}} tap"
+      data-k="{{item.key}}"
+      bindtap="onTab"
+    >{{item.label}}<text wx:if="{{item.key === 'course'}}">（{{reviews.length}}）</text><text wx:elif="{{teacherCount}}">（{{teacherCount}}）</text></view>
+  </view>
+
+  <!-- ========== 按老师 ========== -->
+  <block wx:if="{{tab === 'teacher'}}">
+    <view wx:if="{{teacherGroups.length === 0}}" class="empty">
+      <view class="empty-icon">👩‍🏫</view>
+      <view>还没有人点名评价过老师</view>
+      <view class="empty-hint">写评价时填上任课老师，别人就能按老师查到你的评价</view>
+    </view>
+
+    <view wx:else>
+      <view class="tip-line">老师分和课程分是两档，点进去看细节</view>
+      <view
+        wx:for="{{teacherGroups}}"
+        wx:key="name"
+        class="card tch-item tap"
+        data-name="{{item.name}}"
+        bindtap="goTeacher"
+      >
+        <view class="tch-left">
+          <view class="tch-name">{{item.name}}</view>
+          <view class="muted">
+            <text wx:if="{{item.verified}}" class="tch-verified">✓ 官方名录</text>
+            <text wx:else>待补充</text>
+            · {{item.count}} 条评价
+          </view>
+          <view wx:if="{{item.scoredCount}}" class="muted tch-sub">其中 {{item.scoredCount}} 人单独打了老师分</view>
+        </view>
+        <view class="tch-right">
+          <!-- 老师分：没人单独打过分就显示「—」，不该拿课程分冒充 -->
+          <view class="stars small">
+            <block wx:if="{{item.avg > 0}}">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= item.avgRound ? 'on' : ''}}">★</text>
+            </block>
+            <text wx:else class="star-none">还没人打分</text>
+          </view>
+          <view class="tch-scores">
+            <text wx:if="{{item.avg > 0}}" class="tch-score">老师 {{item.avg}}</text>
+            <text wx:if="{{item.courseAvg > 0}}" class="tch-score muted">课程 {{item.courseAvg}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ========== 课程整体 ========== -->
+  <block wx:else>
+  <view wx:if="{{reviews.length === 0}}" class="empty">还没有评价，来做第一个吧～</view>
+
+  <view wx:for="{{reviews}}" wx:key="id" wx:for-item="rv" class="card review" wx:if="{{expanded || index < 3}}">
+    <view class="review-head">
+      <!-- 匿名评价只显示「匿名同学」；自己那条即使匿名也能认出是自己 -->
+      <text class="rv-name">{{rv.showName}}<text wx:if="{{rv.isMine && rv.anonymous}}" class="rv-badge">我 · 匿名</text></text>
+      <view class="rv-right">
+        <text class="muted rv-time">{{rv.time}}</text>
+        <text wx:if="{{rv.isMine}}" class="rv-op tap" data-id="{{rv.id}}" catchtap="goEdit">修改</text>
+        <text wx:if="{{rv.isMine}}" class="rv-op danger tap" data-id="{{rv.id}}" catchtap="onRemove">删除</text>
+      </view>
+    </view>
+    <view class="stars">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= rv.starOn ? 'on' : ''}}">★</text>
+      <text class="rv-score">{{rv.score}}.0</text>
+    </view>
+    <view class="rv-content">{{rv.content}}</view>
+    <view class="tag-row" wx:if="{{rv.tags.length}}">
+      <text wx:for="{{rv.tags}}" wx:key="*this" wx:for-item="t" class="tag gray">{{t}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{reviews.length > 3}}" class="more-btn tap" bindtap="toggleExpand">
+    {{expanded ? '收起' : '展开全部 ' + reviews.length + ' 条'}}
+  </view>
+  </block>
+
+  <view class="fixed-bar">
+    <button class="btn-primary tap" bindtap="goReview">写评价</button>
+  </view>
+</view>
+
+<!-- 找不到这门课时的兜底：绝不能留白屏。
+     最可能的原因是这条数据是本机早期同步留下的坏数据（id 是空的），
+     所以除了「重新同步」，还要给一个能把它清掉的出口。 -->
+<view class="container detail-page" wx:else>
+  <view class="card nf-card">
+    <view class="nf-icon">🔍</view>
+    <view class="nf-title">这门课找不到了</view>
+    <view class="muted nf-desc">
+      可能是课程数据还没同步全，也可能已经被其他同学删掉了。
+    </view>
+    <view class="nf-acts">
+      <view class="act act-primary tap" bindtap="onRetryLoad">重新同步试试</view>
+      <view class="act tap" bindtap="onDropBroken">清掉这条数据</view>
+    </view>
+    <view class="muted nf-hint">
+      「清掉这条数据」只影响你手机上这份缓存，其他同学照常能看到。
+    </view>
+  </view>
+</view>

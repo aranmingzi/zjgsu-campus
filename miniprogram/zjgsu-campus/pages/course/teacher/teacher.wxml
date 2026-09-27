@@ -1,0 +1,82 @@
+<view class="container" wx:if="{{name}}">
+  <view class="card head">
+    <view class="t-name">{{name}}</view>
+    <view class="t-meta">
+      <text wx:if="{{verified}}" class="t-verified">✓ 已在学校官方名录中<text wx:if="{{college}}"> · {{college}}</text></text>
+      <text wx:else class="muted">名录里还没查到这位老师，同学补充</text>
+    </view>
+    <view wx:if="{{count || otherCount}}" class="t-score-line">
+      <block wx:if="{{avg > 0}}">
+        <text class="t-avg">{{avg}}</text>
+        <view class="stars small">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= avgRound ? 'on' : ''}}">★</text>
+        </view>
+        <text class="muted">{{scoredCount}} 人给老师打分</text>
+      </block>
+      <block wx:else>
+        <text class="muted">还没有人单独给这位老师打分</text>
+      </block>
+      <!-- 课程分是另一档：说「提到这位老师的这些评价里，课本身怎么样」 -->
+      <view wx:if="{{courseAvg > 0}}" class="t-course-line">这些评价里的课程分：{{courseAvg}}</view>
+    </view>
+  </view>
+
+  <view class="section-title">{{courseName || '这门课'}}的评价（{{count}}）</view>
+  <view wx:if="{{count === 0}}" class="empty">
+    <view class="empty-icon">📝</view>
+    <view>还没有针对 {{name}} 的评价</view>
+  </view>
+
+  <view wx:for="{{reviews}}" wx:key="id" wx:for-item="rv" class="card review">
+    <view class="review-head">
+      <text class="rv-name">{{rv.showName}}</text>
+      <text class="muted rv-time">{{rv.time}}</text>
+    </view>
+    <view class="rv-scores">
+      <view wx:if="{{rv.hasTeacherScore}}" class="rv-score-row">
+        <text class="rv-score-label">老师</text>
+        <view class="stars small">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= rv.teacherStarOn ? 'on' : ''}}">★</text>
+        </view>
+        <text class="rv-score-text">{{rv.scoreText}}</text>
+      </view>
+      <view class="rv-score-row">
+        <text class="rv-score-label">课程</text>
+        <view class="stars small">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= rv.starOn ? 'on' : ''}}">★</text>
+        </view>
+        <text class="rv-score-text">{{rv.courseText}}</text>
+      </view>
+    </view>
+    <view class="rv-content">{{rv.content}}</view>
+  </view>
+
+  <view wx:if="{{otherCount}}" class="section-title">其他课里的评价（{{otherCount}}）</view>
+  <view wx:for="{{otherReviews}}" wx:key="id" wx:for-item="rv" class="card review tap" data-id="{{rv.courseId}}" bindtap="goCourse">
+    <view class="review-head">
+      <text class="rv-course">{{rv.courseName}}</text>
+      <text class="muted rv-time">{{rv.time}}</text>
+    </view>
+    <view class="rv-scores">
+      <view wx:if="{{rv.hasTeacherScore}}" class="rv-score-row">
+        <text class="rv-score-label">老师</text>
+        <view class="stars small">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= rv.teacherStarOn ? 'on' : ''}}">★</text>
+        </view>
+        <text class="rv-score-text">{{rv.scoreText}}</text>
+      </view>
+      <view class="rv-score-row">
+        <text class="rv-score-label">课程</text>
+        <view class="stars small">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= rv.starOn ? 'on' : ''}}">★</text>
+        </view>
+        <text class="rv-score-text">{{rv.courseText}}</text>
+      </view>
+    </view>
+    <view class="rv-content">{{rv.content}}</view>
+  </view>
+
+  <view class="fixed-bar">
+    <button class="btn-primary tap" bindtap="goReview">写对 {{name}} 的评价</button>
+  </view>
+</view>

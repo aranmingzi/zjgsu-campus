@@ -1,0 +1,49 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="sk-wrap">
+    <view class="sk-row">
+      <view class="sk-avatar"></view>
+      <view style="flex:1">
+        <view class="sk-line sk-short"></view>
+        <view class="sk-line sk-mid"></view>
+      </view>
+    </view>
+    <view class="sk-row">
+      <view class="sk-avatar"></view>
+      <view style="flex:1">
+        <view class="sk-line sk-short"></view>
+        <view class="sk-line sk-mid"></view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <view class="empty-icon">💬</view>
+    <view>还没有和同学聊过天</view>
+    <view class="empty-hint">遇到合得来的同学，打个招呼认识一下</view>
+    <view class="empty-btn tap" bindtap="goFind">去找同学</view>
+  </view>
+
+  <view wx:else class="chat-list">
+    <view
+      wx:for="{{list}}"
+      wx:key="peer"
+      class="chat-item tap"
+      data-peer="{{item.peer}}"
+      data-name="{{item.nickName}}"
+      bindtap="openChat"
+    >
+      <view class="avatar-wrap">
+        <image wx:if="{{item.avatarUrl}}" class="avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="avatar avatar-text">{{item.avatarText}}</view>
+        <view wx:if="{{item.unread}}" class="dot"></view>
+      </view>
+      <view class="chat-main">
+        <view class="chat-top">
+          <text class="chat-name">{{item.nickName}}</text>
+          <text class="chat-time">{{item.timeText}}</text>
+        </view>
+        <view class="chat-last">{{item.lastTextCut}}</view>
+      </view>
+    </view>
+  </view>
+</view>

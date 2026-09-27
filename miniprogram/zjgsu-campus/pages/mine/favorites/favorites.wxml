@@ -1,0 +1,34 @@
+<view class="container">
+  <view class="tabs">
+    <view class="tab {{tabMap.all ? 'on' : ''}} tap" data-k="all" bindtap="onTab">全部</view>
+    <view class="tab {{tabMap.course ? 'on' : ''}} tap" data-k="course" bindtap="onTab">课程</view>
+    <view class="tab {{tabMap.post ? 'on' : ''}} tap" data-k="post" bindtap="onTab">帖子</view>
+    <view class="tab {{tabMap.market ? 'on' : ''}} tap" data-k="market" bindtap="onTab">失物闲置</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中…</view>
+
+  <view wx:elif="{{items.length === 0}}" class="empty">
+    <view class="empty-icon">⭐</view>
+    <view>{{countText ? '这一类还没有收藏' : '还没有收藏任何内容'}}</view>
+    <view class="empty-hint">看到有用的课、贴子、闲置，点一下星星就能收进来</view>
+  </view>
+
+  <view wx:else>
+    <view class="count">{{countText}}</view>
+    <view
+      wx:for="{{items}}"
+      wx:key="key"
+      class="card f-item tap"
+      data-url="{{item.url}}"
+      bindtap="open"
+    >
+      <view class="f-top">
+        <text class="f-tag t-{{item.type}}">{{item.type === 'market' ? '失物闲置' : (item.type === 'post' ? '帖子' : (item.type === 'review' ? '评价' : '课程'))}}</text>
+        <text class="f-unstar tap" catchtap="unfavorite" data-type="{{item.type}}" data-id="{{item.key}}">取消收藏</text>
+      </view>
+      <view class="f-title">{{item.title}}</view>
+      <view wx:if="{{item.desc}}" class="f-desc">{{item.desc}}</view>
+    </view>
+  </view>
+</view>

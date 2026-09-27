@@ -1,0 +1,51 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="empty">{{loadingText}}</view>
+
+  <block wx:else>
+    <view class="card">
+      <view class="d-kind k-{{item.type}}">{{item.type === 'sell' ? '🛍️ 闲置' : (item.type === 'found' ? '📦 招领' : '🔍 寻物')}}</view>
+      <view class="d-title">{{item.title}}</view>
+      <view wx:if="{{item.desc}}" class="d-desc">{{item.desc}}</view>
+
+      <view wx:if="{{item.images.length}}" class="d-imgs">
+        <image
+          wx:for="{{item.images}}"
+          wx:for-item="src"
+          wx:key="*this"
+          class="d-img tap"
+          src="{{src}}"
+          mode="aspectFill"
+          data-imgs="{{item.images}}"
+          bindtap="previewImages"
+        ></image>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="d-row"><text class="d-k">地点</text><text class="d-v">{{item.location || '未填写'}}</text></view>
+      <view wx:if="{{item.price}}" class="d-row"><text class="d-k">参考价</text><text class="d-price">¥{{item.price}}</text></view>
+      <view class="d-row"><text class="d-k">时间</text><text class="d-v">{{item.time}}</text></view>
+      <view class="d-row"><text class="d-k">发布者</text><text class="d-v">{{item.author || '某个同学'}}</text></view>
+
+      <view wx:if="{{item.contact}}" class="d-contact">
+        <text class="d-k">联系方式</text>
+        <text class="d-contact-v">{{item.contact}}</text>
+        <text class="d-copy tap" catchtap="copyContact">复制</text>
+      </view>
+    </view>
+
+    <view class="card d-ops">
+      <button class="btn-ghost d-msg" open-type="share">转发给同学</button>
+      <view wx:if="{{item.isMine}}" class="d-mine">
+        <view class="d-op tap" bindtap="onDone">{{item.done ? '重新开放' : '标记为已解决'}}</view>
+        <view class="d-op d-del tap" bindtap="onDelete">删除</view>
+      </view>
+      <view wx:else class="d-else">
+        <view class="d-tip">
+          联系不上就打个招呼，对方上线后能看到你的消息
+        </view>
+        <button class="btn-primary d-msg tap" bindtap="goChat">打个招呼</button>
+      </view>
+    </view>
+  </block>
+</view>

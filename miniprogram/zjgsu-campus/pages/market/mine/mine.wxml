@@ -1,0 +1,33 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="sk-wrap">
+    <view class="sk-card"><view class="sk-line sk-title"></view><view class="sk-line sk-mid"></view></view>
+    <view class="sk-card"><view class="sk-line sk-title"></view><view class="sk-line sk-mid"></view></view>
+  </view>
+
+  <view wx:elif="{{items.length === 0}}" class="empty">
+    <view class="empty-icon">📮</view>
+    <view>你还没有发布过信息</view>
+    <view class="empty-btn tap" bindtap="goEdit">去发一条</view>
+  </view>
+
+  <view wx:else>
+    <view
+      wx:for="{{items}}"
+      wx:key="id"
+      class="card m-item tap"
+      data-id="{{item.id}}"
+      bindtap="goDetail"
+    >
+      <view class="m-top">
+        <view class="m-kind k-{{item.type}}">{{item.type === 'sell' ? '🛍️ 闲置' : (item.type === 'found' ? '📦 招领' : '🔍 寻物')}}</view>
+        <view wx:if="{{item.done}}" class="m-done">已解决</view>
+      </view>
+      <view class="m-title">{{item.title}}</view>
+      <view wx:if="{{item.desc}}" class="m-desc">{{item.desc}}</view>
+      <view class="m-foot">
+        <text wx:if="{{item.price}}" class="m-price">¥{{item.price}}</text>
+        <text class="muted m-time">{{item.time}}</text>
+      </view>
+    </view>
+  </view>
+</view>

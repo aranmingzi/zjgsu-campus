@@ -1,0 +1,478 @@
+/* ---------- 搜索栏 ---------- */
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f0f1f3;
+  border-radius: 999rpx;
+  padding: 12rpx 24rpx;
+}
+.search-icon {
+  font-size: 26rpx;
+  margin-right: 10rpx;
+  opacity: 0.7;
+}
+.search-input {
+  flex: 1;
+  font-size: 27rpx;
+  color: #2a2f36;
+}
+.search-clear {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #d8dbe0;
+  color: #fff;
+  font-size: 26rpx;
+}
+.search-go {
+  margin-left: 16rpx;
+  padding: 12rpx 4rpx;
+  font-size: 27rpx;
+  color: #1a5fb4;
+  font-weight: 600;
+}
+.search-panel {
+  margin-bottom: 16rpx;
+}
+.panel-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.panel-label {
+  font-size: 24rpx;
+  color: #9aa0a6;
+}
+.panel-more {
+  font-size: 24rpx;
+  color: #9aa0a6;
+  padding: 4rpx 8rpx;
+}
+.search-panel .filters {
+  margin-bottom: 14rpx;
+}
+.result-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.result-text {
+  font-size: 26rpx;
+  color: #5a6068;
+}
+.result-reset {
+  font-size: 26rpx;
+  color: #1a5fb4;
+  padding: 4rpx 8rpx;
+}
+.hit {
+  color: #d9534f;
+  font-weight: 600;
+}
+.foot-share {
+  display: inline-block;
+  background: transparent !important;
+  color: #8a9099 !important;
+  font-size: 24rpx !important;
+  font-weight: normal !important;
+  line-height: normal !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  box-shadow: none !important;
+}
+.foot-share::after {
+  display: none !important;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.sort {
+  font-size: 26rpx;
+  color: #5a6068;
+  padding: 6rpx 8rpx;
+}
+.sort-on {
+  color: #1a5fb4;
+  font-weight: 600;
+}
+.filters {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+.chip {
+  display: inline-block;
+  padding: 10rpx 26rpx;
+  margin-right: 16rpx;
+  background: #fff;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #5a6068;
+}
+.chip-on {
+  background: #1a5fb4;
+  color: #fff;
+}
+.post-board {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 8rpx;
+  padding: 4rpx 14rpx;
+  margin-bottom: 12rpx;
+}
+.course-filter {
+  padding-bottom: 4rpx;
+}
+.post-course {
+  display: inline-block;
+  font-size: 24rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 10rpx;
+  padding: 8rpx 18rpx;
+  margin-bottom: 12rpx;
+}
+.post-title {
+  margin-bottom: 10rpx;
+}
+.post-content {
+  color: #4b5159;
+  font-size: 27rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+}
+/* 左边作者和时间：太长省略号截断，不许折行 */
+.post-time {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 16rpx;
+}
+/* 右边赞 / 评论 / 分享：各自独立一行小字，间距用 gap 控制，不用空格字符占位 */
+.foot-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 18rpx;
+}
+.foot-right .stat {
+  white-space: nowrap;
+}
+/* 列表上的赞 / 踩按钮：点过的那一侧上色，样式复用 stat 的字号 */
+.foot-right .vote {
+  white-space: nowrap;
+  color: #6b7280;
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+}
+.foot-right .vote.v-on {
+  color: #1a5fb4;
+  background: #eef3fb;
+  font-weight: 600;
+}
+.foot-right .vote.v-done {
+  color: #9aa0a6;
+  background: #f2f3f5;
+}
+.foot-right .vote.v-no {
+  color: #1f9d55;
+  background: #eaf7ef;
+  font-weight: 600;
+}
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10rpx 0 4rpx;
+}
+.post-img {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 10rpx;
+  margin: 0 12rpx 12rpx 0;
+  background: #f0f1f3;
+}
+.load-more {
+  text-align: center;
+  color: #b0b6be;
+  font-size: 24rpx;
+  padding: 24rpx 0 30rpx;
+}
+
+/* 断网提示：内容照常显示，但要说明它不是最新的 */
+.net-bar {
+  background: #faeeda;
+  color: #854f0b;
+  font-size: 24rpx;
+  padding: 14rpx 24rpx;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 首屏骨架屏 */
+.sk-wrap { margin-top: 8rpx; }
+.sk-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+.sk-line {
+  height: 24rpx;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #f0f1f3 25%, #e6e8eb 37%, #f0f1f3 63%);
+  background-size: 400% 100%;
+  animation: sk 1.2s ease-in-out infinite;
+  margin-bottom: 16rpx;
+}
+.sk-title { width: 55%; height: 30rpx; }
+.sk-short { width: 35%; }
+.sk-mid { width: 80%; margin-bottom: 0; }
+@keyframes sk {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* 帖子头部：板块 + 热榜序号 + 匿名标记 */
+.post-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.hot-rank {
+  margin-left: 12rpx;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  text-align: center;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  color: #fff;
+  background: #c0c6cc;
+}
+.hot-rank.hot-1 { background: #e64340; }
+.hot-rank.hot-2 { background: #f0882e; }
+.hot-rank.hot-3 { background: #f5b400; }
+.anon-badge {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: #6b7280;
+  background: #f0f1f3;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+}
+
+/* 信息墙徽标：正文位是空的，没有这个标列表里会被当成没写完的帖 */
+.topic-badge {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  color: #8a5a00;
+  background: #fff6e0;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+.topic-hint {
+  color: #9aa0a6;
+}
+/* ---------- 置顶徽标与热度分 ---------- */
+.pin-badge {
+  margin-right: 12rpx;
+  font-size: 22rpx;
+  color: #fff;
+  background: #e64340;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  font-weight: 600;
+}
+.hot-score {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  color: #c26a00;
+  background: #fdf1e0;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+
+/* ---------- 树洞独立入口 ---------- */
+.hole-entry {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #5b3ea8, #8d6bd8);
+  border-radius: 20rpx;
+  padding: 26rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 6rpx 18rpx rgba(91, 62, 168, 0.25);
+}
+.hole-emoji {
+  font-size: 46rpx;
+  margin-right: 20rpx;
+}
+.hole-main {
+  flex: 1;
+  min-width: 0;
+}
+.hole-title {
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.hole-sub {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 23rpx;
+  margin-top: 4rpx;
+}
+.hole-go {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 40rpx;
+  padding: 0 8rpx;
+}
+
+/* ---------- 校园盲盒 / 漂流瓶入口 ----------
+   和树洞入口并排、同款布局，但换成海青色 —— 树洞是紫、盲盒是海，
+   两张卡挨着也不至于被看成同一件事 */
+.bb-entry {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #0e7c86, #2fa8b5);
+  border-radius: 20rpx;
+  padding: 26rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 6rpx 18rpx rgba(14, 124, 134, 0.25);
+}
+.bb-emoji {
+  font-size: 46rpx;
+  margin-right: 20rpx;
+}
+.bb-main {
+  flex: 1;
+  min-width: 0;
+}
+.bb-title {
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.bb-sub {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 23rpx;
+  margin-top: 4rpx;
+}
+.bb-go {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 40rpx;
+  padding: 0 8rpx;
+}
+
+/* ---------- 被举报暂停展示：低调的入口，别和内容抢注意力 ---------- */
+.muted-entry {
+  display: flex;
+  align-items: center;
+  background: #fff8e6;
+  border: 2rpx solid #ffe1a6;
+  border-radius: 20rpx;
+  padding: 22rpx 26rpx;
+  margin-bottom: 20rpx;
+}
+.muted-emoji {
+  font-size: 40rpx;
+  margin-right: 18rpx;
+}
+.muted-main {
+  flex: 1;
+  min-width: 0;
+}
+.muted-title {
+  color: #8a6310;
+  font-size: 27rpx;
+  font-weight: 600;
+}
+.muted-sub {
+  color: #b08a3e;
+  font-size: 22rpx;
+  margin-top: 4rpx;
+}
+.muted-go {
+  color: #b08a3e;
+  font-size: 38rpx;
+  padding: 0 8rpx;
+}
+
+/* ---------- 最新 / 热门切换 ---------- */
+/* 排序：五档塞不进一个胶囊，改成横滑一排，宽度固定由内容撑开 */
+.sort-bar-wrap {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+.sort-bar {
+  display: inline-flex;
+  background: #eceef1;
+  border-radius: 999rpx;
+  padding: 6rpx;
+}
+.sort-item {
+  text-align: center;
+  font-size: 24rpx;
+  color: #5a6068;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+}
+.sort-item.on {
+  background: #fff;
+  color: #1a5fb4;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 精准 / 模糊 切换：样式和课程页保持一致，同学在两个页面看到的样子一样 */
+.mode-row {
+  display: flex;
+  align-items: center;
+  margin: 0 0 16rpx;
+}
+.mode-chip {
+  font-size: 24rpx;
+  color: #6b7280;
+  background: #fff;
+  border: 1rpx solid #e6e9ee;
+  border-radius: 999rpx;
+  padding: 8rpx 24rpx;
+  margin-right: 14rpx;
+}
+.mode-chip.on {
+  color: #fff;
+  background: #1a5fb4;
+  border-color: #1a5fb4;
+  font-weight: 600;
+}
+.mode-hint {
+  font-size: 21rpx;
+  color: #b0b6be;
+  margin-left: auto;
+}

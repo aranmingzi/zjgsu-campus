@@ -1,0 +1,138 @@
+<view class="container">
+  <!-- 课程评价 / 老师评价：搜索框还是那一个，但底下搜的东西完全两样 -->
+  <view class="scope-row">
+    <view
+      wx:for="{{scopes}}"
+      wx:key="key"
+      class="scope-chip {{scopeMap[item.key] ? 'on' : ''}} tap"
+      data-s="{{item.key}}"
+      bindtap="onScope"
+    >{{item.label}}<text wx:if="{{item.key === 'teacher' && teacherCount}}" class="scope-num">{{teacherCount}}</text></view>
+  </view>
+
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input
+      placeholder="{{scope === 'teacher' ? '搜索老师姓名或学院' : '搜索课程名或专业'}}"
+      value="{{keyword}}"
+      bindinput="onSearch"
+      confirm-type="search"
+    />
+    <text wx:if="{{hasKeyword}}" class="search-clear tap" bindtap="onClear">✕</text>
+  </view>
+
+  <!-- 学院 + 课程类型筛选只有课程档用得上：老师档筛的是人，学院写在人名下面了 -->
+  <block wx:if="{{scope === 'course'}}">
+    <scroll-view class="filters {{hasKeyword ? 'filters-off' : ''}}" scroll-x="true">
+      <view wx:for="{{colleges}}" wx:key="*this" class="chip {{college === item ? 'chip-on' : ''}} tap" data-c="{{item}}" bindtap="onCollege">{{item}}</view>
+    </scroll-view>
+    <!-- 课程类型二级分类：学院下面再挑一层「这门课是什么性质」 -->
+    <scroll-view class="filters {{hasKeyword ? 'filters-off' : ''}}" scroll-x="true">
+      <view wx:for="{{ctypes}}" wx:key="*this" class="chip chip-type {{ctype === item ? 'chip-on' : ''}} {{item !== '全部' && ctypeCounts[item] === 0 ? 'chip-empty' : ''}} tap" data-t="{{item}}" bindtap="onCtype">{{item}}<text wx:if="{{item !== '全部'}}" class="chip-num">{{ctypeCounts[item] || 0}}</text></view>
+    </scroll-view>
+    <view wx:if="{{hasKeyword}}" class="filter-off-hint">搜索时不分学院和类型，这样才不会漏掉别的学院的课</view>
+  </block>
+
+  <view class="bar">
+    <text class="muted">{{scope === 'teacher' ? '共 ' + total + ' 位老师' : '共 ' + total + ' 门'}}<text wx:if="{{fuzzyCount}}" class="fuzzy-note">（{{fuzzyCount}} {{scope === 'teacher' ? '位' : '门'}}是模糊匹配到的）</text></text>
+    <view class="sort-group">
+      <view
+        wx:for="{{sortItems}}"
+        wx:key="k"
+        class="sort {{sort === item.k ? 'sort-on' : ''}} tap"
+        data-s="{{item.k}}"
+        bindtap="onSortPick"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{display.length === 0}}" class="empty">
+    <view wx:if="{{hasKeyword}}">
+      <view wx:if="{{scope === 'teacher'}}">
+        <view>没有叫「{{keyword}}」的老师</view>
+        <view class="muted empty-sub">错字也找过了，确实没有。老师名是同学写评价时填的，你要是认识这位老师，在评价里写上名字就能建出来</view>
+        <view class="btn-ghost empty-btn tap" data-s="course" bindtap="onScope">回到课程评价</view>
+      </view>
+      <view wx:else>
+        <view>课程库里还没有「{{keyword}}」</view>
+        <view class="muted empty-sub">错字也找过了，确实没有。这门课缺失？由同学添加后，全校都能看到并评价</view>
+        <view class="btn-ghost empty-btn tap" bindtap="goAdd">＋ 添加这门课</view>
+      </view>
+    </view>
+    <view wx:elif="{{scope === 'course' && ctype !== '全部'}}">
+      <view>{{college === '全部' ? '课程库里暂时没有' : college + '暂时没有'}}「{{ctype}}」的课</view>
+      <view class="muted empty-sub">官方课目录收录的是各专业核心课，体育课 / 思政课 / 通识课多半还没在里面。同学添加课程时可以自己选类型，加进来就会出现在这里</view>
+      <view class="btn-ghost empty-btn tap" data-t="{{ctype}}" bindtap="goAdd">＋ 添加一门{{ctype}}</view>
+    </view>
+    <view wx:else>{{scope === 'teacher' ? '还没有老师评价，写评价时填上老师名就有了' : '没有匹配的课程，换个关键词试试～'}}</view>
+  </view>
+
+  <!-- ========== 老师档 ========== -->
+  <block wx:if="{{scope === 'teacher'}}">
+    <view
+      wx:for="{{display}}"
+      wx:key="name"
+      class="card tch-card tap"
+      data-name="{{item.name}}"
+      bindtap="onTapItem"
+    >
+      <view class="tch-left">
+        <view class="tch-name">{{item.name}}</view>
+        <view class="muted tch-meta">
+          <text wx:if="{{item.verified}}" class="tch-verified">✓ 官方名录</text>
+          <text wx:elif="{{item.count}}" class="tch-pending">待补充</text>
+          <text wx:if="{{item.count}}">· {{item.count}} 条评价</text>
+          <text wx:elif="{{item.verified}}">· 还没有人评价</text>
+        </view>
+        <view wx:if="{{item.courseNames}}" class="muted tch-sub">教过：{{item.courseNames}}<text wx:if="{{item.courseCount > 2}}"> 等 {{item.courseCount}} 门</text></view>
+        <view wx:elif="{{item.scoredCount}}" class="muted tch-sub">其中 {{item.scoredCount}} 人单独打了老师分</view>
+      </view>
+      <view class="tch-right">
+        <view class="stars small">
+          <block wx:if="{{item.hasScore}}">
+            <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= item.avgRound ? 'on' : ''}}">★</text>
+          </block>
+          <text wx:else class="star-none">还没人打分</text>
+        </view>
+        <view class="tch-scores">
+          <text wx:if="{{item.hasScore}}" class="tch-score">老师 {{item.avg}}</text>
+          <text wx:if="{{item.courseAvg > 0}}" class="tch-score muted">课程 {{item.courseAvg}}</text>
+        </view>
+        <view wx:if="{{item.goodRate >= 0}}" class="muted tch-good">好评率 {{item.goodRate}}%</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ========== 课程档 ========== -->
+  <block wx:else>
+  <view
+    wx:for="{{display}}"
+    wx:key="id"
+    wx:for-item="course"
+    class="card course-card tap"
+    data-id="{{course.id}}"
+    bindtap="onTapItem"
+  >
+    <view class="course-top">
+      <view class="title-md">{{course.name}}</view>
+      <view class="score-badge">{{course.avgScore}}</view>
+    </view>
+    <view class="muted course-meta">
+      <text class="ctype-badge">{{course.ctype || '专业必修'}}</text>
+      {{course.college}} · {{course.major}} · {{course.credit}} 学分
+    </view>
+    <view class="stars">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= course.starOn ? 'on' : ''}}">★</text>
+      <text class="muted score-num">{{course.reviewCount}} 条评价</text>
+      <text wx:if="{{course.goodRate >= 0}}" class="muted score-num good-rate">好评率 {{course.goodRate}}%</text>
+    </view>
+    <view wx:if="{{course.hotTag && course.reviewCount}}" class="hot-tag">🔥 大家都在说：{{course.hotTag}}</view>
+    <view class="tag-row">
+      <text wx:for="{{course.tags}}" wx:key="*this" wx:for-item="t" class="tag">{{t}}</text>
+    </view>
+  </view>
+  </block>
+
+  <view wx:if="{{display.length === 0}}" class="empty-tail">没有更多了</view>
+  <view wx:elif="{{hasMore}}" class="empty-tail">上滑加载更多…</view>
+</view>

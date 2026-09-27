@@ -1,0 +1,109 @@
+<view class="container" wx:if="{{course}}">
+  <view class="card">
+    <view class="muted">正在评价</view>
+    <view class="title-md">{{course.name}} · {{course.major}}</view>
+  </view>
+
+  <!-- 评分对象：先选「给课打分」还是「给老师打分」，再点星。
+       两档分是两个意思，混在一张卡上同学很容易以为只有一个分 -->
+  <view class="card">
+    <view class="label">这次要打哪个分</view>
+    <view class="target-row">
+      <view class="target-chip {{scale === 'course' ? 'on' : ''}} tap" data-s="course" bindtap="onScale">
+        课程评分 <text class="target-num">{{score}}.0</text>
+      </view>
+      <view
+        wx:if="{{teacher}}"
+        class="target-chip {{scale === 'teacher' ? 'on' : ''}} tap"
+        data-s="teacher"
+        bindtap="onScale"
+      >老师评分 <text class="target-num">{{teacherScore}}.0</text></view>
+      <view wx:else class="target-chip target-off tap" bindtap="onNeedTeacher">老师评分</view>
+    </view>
+
+    <block wx:if="{{scale === 'course'}}">
+      <view class="scale-title">课程评分</view>
+      <view class="stars-pick">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star-pick {{s <= score ? 'on' : ''}} tap" data-s="{{s}}" bindtap="selectScore">★</text>
+        <text class="score-text">{{score}}.0</text>
+      </view>
+      <view class="muted star-hint">给分 / 作业量 / 考试难度 —— 这门课值不值得选</view>
+    </block>
+
+    <block wx:else>
+      <view class="scale-title">老师评分 · {{teacher}}</view>
+      <view class="stars-pick">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star-pick on2 {{s <= teacherScore ? 'on' : ''}} tap" data-s="{{s}}" bindtap="selectTeacherScore">★</text>
+        <text class="score-text">{{teacherScore}}.0</text>
+      </view>
+      <view class="muted star-hint">讲课水平 / 态度 / 是否点名 —— 和课程分分开算</view>
+      <view wx:if="{{teacherVerified}}" class="tip ok">✓ 学校官方名录里有这位老师</view>
+    </block>
+  </view>
+
+  <!-- 匿名：默认开着。实名留评价对发帖人是有风险的，所以不强迫 -->
+  <view class="card anon-card">
+    <view class="anon-row">
+      <view class="anon-left">
+        <view class="anon-title">匿名发布</view>
+        <view class="muted anon-sub">默认匿名 · 别人只看到「匿名同学」</view>
+      </view>
+      <switch checked="{{anonymous}}" bindchange="toggleAnonymous" color="#1a5fb4" />
+    </view>
+    <view wx:if="{{!anonymous}}" class="tip">你选择了显示昵称「{{myNick}}」，评价内容会公开显示。</view>
+  </view>
+
+  <view class="card">
+    <view class="label">标签（可多选）</view>
+    <view class="tag-row">
+      <text wx:for="{{presetTags}}" wx:key="*this" wx:for-item="t" class="tag-pick {{tagsMap[t] ? 'on' : ''}} tap" data-t="{{t}}" bindtap="toggleTag">{{t}}</text>
+    </view>
+    <view wx:if="{{universalTags.length}}" class="tag-row">
+      <text wx:for="{{universalTags}}" wx:key="*this" wx:for-item="t" class="tag-pick {{tagsMap[t] ? 'on' : ''}} tap" data-t="{{t}}" bindtap="toggleTag">{{t}}</text>
+    </view>
+    <view wx:if="{{tags.length}}" class="picked-row">
+      <text class="muted">已选：</text>
+      <text wx:for="{{tags}}" wx:key="*this" class="tag on tap" data-t="{{item}}" bindtap="removeTag">{{item}} ×</text>
+    </view>
+    <view class="muted tip">标签会汇总成课程页的「大家都在说」，帮后面的同学选课。</view>
+  </view>
+
+  <!-- 任课老师：选填，而且和上面的课程打分是两档分 -->
+  <view class="card tch-pick">
+    <view class="label">任课老师（可不填）</view>
+    <input
+      class="input"
+      placeholder="填了才能给老师单独打分"
+      value="{{teacher}}"
+      maxlength="20"
+      bindinput="onTeacherInput"
+    />
+    <view wx:if="{{teacherOptions.length}}" class="match-row">
+      <text
+        wx:for="{{teacherOptions}}"
+        wx:key="name"
+        class="match-chip {{teacher === item.name ? 'on' : ''}} tap"
+        data-name="{{item.name}}"
+        bindtap="pickTeacher"
+      >{{item.name}}<text wx:if="{{item.college}}"> · {{item.college}}</text></text>
+    </view>
+    <view wx:if="{{teacherVerified}}" class="tip ok">✓ 已查到，学校官方名录里有这位老师</view>
+    <view wx:else class="tip">名录里没有也没关系，点下面一键加入，后面的人就能选到 TA</view>
+    <view wx:if="{{teacher && !teacherVerified}}" class="add-row tap" bindtap="onAddTeacher">
+      <text>＋ 把「{{teacher}}」加入名录</text>
+    </view>
+
+    <view wx:if="{{teacher && scale === 'course'}}" class="to-teacher tap" bindtap="onScale" data-s="teacher">
+      <text>再给「{{teacher}}」打个分 ›</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">详细评价</view>
+    <textarea class="textarea" placeholder="老师风格、作业量、给分、怎么备考…" value="{{content}}" bindinput="onContent" maxlength="300" />
+    <view class="counter">{{content.length}}/300</view>
+  </view>
+
+  <button wx:if="{{!isEdit}}" class="btn-ghost draft-btn tap" bindtap="onSaveDraft">存草稿</button>
+  <button class="btn-primary tap" bindtap="submit" loading="{{submitting}}">{{isEdit ? '保存修改' : '提交评价'}}</button>
+</view>

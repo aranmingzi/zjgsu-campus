@@ -1,0 +1,54 @@
+<view class="container">
+
+  <view wx:if="{{notFound}}" class="empty">
+    <view class="empty-icon">🔍</view>
+    <view>这个活动找不到了</view>
+    <view class="empty-hint">可能已经被作者删掉，或者链接过期了</view>
+  </view>
+
+  <block wx:else>
+    <view wx:if="{{loading}}" class="empty">
+      <view class="empty-icon">⏳</view>
+      <view>活动加载中…</view>
+    </view>
+
+    <block wx:else>
+      <view class="card">
+        <view class="ev-top">
+          <view class="ev-type">{{ev.typeIcon}} {{ev.typeLabel}}</view>
+          <view wx:if="{{ev.isMine}}" class="ev-mine">我发布的</view>
+        </view>
+        <view class="ev-title">{{ev.title}}</view>
+
+        <view class="ev-row">🕘 {{ev.start || '时间待定'}}</view>
+        <view wx:if="{{ev.location}}" class="ev-row">📍 {{ev.location}}</view>
+        <view wx:if="{{!ev.official}}" class="ev-row">👥 {{ev.countText}}</view>
+        <view wx:if="{{ev.official && ev.source}}" class="ev-row">🏛️ 来源：{{ev.source}}</view>
+
+        <view wx:if="{{ev.desc}}" class="ev-desc">{{ev.desc}}</view>
+      </view>
+
+      <view class="card">
+        <view class="sec-title">联系人</view>
+        <!-- 没报名不显示联系方式：(activity)公开号码会把发布者直接架在火上 -->
+        <view wx:if="{{contactVisible && ev.contact}}" class="contact tap" bindtap="onCopyContact">
+          <text>{{ev.contact}}</text>
+          <text class="contact-go">复制</text>
+        </view>
+        <view wx:elif="{{contactVisible}}" class="muted">发布者没留联系方式</view>
+        <view wx:else class="muted">报名成功后可以看到联系方式</view>
+      </view>
+
+      <view wx:if="{{ev.isMine}}" class="act act-danger tap" bindtap="onRemove">🗑 删除这个活动</view>
+      <view class="foot-space"></view>
+    </block>
+  </block>
+
+  <!-- 底部操作条：报名 / 取消报名永远是最显眼的位置 -->
+  <view wx:if="{{!loading && !notFound && ev}}" class="bar">
+    <view wx:if="{{ev.official}}" class="bar-btn tap" bindtap="onCopySource">复制原文链接</view>
+    <view wx:elif="{{ev.isMine}}" class="bar-btn tap" bindtap="goBack">返回</view>
+    <view wx:elif="{{ev.joined}}" class="bar-btn joined tap" bindtap="onCancel">取消报名</view>
+    <view wx:else class="bar-btn tap" bindtap="onJoin">{{ev.fullText || '我要报名'}}</view>
+  </view>
+</view>

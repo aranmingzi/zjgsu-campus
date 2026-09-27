@@ -1,0 +1,173 @@
+.hole-head {
+  padding: 8rpx 8rpx 20rpx;
+}
+.hole-title {
+  font-size: 38rpx;
+  font-weight: 600;
+  color: #4a2f8f;
+}
+.hole-sub {
+  font-size: 24rpx;
+  color: #8a9099;
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
+.composer {
+  background: #f7f5fd;
+  border: 2rpx solid #e4dcfb;
+}
+.hole-title-input {
+  font-size: 28rpx;
+  height: 76rpx;
+  padding: 0 4rpx;
+  color: #1f2329;
+}
+.hole-content {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 140rpx;
+  max-height: 400rpx;
+  font-size: 28rpx;
+  line-height: 1.7;
+  padding: 4rpx 4rpx 0;
+}
+.composer-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #ece7fb;
+}
+.anon-tip {
+  font-size: 22rpx;
+  color: #8a9099;
+}
+.send-btn {
+  padding: 14rpx 40rpx;
+  border-radius: 999rpx;
+  background: #5b3ea8;
+  color: #fff;
+  font-size: 28rpx;
+}
+.send-btn.disabled {
+  background: #c3b9e0;
+}
+
+/* 排序同主论坛：五档横滑，避免挤成一条 */
+.sort-bar-wrap {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+.sort-bar {
+  display: inline-flex;
+  background: #eceef1;
+  border-radius: 999rpx;
+  padding: 6rpx;
+}
+.sort-item {
+  text-align: center;
+  font-size: 24rpx;
+  color: #5a6068;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+}
+.sort-item.on {
+  background: #fff;
+  color: #5b3ea8;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.hole-card {
+  position: relative;
+}
+.hole-card-head {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 12rpx;
+}
+.hole-card-who {
+  font-size: 26rpx;
+  color: #5b3ea8;
+  margin-right: 16rpx;
+}
+.hole-card-time {
+  font-size: 22rpx;
+}
+.hole-card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+.hole-card-content {
+  font-size: 28rpx;
+  color: #1f2329;
+  line-height: 1.7;
+}
+.hole-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-top: 16rpx;
+}
+.hole-card-foot .stat {
+  white-space: nowrap;
+}
+.hole-card-foot .vote {
+  white-space: nowrap;
+  color: #6b7280;
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+}
+.hole-card-foot .vote.v-on {
+  color: #1a5fb4;
+  background: #eef3fb;
+  font-weight: 600;
+}
+.hole-card-foot .vote.v-no {
+  color: #1f9d55;
+  background: #eaf7ef;
+  font-weight: 600;
+}
+/* 已举报：变灰，一眼看出这条自己已经报过了，别重复点 */
+.hole-card-foot .vote.v-done {
+  color: #9aa0a6;
+  background: #f2f3f5;
+}
+.hole-card-foot .foot-share {
+  margin-left: auto !important;
+}
+.foot-share {
+  display: inline-block;
+  background: transparent !important;
+  color: #8a9099 !important;
+  font-size: 24rpx !important;
+  font-weight: normal !important;
+  line-height: normal !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  box-shadow: none !important;
+}
+.foot-share::after {
+  display: none !important;
+}
+
+.empty-icon {
+  font-size: 60rpx;
+}
+.empty-hint {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+}
+.hole-tip {
+  font-size: 22rpx;
+  color: #8a9099;
+  line-height: 1.6;
+  padding: 8rpx 12rpx 24rpx;
+}

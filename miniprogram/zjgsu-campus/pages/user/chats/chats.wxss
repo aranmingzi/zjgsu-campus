@@ -1,0 +1,87 @@
+.chat-list { background: #fff; border-radius: 20rpx; overflow: hidden; }
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 24rpx;
+  border-bottom: 1rpx solid #f0f1f3;
+}
+.chat-item:last-child { border-bottom: none; }
+
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #e6f1fb;
+}
+.avatar-text {
+  color: #1a5fb4;
+  font-size: 36rpx;
+  text-align: center;
+  line-height: 96rpx;
+}
+.dot {
+  position: absolute;
+  right: -4rpx;
+  top: -4rpx;
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: #e24b4a;
+}
+
+.chat-main { flex: 1; margin-left: 24rpx; overflow: hidden; }
+.chat-top { display: flex; align-items: baseline; }
+.chat-name {
+  font-size: 30rpx;
+  color: #1f2329;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chat-time { font-size: 22rpx; color: #b0b6be; flex-shrink: 0; }
+.chat-last {
+  font-size: 26rpx;
+  color: #8a9099;
+  margin-top: 8rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.empty-btn {
+  margin-top: 30rpx;
+  display: inline-block;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 999rpx;
+  padding: 18rpx 50rpx;
+  font-size: 28rpx;
+}
+
+.empty-icon { font-size: 70rpx; }
+.empty-hint {
+  font-size: 24rpx;
+  color: #c4c9d0;
+  margin-top: 16rpx;
+}
+
+.sk-wrap { background: #fff; border-radius: 20rpx; padding: 28rpx; }
+.sk-row { display: flex; gap: 24rpx; margin-bottom: 36rpx; }
+.sk-avatar { width: 96rpx; height: 96rpx; border-radius: 50%; background: #f0f1f3; }
+.sk-line {
+  height: 22rpx;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #f0f1f3 25%, #e6e8eb 37%, #f0f1f3 63%);
+  background-size: 400% 100%;
+  animation: sk 1.2s ease-in-out infinite;
+  margin-bottom: 14rpx;
+}
+.sk-short { width: 40%; }
+.sk-mid { width: 85%; margin-bottom: 0; }
+@keyframes sk {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}

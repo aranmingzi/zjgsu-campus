@@ -1,0 +1,167 @@
+.post-board {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 8rpx;
+  padding: 4rpx 14rpx;
+  margin-bottom: 14rpx;
+}
+.post-course {
+  display: inline-block;
+  font-size: 26rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 10rpx;
+  padding: 12rpx 22rpx;
+  margin-bottom: 16rpx;
+}
+.post-title {
+  margin-bottom: 16rpx;
+}
+.post-body {
+  color: #2b3138;
+  font-size: 30rpx;
+  line-height: 1.7;
+}
+.post-meta {
+  color: #8a9099;
+  font-size: 24rpx;
+  margin: 18rpx 0 8rpx;
+}
+.author-link {
+  color: #1a5fb4;
+  margin-left: 2rpx;
+}
+.like-row {
+  display: flex;
+}
+.hidden-tip {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: #a86a1c;
+  background: #fdf6e6;
+  border-radius: 10rpx;
+  padding: 12rpx 20rpx;
+  line-height: 1.6;
+}
+.like-btn {
+  font-size: 26rpx;
+  color: #6b7280;
+  background: #f0f1f3;
+  border-radius: 999rpx;
+  padding: 10rpx 28rpx;
+}
+.like-btn.liked {
+  color: #1a5fb4;
+  background: #eef3fb;
+  font-weight: 600;
+}
+/* 点踩走另一套颜色：一绿一蓝摆在一条上，扫一眼就知道踩的人是什么态度 */
+.like-btn.dislike {
+  margin-left: 16rpx;
+}
+.like-btn.disliked {
+  color: #1f9d55;
+  background: #eaf7ef;
+  font-weight: 600;
+}
+/* 微信 button 默认带灰底和边框，这里改造成和其他操作按钮一致的胶囊样式 */
+.share-btn {
+  background: #f0f1f3;
+  color: #6b7280;
+  font-size: 26rpx;
+  line-height: normal;
+  padding: 10rpx 28rpx;
+  border-radius: 999rpx;
+  margin-left: 20rpx;
+  align-self: center;
+}
+.share-btn::after {
+  border: none;
+}
+.my-post-op {
+  margin-left: 20rpx;
+  font-size: 26rpx;
+  color: #9aa0a6;
+  align-self: center;
+}
+.fav-op.fav-on { color: #a86a1c; }
+.detail-images {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 14rpx 0 6rpx;
+}
+.detail-img {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 10rpx;
+  margin: 0 14rpx 14rpx 0;
+  background: #f0f1f3;
+}
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin: 12rpx 4rpx 16rpx;
+}
+.comment-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+.rv-name {
+  font-weight: 600;
+}
+.comment-del {
+  margin-left: auto;
+  padding-left: 20rpx;
+  font-size: 22rpx;
+  color: #c0392b;
+}
+.comment-report {
+  margin-left: auto;
+  padding-left: 20rpx;
+  font-size: 22rpx;
+  color: #888780;
+}
+.comment-reported {
+  margin-left: auto;
+  padding-left: 20rpx;
+  font-size: 22rpx;
+  color: #b4b2a9;
+}
+.comment-content {
+  color: #2b3138;
+}
+.detail-page {
+  padding-bottom: 140rpx;
+}
+.input-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+.input {
+  flex: 1;
+  background: #f4f5f7;
+  border-radius: 999rpx;
+  /* 定高修复：input 只给 padding 不给高度会截字 */
+  height: 76rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  margin-right: 16rpx;
+}
+.send-btn {
+  background: #1a5fb4;
+  color: #fff;
+  border-radius: 999rpx;
+  padding: 14rpx 32rpx;
+  font-size: 28rpx;
+}

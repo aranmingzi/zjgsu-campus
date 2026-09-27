@@ -1,0 +1,364 @@
+.mod-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 4rpx 4rpx 20rpx;
+}
+.head-title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.head-sub {
+  font-size: 26rpx;
+  color: #8a9099;
+}
+.setup-done {
+  font-size: 25rpx;
+  color: #1f7a3d;
+  background: #eefaf1;
+  border-radius: 12rpx;
+  padding: 18rpx 22rpx;
+  line-height: 1.7;
+  margin-bottom: 18rpx;
+}
+/* 自动处置说明：审核员最该知道的就是「哪些不用我来判」 */
+.auto-note {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx dashed #c7e6cf;
+  color: #2b6b45;
+  font-size: 23rpx;
+  line-height: 1.75;
+}
+/* 条件本身要跳出来，不然一长段说明没人读得下去 */
+.auto-note .hl {
+  color: #1c5233;
+  font-weight: 600;
+}
+.setup-card {
+  background: #f7f9fc;
+  border: 2rpx solid #e3eaf5;
+  border-radius: 14rpx;
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+}
+.setup-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 14rpx;
+}
+.setup-step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+.step-no {
+  flex: none;
+  width: 34rpx;
+  height: 34rpx;
+  line-height: 34rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #1a5fb4;
+  color: #fff;
+  font-size: 22rpx;
+  margin-right: 14rpx;
+}
+.step-txt {
+  flex: 1;
+  font-size: 25rpx;
+  color: #4b525a;
+  line-height: 1.6;
+}
+.setup-btn {
+  margin-top: 18rpx;
+  background: #1a5fb4;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 12rpx;
+  padding: 22rpx 0;
+}
+.setup-id {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #8a9099;
+  word-break: break-all;
+  text-align: center;
+}
+/* 前端名单 / 云函数 两侧判定对比：哪个 ✗ 一眼看到，别再让人对着「还不是审核员」猜 */
+.setup-diag {
+  margin-top: 20rpx;
+  padding: 18rpx 22rpx;
+  background: #f4f6f9;
+  border-radius: 12rpx;
+}
+.diag-line {
+  font-size: 24rpx;
+  color: #4a5057;
+  line-height: 1.8;
+}
+.diag-hint {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #8a6d1a;
+  line-height: 1.7;
+}
+.guide {
+  background: #fdf6e6;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 18rpx;
+}
+.guide-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #a86a1c;
+  margin-bottom: 10rpx;
+}
+.guide-row {
+  font-size: 24rpx;
+  color: #7a5a1c;
+  line-height: 1.8;
+}
+.guide-row-dim {
+  color: #a08a5a;
+  margin-top: 6rpx;
+}
+.tip {
+  font-size: 24rpx;
+  color: #a86a1c;
+  background: #fdf6e6;
+  border-radius: 10rpx;
+  padding: 16rpx 20rpx;
+  line-height: 1.7;
+  margin-bottom: 18rpx;
+}
+.batch-bar {
+  display: flex;
+  align-items: center;
+  background: #1a5fb4;
+  border-radius: 14rpx;
+  padding: 22rpx 28rpx;
+  margin-bottom: 20rpx;
+}
+.batch-main {
+  flex: 1;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.batch-sub {
+  font-size: 24rpx;
+  color: #cfe0f7;
+  margin-left: 20rpx;
+}
+.empty {
+  color: #8a9099;
+  font-size: 28rpx;
+  text-align: center;
+  padding: 60rpx 0;
+}
+.rep-card {
+  margin-bottom: 18rpx;
+}
+.rep-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.rep-check {
+  width: 40rpx;
+  height: 40rpx;
+  border: 2rpx solid #d5d8dd;
+  border-radius: 10rpx;
+  color: #1a5fb4;
+  font-size: 26rpx;
+  text-align: center;
+  line-height: 38rpx;
+  margin-right: 14rpx;
+}
+.rep-reason {
+  font-size: 26rpx;
+  color: #d9534f;
+  background: #fdecec;
+  border-radius: 8rpx;
+  padding: 4rpx 14rpx;
+  margin-right: 14rpx;
+}
+/* 观察期标签：跟举报原因的红色区分开，表示的是「这条票系统没动过」 */
+.rep-tag {
+  font-size: 22rpx;
+  color: #8a6d1f;
+  background: #fdf6e0;
+  border-radius: 8rpx;
+  padding: 3rpx 12rpx;
+  margin-right: 14rpx;
+}
+.rep-time {
+  font-size: 22rpx;
+  color: #a8adb4;
+  margin-left: auto;
+}
+/* 说明里的补充条件：跟上面的规则混在一起就没人看了，单独拎出来加个左竖线 */
+.hl-note {
+  margin-top: 12rpx;
+  padding-left: 16rpx;
+  border-left: 5rpx solid #f0d8a0;
+  color: #7a6a3f;
+}
+.rep-body {
+  font-size: 27rpx;
+  color: #2b3138;
+  line-height: 1.7;
+}
+.rep-who {
+  font-size: 23rpx;
+  color: #8a9099;
+}
+.rep-title {
+  font-weight: 600;
+  margin-top: 6rpx;
+}
+.rep-desc {
+  color: #4b525a;
+  margin: 6rpx 0;
+}
+.rep-detail {
+  font-size: 24rpx;
+  color: #8a9099;
+  background: #f7f8fa;
+  border-radius: 8rpx;
+  padding: 10rpx 14rpx;
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+.rep-ops {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+  padding-top: 14rpx;
+  border-top: 1rpx solid #f0f1f3;
+}
+.op {
+  font-size: 25rpx;
+  color: #6b7280;
+  padding: 8rpx 20rpx;
+  border: 1rpx solid #e3e6ea;
+  border-radius: 999rpx;
+  margin-right: 14rpx;
+}
+.op.danger {
+  color: #d9534f;
+  border-color: #f0c9c9;
+}
+.op.restore {
+  color: #1a5fb4;
+  border-color: #cfe0f7;
+}
+.bottom-note {
+  font-size: 23rpx;
+  color: #a8adb4;
+  line-height: 1.7;
+  padding: 10rpx 6rpx 40rpx;
+}
+
+/* ---------- 三个分区的切换 ---------- */
+.tab-bar {
+  display: flex;
+  background: #eceef1;
+  border-radius: 999rpx;
+  padding: 6rpx;
+  margin: 0 4rpx 20rpx;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  font-size: 25rpx;
+  color: #5a6068;
+  padding: 14rpx 0;
+  border-radius: 999rpx;
+}
+.tab.on {
+  background: #fff;
+  color: #1a5fb4;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+.sec-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin: 8rpx 4rpx 16rpx;
+}
+.sec-sub {
+  font-size: 22rpx;
+  color: #a8adb4;
+  font-weight: normal;
+}
+
+/* ---------- 置顶管理 ---------- */
+.pin-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+.pin-main {
+  flex: 1;
+  min-width: 0;
+}
+.pin-title {
+  font-size: 27rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pin-meta {
+  font-size: 22rpx;
+  margin-top: 6rpx;
+}
+.pin-btn {
+  flex: none;
+  margin-left: 18rpx;
+  padding: 12rpx 30rpx;
+  font-size: 25rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 999rpx;
+}
+.pin-btn.on {
+  color: #fff;
+  background: #e64340;
+}
+
+/* ---------- 通知设置 ---------- */
+.cfg-card {
+  background: #f7f9fc;
+  border: 2rpx solid #e3eaf5;
+  border-radius: 14rpx;
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+}
+.cfg-label {
+  font-size: 26rpx;
+  color: #4b525a;
+  margin-bottom: 12rpx;
+}
+.cfg-label + .cfg-label {
+  margin-top: 22rpx;
+}
+.cfg-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 26rpx;
+  height: 84rpx;
+  padding: 0 20rpx;
+  background: #fff;
+  border: 1rpx solid #dde1e6;
+  border-radius: 10rpx;
+}
+.cfg-hint {
+  font-size: 22rpx;
+  color: #1f7a3d;
+  margin-top: 10rpx;
+}

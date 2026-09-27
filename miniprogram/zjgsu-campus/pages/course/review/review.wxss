@@ -1,0 +1,173 @@
+.label {
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+.stars-pick {
+  display: flex;
+  align-items: center;
+}
+.star-pick {
+  font-size: 56rpx;
+  color: #d9dde3;
+  margin-right: 12rpx;
+}
+.star-pick.on {
+  color: #ff9f1c;
+}
+.score-text {
+  margin-left: 12rpx;
+  color: #ff9f1c;
+  font-weight: 600;
+}
+.star-hint {
+  font-size: 22rpx;
+  margin-top: 14rpx;
+}
+/* 评分对象切换：先挑给谁打分，再点星 */
+.target-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 22rpx;
+}
+.target-chip {
+  font-size: 24rpx;
+  color: #6b7280;
+  background: #f4f6f9;
+  border: 1rpx solid #e6e9ee;
+  border-radius: 999rpx;
+  padding: 12rpx 26rpx;
+  margin: 0 16rpx 12rpx 0;
+}
+.target-chip.on {
+  color: #fff;
+  background: #1a5fb4;
+  border-color: #1a5fb4;
+  font-weight: 600;
+}
+.target-chip.on .target-num { color: #ffe0b2; }
+.target-chip.target-off { color: #c2c7cd; border-style: dashed; }
+.target-num { font-size: 22rpx; color: #9aa0a6; margin-left: 6rpx; }
+
+.scale-title {
+  font-size: 26rpx;
+  color: #3d434b;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+/* 老师分用偏暖的橙色，和课程分的蓝调区分开，一眼能认出在打哪个 */
+.star-pick.on2.on { color: #e8703a; }
+
+/* 打完课程分，顺手引导去给老师打分 */
+.to-teacher {
+  margin-top: 22rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx dashed #e3e7ec;
+  font-size: 25rpx;
+  color: #1a5fb4;
+  font-weight: 600;
+}
+.tag-row {
+  margin-top: 4rpx;
+}
+.tag-pick {
+  display: inline-block;
+  font-size: 24rpx;
+  color: #6b7280;
+  background: #f0f1f3;
+  border-radius: 8rpx;
+  padding: 10rpx 22rpx;
+  margin: 0 16rpx 16rpx 0;
+}
+.tag-pick.on {
+  color: #1a5fb4;
+  background: #eef3fb;
+  font-weight: 600;
+}
+.textarea {
+  width: 100%;
+  height: 220rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.counter {
+  text-align: right;
+  color: #b0b6be;
+  font-size: 22rpx;
+}
+.btn-primary {
+  margin-top: 12rpx;
+}
+.draft-btn {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20rpx;
+}
+.anon-card {
+  display: flex;
+  flex-direction: column;
+}
+.anon-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.anon-title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.anon-sub {
+  font-size: 24rpx;
+  margin-top: 4rpx;
+}
+.tip {
+  font-size: 22rpx;
+  line-height: 1.6;
+  margin-top: 8rpx;
+}
+.picked-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12rpx;
+}
+.picked-row .tag {
+  margin: 0 12rpx 8rpx 0;
+}
+
+.tip.ok { color: #0f8b5f; }
+.input {
+  background: #f7f8fa;
+  border-radius: 14rpx;
+  /* 定高修复：input 只给 padding 不给 height，字会被上下切掉一半 */
+  height: 88rpx;
+  padding: 0 22rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  width: 100%;
+}
+.match-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12rpx;
+}
+.match-chip {
+  font-size: 23rpx;
+  color: #5b636d;
+  background: #f2f4f7;
+  border-radius: 999rpx;
+  padding: 10rpx 22rpx;
+  margin: 0 12rpx 10rpx 0;
+}
+.match-chip.on {
+  color: #fff;
+  background: #1a5fb4;
+}
+.add-row {
+  margin-top: 14rpx;
+  text-align: center;
+  font-size: 25rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 14rpx;
+  padding: 18rpx 0;
+}

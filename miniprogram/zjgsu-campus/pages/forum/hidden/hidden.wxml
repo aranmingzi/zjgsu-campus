@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="tip-card">
+    <view class="tip-title">这些内容因为被同学举报，暂时从列表里收起来了</view>
+    <view class="tip-body">不是删掉了：确认没有违规的话可以恢复，被举报也会继续记录，
+      24 小时内凑够人数系统会自动处置，不用等人工确认。</view>
+  </view>
+
+  <view wx:if="{{posts.length === 0}}" class="empty">暂时没有暂停展示的内容</view>
+
+  <view wx:for="{{posts}}" wx:key="id" wx:for-item="p" class="card post tap" data-id="{{p.id}}" bindtap="goDetail">
+    <view class="post-head">
+      <view class="post-board">{{p.board}}</view>
+      <view class="lock-badge">🔒 暂停展示</view>
+    </view>
+    <view class="title-md post-title">{{p.title}}</view>
+    <view class="post-content">{{p.content}}</view>
+    <view class="post-foot">
+      <text class="muted post-time">{{p.showAuthor}} · {{p.time}}</text>
+      <text class="muted stat">点开可以看看，也可以补充举报</text>
+    </view>
+  </view>
+</view>

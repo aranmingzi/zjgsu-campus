@@ -1,0 +1,124 @@
+.f-label {
+  font-size: 26rpx;
+  color: #5f6672;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+}
+
+.type-row {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+.type {
+  font-size: 26rpx;
+  color: #5f6672;
+  background: #f4f5f7;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+}
+.type.on {
+  color: #1a5fb4;
+  background: #e6f1fb;
+  font-weight: 500;
+}
+
+.f-input {
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+  /* 定高修复：input 不给固定高度会被默认的 1.4rem 拦腰截字，
+     只留水平内边距，否则纵向 padding 会把文字压出可视区 */
+  height: 88rpx;
+  padding: 0 4rpx;
+}
+.f-textarea {
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 160rpx;
+  margin-top: 10rpx;
+}
+.f-counter {
+  text-align: right;
+  font-size: 22rpx;
+  color: #c4c9d0;
+  margin-top: 6rpx;
+}
+
+.f-line {
+  display: flex;
+  align-items: center;
+  border-top: 1rpx solid #eef0f2;
+  margin-top: 6rpx;
+}
+.f-prefix {
+  font-size: 30rpx;
+  color: #d85a30;
+  margin-right: 8rpx;
+}
+.f-price { flex: 1; }
+
+.ct-row {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 16rpx;
+  flex-wrap: wrap;
+}
+/* 隐私说明贴着联系方式组：放在这里比扔在底部按钮旁更贴近语境 */
+.f-privacy {
+  font-size: 22rpx;
+  color: #b0b6be;
+  margin-top: 16rpx;
+}
+.ct {
+  font-size: 24rpx;
+  color: #6b7280;
+  background: #f4f5f7;
+  border-radius: 999rpx;
+  padding: 10rpx 24rpx;
+}
+.ct.on {
+  color: #185fa5;
+  background: #e6f1fb;
+}
+
+.img-grid {
+  display: flex;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+.img-cell {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.img { width: 100%; height: 100%; }
+.img-cell.add {
+  background: #f4f5f7;
+  color: #b0b6be;
+  font-size: 56rpx;
+  text-align: center;
+  line-height: 160rpx;
+}
+.img-del {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 44rpx;
+  height: 44rpx;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 24rpx;
+  text-align: center;
+  line-height: 44rpx;
+  border-radius: 0 0 0 12rpx;
+}
+
+.f-foot { display: flex; flex-direction: column; }
+/* 存草稿（次）1 份 + 发布（主）2 份并排：主操作一眼可见，页面也不再被拉长 */
+.f-btns { display: flex; gap: 16rpx; align-items: center; }
+.f-draft { flex: 1; box-sizing: border-box; margin: 0; }
+.f-submit { flex: 2; box-sizing: border-box; margin: 0; }

@@ -1,0 +1,183 @@
+<view class="container">
+  <view class="card profile tap" bindtap="onEditProfile">
+    <view class="avatar-wrap">
+      <image wx:if="{{user.avatar}}" class="avatar-img" src="{{user.avatar}}" mode="aspectFill"></image>
+      <view wx:else class="avatar">{{user.avatarText}}</view>
+      <view wx:if="{{user.college}}" class="badge">{{user.college}}</view>
+    </view>
+    <view class="profile-info">
+      <view class="title-lg">{{user.nickName}}</view>
+      <view class="muted">{{user.motto}}</view>
+      <view class="edit-hint">编辑资料 ›</view>
+    </view>
+  </view>
+
+  <view wx:if="{{profileIncomplete}}" class="card auth-tip tap" bindtap="onEditProfile">
+    <text class="auth-icon">👋</text>
+    <view class="auth-text">
+      <view class="auth-title">完善一下头像，同学更容易找到你</view>
+      <view class="auth-sub">点这里设置头像和昵称，选好的头像会自动保存到云端</view>
+    </view>
+  </view>
+
+  <view class="card relation">
+    <view class="rel-item tap" data-tab="friends" bindtap="onFriends">
+      <view class="rel-num">{{friendCount}}</view>
+      <view class="rel-label">我的同学</view>
+    </view>
+    <view class="rel-line"></view>
+    <view class="rel-item tap" data-tab="requests" bindtap="onFriends">
+      <view class="rel-num {{reqCount > 0 ? 'hot' : ''}}">{{reqCount}}</view>
+      <view class="rel-label">待处理请求</view>
+    </view>
+    <view class="rel-line"></view>
+    <view class="rel-item tap" data-tab="search" bindtap="onFriends">
+      <view class="rel-num">＋</view>
+      <view class="rel-label">找同学</view>
+    </view>
+  </view>
+
+  <!-- 身份 ID 的展示与复制收口到「编辑资料」页（pages/user/profile），
+       这里不再重复放一张卡 —— 两处并存时点哪处都像「没反应」，排查成本高。 -->
+
+  <!-- 应用说明：新同学进来第一件事是知道这东西能干嘛，放在「我的」页显眼处。
+       首次打开小程序会弹一次窗指到这里，之后不再打扰 -->
+  <view class="card app-guide tap" bindtap="onGuide">
+    <view class="ag-head">
+      <text class="ag-icon">📖</text>
+      <text class="ag-title">应用说明</text>
+      <text class="ag-go">›</text>
+    </view>
+    <view class="ag-hint">五个底部标签 + 五个小工具都是干什么的，点开看一遍</view>
+  </view>
+
+  <!-- 常用入口：私信 / 收藏 / 草稿
+       跳蚤市场已经升到底部 tabBar，这里的重复入口去掉了 -->
+  <view class="card entry-card">
+    <view class="entry-item tap" bindtap="onChats">
+      <text class="entry-icon">💬</text>
+      <text class="entry-name">我的私信</text>
+      <text wx:if="{{unreadChat > 0}}" class="entry-dot">{{unreadChat}}</text>
+      <text wx:elif="{{friendCount > 0}}" class="entry-hint">{{friendCount}} 位同学</text>
+      <text class="entry-go">›</text>
+    </view>
+    <view class="entry-line"></view>
+    <view class="entry-item tap" bindtap="onFavorites">
+      <text class="entry-icon">⭐</text>
+      <text class="entry-name">我的收藏</text>
+      <text class="entry-hint">{{favoriteCount > 0 ? favoriteCount + ' 项' : '还没有收藏'}}</text>
+      <text class="entry-go">›</text>
+    </view>
+    <view wx:if="{{draftCount > 0}}" class="entry-line"></view>
+    <view wx:if="{{draftCount > 0}}" class="entry-item tap" bindtap="onDrafts">
+      <text class="entry-icon">📝</text>
+      <text class="entry-name">草稿箱</text>
+      <text class="entry-hint">{{draftCount}} 篇没写完</text>
+      <text class="entry-go">›</text>
+    </view>
+  </view>
+
+  <!-- 校园工具：只剩「我的备忘」。
+       校历 / 校园地点都进了「活动」Tab，学习资料并进了闲置分享，
+       这边留着就三个重复入口，只能把人绕晕 -->
+  <view class="card entry-card">
+    <view class="entry-item tap" bindtap="goMemo">
+      <text class="entry-icon">📔</text>
+      <text class="entry-name">我的备忘</text>
+      <text class="entry-hint">{{memoStreak ? '已连续 ' + memoStreak + ' 天' : '记下今天'}}</text>
+      <text class="entry-go">›</text>
+    </view>
+    <view class="entry-line"></view>
+    <view class="entry-item tap" bindtap="goBlindbox">
+      <text class="entry-icon">🫙</text>
+      <text class="entry-name">校园盲盒 · 漂流瓶</text>
+      <text class="entry-hint">每天捞 3 次 · 匿名</text>
+      <text class="entry-go">›</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">我的课程评价（{{myReviews.length}}）</view>
+    <view wx:if="{{myReviews.length === 0}}" class="empty-sm">还没有评价，去「课程评价」写一条吧</view>
+    <view wx:for="{{myReviews}}" wx:key="id" wx:for-item="r" class="mini-item tap" data-id="{{r.courseId}}" bindtap="goCourse">
+      <view class="mini-top">
+        <view class="mini-left">
+          <text class="mini-name">{{r.courseName}}</text>
+          <view class="stars">
+            <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this" class="star {{s <= r.starOn ? 'on' : ''}}">★</text>
+          </view>
+        </view>
+        <view
+          wx:if="{{r.canDelete}}"
+          class="mini-del tap"
+          data-id="{{r.id}}"
+          catchtap="onDeleteReview"
+        >删除</view>
+      </view>
+      <view class="mini-content">{{r.content}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>我的帖子（{{myPosts.length}}）</text>
+      <text wx:if="{{myPosts.length}}" class="title-op tap" catchtap="onClearPosts">清空</text>
+    </view>
+    <view wx:if="{{myPosts.length === 0}}" class="empty-sm">还没有发帖，去「论坛」发一条吧</view>
+    <view wx:for="{{myPosts}}" wx:key="id" wx:for-item="p" class="mini-item tap" data-id="{{p.id}}" bindtap="goPost">
+      <view class="mini-top">
+        <text class="mini-name">{{p.title}}</text>
+        <text wx:if="{{p.hidden}}" class="post-board hidden-tag">已暂停展示</text>
+        <text wx:else class="post-board">{{p.board}}</text>
+        <view
+          wx:if="{{p.canDelete}}"
+          class="mini-del tap"
+          data-id="{{p.id}}"
+          catchtap="onDeletePost"
+        >删除</view>
+      </view>
+      <view wx:if="{{p.hidden}}" class="mini-restore tap" data-id="{{p.id}}" catchtap="onRestorePost">这条因举报暂停展示了，确认没违规？点这里恢复</view>
+      <view class="mini-content">{{p.content}}</view>
+    </view>
+  </view>
+
+  <view class="card demo-card tap" bindtap="onOpenPrivacy">
+      <view class="demo-title">用户隐私保护指引</view>
+      <view class="demo-hint">我们怎么用你的昵称、头像和联系方式，点开看全文</view>
+    </view>
+
+    <!-- 环境自检只有审核员看得到：这是排查部署问题的开发工具，
+         普通同学碰到发帖失败走的是上面的黄色身份警告条，不需要懂「集合」是什么。 -->
+    <view wx:if="{{isMod}}" class="card demo-card tap" bindtap="onDiag">
+      <view class="demo-title">环境自检</view>
+      <view class="demo-hint">检查云函数能不能通、数据库集合齐不齐。发帖 / 发评价失败时先看这里</view>
+    </view>
+
+    <!-- 清除本机缓存。不是「演示模式」——真上架后这是普通用户的一个自助入口，
+         文案按真实用途写：缓存堆积会让页面变卡，清掉就能恢复。 -->
+    <view class="card demo-card tap" bindtap="onClearCache">
+      <view class="demo-title">清除本机缓存</view>
+      <view class="demo-hint">清掉这台手机上的帖子 / 评价 / 收藏 / 草稿，让页面恢复正常速度（云端数据不受影响）</view>
+    </view>
+
+    <!-- 内容审核：放在页面最底下，位置隐蔽但人人可见 ——
+         不再挂在 isMod 上，省掉「审核员看不到自己入口」的时序坑；
+         还不是审核员的人点它，onModeration 会告诉 ta 怎么拿 ID 去申请。
+         审核操作真正的门禁在云函数（环境变量 MODERATORS），前端这层只是导航。 -->
+    <view class="card mod-card">
+      <view class="mod-item tap" bindtap="onModeration">
+        <view class="mod-title">内容审核</view>
+        <view class="mod-hint">举报队列 · 批量处理 ›</view>
+      </view>
+    </view>
+
+  <!-- 身份没拿到时必须一眼看到：光说「退出重进」没用，得把排查入口摆出来。
+       典型原因是 login 云函数没部署 —— 预览（开发者本人）正常，体验版同学全废。 -->
+  <view wx:if="{{!registered}}" class="id-alert tap" bindtap="onDiag">
+    <view class="id-alert-title">⚠️ 还没拿到身份，有些功能会跟着出问题</view>
+    <!-- 文案刻意不写「发帖会失败」：服务端认人靠的是微信塞给云函数的身份，
+         跟客户端拿没拿到 openid 没关系，发帖其实是好的。以前这儿写成「发帖会失败」，
+         同学一看就以为论坛废了，其实是删除按钮认不出自己那条之类的次要影响。 -->
+    <view class="id-alert-hint">多半是 login 云函数没部署（表现为：预览正常、体验版同学全废）。点这里跑一次「环境自检」看缺什么</view>
+  </view>
+</view>

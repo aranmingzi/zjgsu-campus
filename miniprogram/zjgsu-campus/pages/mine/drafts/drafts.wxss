@@ -1,0 +1,50 @@
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8rpx 12rpx;
+}
+.count { font-size: 22rpx; color: #b0b6be; }
+.clear { font-size: 24rpx; color: #d9534f; }
+
+.d-item { position: relative; padding-bottom: 50rpx; }
+.d-top { display: flex; align-items: center; margin-bottom: 10rpx; }
+.d-type {
+  font-size: 22rpx;
+  color: #185fa5;
+  background: #e6f1fb;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+.d-time { margin-left: auto; }
+
+.d-title { font-size: 30rpx; font-weight: 600; color: #1f2329; line-height: 1.5; }
+.d-preview {
+  font-size: 26rpx;
+  color: #5f6672;
+  margin-top: 8rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.d-del {
+  position: absolute;
+  right: 28rpx;
+  bottom: 18rpx;
+  font-size: 22rpx;
+  color: #d9534f;
+  background: #fdecec;
+  padding: 6rpx 20rpx;
+  border-radius: 8rpx;
+}
+
+.empty-icon { font-size: 70rpx; }
+.empty-hint {
+  font-size: 24rpx;
+  color: #c4c9d0;
+  margin-top: 16rpx;
+  padding: 0 60rpx;
+  line-height: 1.7;
+}

@@ -1,0 +1,82 @@
+<view class="container">
+  <view class="card">
+    <view class="label">活动类型</view>
+    <view class="type-row">
+      <view
+        wx:for="{{types}}"
+        wx:key="key"
+        class="type-chip {{typeMap[item.key] ? 'on' : ''}} tap"
+        data-k="{{item.key}}"
+        bindtap="onType"
+      >{{item.icon}} {{item.label}}</view>
+    </view>
+
+    <view class="label">活动名字 <text class="req">*</text></view>
+    <input
+      class="input"
+      placeholder="例如：ACM 校赛串讲"
+      value="{{form.title}}"
+      maxlength="40"
+      data-k="title"
+      bindinput="onInput"
+    />
+
+    <view class="label">时间</view>
+    <view class="time-row">
+      <picker mode="date" value="{{form.date}}" bindchange="onDate">
+        <view class="picker {{form.date ? '' : 'ph'}}">📅 {{form.date || '选日期'}}</view>
+      </picker>
+      <picker mode="time" value="{{form.time}}" bindchange="onTime">
+        <view class="picker {{form.time ? '' : 'ph'}}">🕘 {{form.time || '选时间'}}</view>
+      </picker>
+    </view>
+
+    <view class="label">地点</view>
+    <input
+      class="input"
+      placeholder="例如：A 教学楼 301"
+      value="{{form.location}}"
+      maxlength="40"
+      data-k="location"
+      bindinput="onInput"
+    />
+
+    <view class="label">人数上限（可不填，最多 500）</view>
+    <input
+      class="input"
+      placeholder="不填不限人数"
+      value="{{form.capacity}}"
+      type="number"
+      maxlength="3"
+      data-k="capacity"
+      bindinput="onInput"
+    />
+
+    <view class="label">联系方式（报名后才公开）</view>
+    <input
+      class="input"
+      placeholder="微信号 / 手机号 / QQ"
+      value="{{form.contact}}"
+      maxlength="40"
+      data-k="contact"
+      bindinput="onInput"
+    />
+  </view>
+
+  <view class="card">
+    <view class="label">活动详情</view>
+    <textarea
+      class="textarea"
+      placeholder="讲什么、怎么参加、要不要带东西、有没有奖励……写清楚同学才敢报"
+      value="{{form.desc}}"
+      maxlength="500"
+      data-k="desc"
+      bindinput="onInput"
+      auto-height
+    />
+    <view class="count">{{form.desc.length}}/500</view>
+  </view>
+
+  <button class="btn-primary" bindtap="onSubmit">发布活动</button>
+  <view class="tip">发布后会显示在「校园 → 活动信息」，全校同学都能看到并报名</view>
+</view>

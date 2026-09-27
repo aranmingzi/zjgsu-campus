@@ -1,0 +1,88 @@
+<view class="container">
+  <view class="cat-row">
+    <view
+      wx:for="{{cats}}"
+      wx:for-item="c"
+      wx:key="*this"
+      class="cat-chip {{catMap[c] ? 'on' : ''}} tap"
+      data-c="{{c}}"
+      bindtap="onCategory"
+    >{{c}}</view>
+  </view>
+
+  <view class="card add-entry tap" bindtap="onToggleForm">
+    <text class="add-icon">📍</text>
+    <view class="add-main">
+      <view class="add-title">{{showForm ? '收起' : '补充一个地点'}}</view>
+      <view class="muted add-sub">快递点在哪、哪个教室在哪栋楼，你加一个全校都能用</view>
+    </view>
+    <text class="add-go">{{showForm ? '▲' : '▼'}}</text>
+  </view>
+
+  <view wx:if="{{showForm}}" class="card form-card">
+    <view class="loc-row tap" bindtap="pickLocation">
+      <text class="loc-icon">🗺️</text>
+      <view class="loc-main">
+        <view wx:if="{{picked}}" class="loc-name">已选位置：{{form.address || '（地图上已定位）'}}</view>
+        <view wx:else class="loc-name">点这里，在地图上选一下位置</view>
+        <view class="muted loc-sub">经纬度由地图给出，不用手填，也不会偏</view>
+      </view>
+    </view>
+    <input
+      class="field"
+      placeholder="如「2 号教学楼」「菜鸟驿站」"
+      value="{{form.name}}"
+      data-k="name"
+      bindinput="onInput"
+      maxlength="30"
+    />
+    <input
+      class="field"
+      placeholder="选填，如「一楼有自助打印」"
+      value="{{form.desc}}"
+      data-k="desc"
+      bindinput="onInput"
+      maxlength="80"
+    />
+    <view class="type-row">
+      <view
+        wx:for="{{['教学楼','食堂','宿舍','快递','运动','其他']}}"
+        wx:for-item="t"
+        wx:key="*this"
+        class="type {{catFormMap[t] ? 'on' : ''}} tap"
+        data-c="{{t}}"
+        bindtap="onFormCategory"
+      >{{t}}</view>
+    </view>
+    <button class="btn-primary tap" bindtap="onSubmit">添加地点</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中…</view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <view class="empty-icon">🗺️</view>
+    <view>还没有人添加地点</view>
+    <view class="empty-hint">第一个添加的通常是最常用的那个快递点</view>
+  </view>
+
+  <view wx:else>
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="card pl-item"
+    >
+      <view class="pl-head">
+        <text class="pl-icon">{{item.catIcon}}</text>
+        <view class="pl-main">
+          <view class="pl-name">{{item.name}}</view>
+          <view wx:if="{{item.desc}}" class="muted pl-desc">{{item.desc}}</view>
+          <view wx:if="{{item.address}}" class="muted pl-addr">{{item.address}}</view>
+        </view>
+      </view>
+      <view class="pl-ops">
+        <view class="pl-op primary tap" data-i="{{index}}" catchtap="onOpen">在地图里看</view>
+        <view wx:if="{{item.isMine}}" class="pl-op del tap" data-id="{{item.id}}" catchtap="onRemove">删除</view>
+      </view>
+    </view>
+  </view>
+</view>

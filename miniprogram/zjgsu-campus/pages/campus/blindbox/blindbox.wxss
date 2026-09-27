@@ -1,0 +1,259 @@
+/* pages/campus/blindbox —— 校园盲盒 / 漂流瓶样式
+   配色沿用全站蓝（#1a5fb4），卡片、圆角、字号跟其它页面保持一致。 */
+
+/* ---------- 顶部规则卡 ---------- */
+.bb-head {
+  background: linear-gradient(135deg, #eaf1fc, #f7faff);
+}
+.bb-title {
+  font-size: 33rpx;
+  font-weight: 600;
+  color: #1a5fb4;
+}
+.bb-sub {
+  font-size: 25rpx;
+  color: #5b636d;
+  margin-top: 12rpx;
+}
+.bb-rules {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx dashed #d7e0ee;
+  display: flex;
+  flex-direction: column;
+}
+.bb-rules text {
+  font-size: 23rpx;
+  color: #7b8189;
+  line-height: 40rpx;
+}
+
+/* 云端连不上时的一句实话，放在次数卡下面，不抢主按钮的位置 */
+.cloud-msg {
+  font-size: 22rpx;
+  color: #b07a2a;
+  text-align: center;
+  margin: -8rpx 0 20rpx;
+}
+
+/* ---------- 今日次数 + 捞瓶 ---------- */
+.bb-pool {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 28rpx;
+}
+.bb-count { display: flex; align-items: baseline; }
+.bb-count-num {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #1a5fb4;
+  line-height: 1;
+}
+.bb-count-unit {
+  font-size: 24rpx;
+  color: #8a9099;
+  margin-left: 12rpx;
+}
+.bb-fetch-btn {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #1a5fb4, #3d86e0);
+  border-radius: 999rpx;
+  padding: 20rpx 44rpx;
+  box-shadow: 0 6rpx 18rpx rgba(26, 95, 180, 0.25);
+}
+/* 次数用完 / 正在撒网：置灰，但不能看着还能点 */
+.bb-fetch-btn.off {
+  color: #9aa1a9;
+  background: #eef0f3;
+  box-shadow: none;
+}
+
+/* ---------- 捞到的瓶子 ---------- */
+.bb-bottle {
+  background: linear-gradient(160deg, #ffffff, #fbfcff);
+  border: 1rpx solid #e4ebf6;
+}
+.bb-bottle-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.bb-bottle-kind {
+  font-size: 24rpx;
+  color: #1a5fb4;
+  background: #eef3fb;
+  border-radius: 8rpx;
+  padding: 4rpx 16rpx;
+}
+.bb-lock {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: #8a9099;
+  background: #f2f4f7;
+  border-radius: 999rpx;
+  padding: 6rpx 18rpx;
+}
+/* 解锁态：换成暖色，一眼看出「这个人是谁已经翻开」 */
+.bb-lock-on {
+  color: #8a6d3b;
+  background: #fdf6e3;
+}
+.bb-bottle-content {
+  font-size: 29rpx;
+  color: #1f2329;
+  line-height: 48rpx;
+  word-break: break-all;
+}
+
+/* 回复框：定高自适应（auto-height），不写死 height，免得长文本被截 */
+.bb-reply,
+.bb-content {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 27rpx;
+  color: #1f2329;
+  background: #f6f8fb;
+  border-radius: 16rpx;
+  padding: 20rpx 22rpx;
+  margin-top: 20rpx;
+  min-height: 120rpx;
+}
+
+.bb-bottle-ops {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20rpx;
+}
+.bb-op {
+  font-size: 26rpx;
+  color: #6b7280;
+  background: #f2f4f7;
+  border-radius: 999rpx;
+  padding: 16rpx 36rpx;
+  margin-left: 18rpx;
+}
+.bb-op.main {
+  color: #fff;
+  background: #1a5fb4;
+}
+.bb-op.off {
+  color: #9aa1a9;
+  background: #eef0f3;
+}
+
+/* 解锁提示条：刚解锁时弹一下（pop），之后安静地挂着 */
+.bb-unlocked {
+  font-size: 25rpx;
+  color: #0f8b5f;
+  background: #e8f8f1;
+  border-radius: 14rpx;
+  padding: 18rpx 22rpx;
+  margin-top: 20rpx;
+}
+.bb-unlocked.pop {
+  animation: bbPop .42s ease both;
+}
+@keyframes bbPop {
+  0%   { transform: scale(.94); opacity: 0; }
+  60%  { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------- 扔瓶子 ---------- */
+.bb-throw-title {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #1f2329;
+}
+/* 类型横滑：三个 chip 一行放得下，但窄屏也能横向滑 */
+.bb-kinds {
+  margin-top: 18rpx;
+  white-space: nowrap;
+}
+.bb-kinds .chip {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  margin-right: 16rpx;
+  background: #fff;
+  border: 1rpx solid #e6e9ee;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #5a6068;
+}
+.bb-kinds .chip-on {
+  background: #1a5fb4;
+  border-color: #1a5fb4;
+  color: #fff;
+}
+.bb-throw-hint {
+  margin-top: 14rpx;
+}
+.bb-throw-btn {
+  margin-top: 24rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #fff;
+  background: #1a5fb4;
+  border-radius: 16rpx;
+  padding: 24rpx 0;
+}
+.bb-throw-btn.off {
+  color: #9aa1a9;
+  background: #eef0f3;
+}
+.bb-throw-note {
+  margin-top: 16rpx;
+  text-align: center;
+}
+
+/* ---------- 我的瓶子 ---------- */
+/* more-row 在 campus.wxss 里也有，但那个是页面级样式，这里得自己有一份 */
+.more-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 18rpx;
+  padding: 24rpx 28rpx;
+  margin: 8rpx 0 20rpx;
+  font-size: 26rpx;
+  color: #5b636d;
+}
+.more-go { color: #b0b6be; }
+
+.empty-sm {
+  text-align: center;
+  font-size: 24rpx;
+  color: #b0b6be;
+  padding: 40rpx 0;
+}
+
+.bb-mine { padding: 24rpx 26rpx; }
+.bb-mine-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+.bb-mine-replies { font-size: 22rpx; }
+
+.bb-reply-item {
+  background: #f6f8fb;
+  border-radius: 14rpx;
+  padding: 18rpx 20rpx;
+  margin-top: 14rpx;
+}
+.bb-reply-content {
+  font-size: 26rpx;
+  color: #1f2329;
+  line-height: 42rpx;
+  word-break: break-all;
+}
+.bb-reply-meta {
+  margin-top: 8rpx;
+  font-size: 21rpx;
+}

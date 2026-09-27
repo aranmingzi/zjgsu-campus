@@ -1,0 +1,75 @@
+<view class="container">
+  <view class="hole-head">
+    <view class="hole-title">🎭 匿名树洞</view>
+    <view class="hole-sub">没有昵称，没有头像，没有人知道这是谁写的。说点平时不敢说的。</view>
+  </view>
+
+  <view class="card composer">
+    <input
+      class="hole-title-input"
+      placeholder="给树洞起个标题（可不填）"
+      value="{{title}}"
+      bindinput="onTitle"
+      maxlength="60"
+    />
+    <textarea
+      class="hole-content"
+      placeholder="随便说，没人认识你"
+      value="{{content}}"
+      bindinput="onContent"
+      maxlength="2000"
+      auto-height="{{true}}"
+      show-confirm-bar="{{false}}"
+      confirm-type="send"
+      bindconfirm="send"
+    />
+    <view class="composer-foot">
+      <text class="anon-tip">发布后强制匿名 · 违规照样会被删</text>
+      <view class="send-btn {{content ? '' : 'disabled'}} tap" bindtap="send">{{posting ? '投放中…' : '投进树洞'}}</view>
+    </view>
+  </view>
+
+  <scroll-view class="sort-bar-wrap" scroll-x="true">
+    <view class="sort-bar">
+      <view wx:for="{{sortOptions}}" wx:key="k"
+            class="sort-item {{sort === item.k ? 'on' : ''}} tap"
+            data-s="{{item.k}}" bindtap="onSortPick">{{item.icon}} {{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{posts.length === 0}}" class="empty">
+    <view class="empty-icon">🌳</view>
+    <view>树洞还是空的</view>
+    <view class="empty-hint">前面第一条，可能被人记很久</view>
+  </view>
+
+  <view
+    wx:for="{{posts}}"
+    wx:key="id"
+    wx:for-item="p"
+    class="card hole-card tap post-anim"
+    data-id="{{p.id}}"
+    bindtap="goDetail"
+  >
+    <view class="hole-card-head">
+      <text class="hole-card-who">{{p.showAuthor}}</text>
+      <text class="muted hole-card-time">{{p.time}}</text>
+    </view>
+    <view wx:if="{{p.title}}" class="hole-card-title">{{p.title}}</view>
+    <view class="hole-card-content">{{p.content}}</view>
+    <view class="hole-card-foot">
+      <!-- 树洞的赞叫「抱抱」：安慰说真心话的人。没有踩 —— 想吐槽去主论坛，
+           树洞只收温柔。catchtap 挡住卡片跳转，点抱抱不会误进详情 -->
+      <view class="vote tap {{p.liked ? 'v-on' : ''}}" data-id="{{p.id}}" catchtap="onPostVote">🤗 抱抱 {{p.likes}}</view>
+      <text class="muted stat">💬 {{p.comments.length}}</text>
+      <!-- 匿名内容照样能被举报：匿名是保护作者不被认出来，不是免罪牌。
+           catchtap 挡住卡片的跳转，举报不会顺带点进详情 -->
+      <view class="vote tap {{p.reported ? 'v-done' : ''}}" data-id="{{p.id}}" data-openid="{{p.authorOpenid}}" catchtap="onReport">{{p.reported ? '✓ 已举报' : '⚑ 举报'}}</view>
+      <button class="foot-share" open-type="share">↗ 分享</button>
+    </view>
+  </view>
+
+  <view wx:if="{{posts.length && sort === 'hot'}}" class="hole-tip">
+    热度 =（抱抱 + 评论×2）× 时间衰减，72 小时外的帖只剩两成，热榜天天有新东西。
+  </view>
+</view>

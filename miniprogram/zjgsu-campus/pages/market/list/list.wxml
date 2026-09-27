@@ -1,0 +1,120 @@
+<view class="container">
+  <!-- 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置，自动缓慢切换，触摸即停 -->
+  <include src="/utils/banner.wxml"/>
+
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input
+      class="search-input"
+      placeholder="搜丢失的物品 / 闲置"
+      value="{{keyword}}"
+      confirm-type="search"
+      bindinput="onSearch"
+      bindconfirm="onSearch"
+    />
+    <view wx:if="{{keyword}}" class="clear-btn tap" bindtap="onSearchClear">✕</view>
+  </view>
+
+  <!-- 三种类型一个 tab 一个，选中项是 tabMap 里的 true -->
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab {{tabMap[item.key] ? 'on' : ''}} tap"
+      data-k="{{item.key}}"
+      bindtap="onTab"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 教材专区：开学季最强需求。只在「闲置」tab 出现 -->
+  <view wx:if="{{tab === 'sell'}}" class="cat-row">
+    <view
+      wx:for="{{cats}}"
+      wx:for-item="c"
+      wx:key="key"
+      class="cat-chip {{catMap[c.key] ? 'on' : ''}} tap"
+      data-c="{{c.key}}"
+      bindtap="onCategory"
+    >{{c.icon}}{{c.label}}</view>
+  </view>
+
+  <!-- 学习资料：笔记 / 真题 / 讲义是每学期都要找的东西，
+       和闲置共用「分享给同学」这件事，所以放在同一个入口里，不用再单独占一个 tab -->
+  <view class="res-entry tap" bindtap="goResources">
+    <text class="res-icon">📚</text>
+    <view class="res-body">
+      <view class="res-title">学习资料共享</view>
+      <view class="res-sub">学长学姐的笔记、真题、讲义，上传就能给同学用</view>
+    </view>
+    <text class="res-go">去分享 ›</text>
+  </view>
+
+  <!-- 我发布的：管理、标记已解决、删除都在这个页面里 -->
+  <view class="my-entry tap" bindtap="myTap">
+    <text class="my-entry-txt">我发布的</text>
+    <text class="my-entry-go">管理 ›</text>
+  </view>
+
+  <!-- 首屏骨架屏：只有第一次加载才有，之后都是直接出结果 -->
+  <view wx:if="{{loading}}" class="sk-wrap">
+    <view class="sk-card">
+      <view class="sk-line sk-title"></view>
+      <view class="sk-line sk-short"></view>
+      <view class="sk-line sk-mid"></view>
+    </view>
+    <view class="sk-card">
+      <view class="sk-line sk-title"></view>
+      <view class="sk-line sk-mid"></view>
+    </view>
+  </view>
+
+  <view wx:elif="{{items.length === 0}}" class="empty">
+    <view class="empty-icon">📭</view>
+    <view>{{keyword ? '没找到相关的内容' : (tab === 'sell' ? '还没有人挂闲置，来当第一个吧' : '目前没有新的记录，有新情况随时发布')}}</view>
+    <view class="empty-hint">丢东西别急，先发一条，同学看到就能联系你</view>
+  </view>
+
+  <view wx:else>
+    <view
+      wx:for="{{items}}"
+      wx:key="id"
+      class="card m-item tap"
+      data-id="{{item.id}}"
+      bindtap="goDetail"
+    >
+      <view class="m-top">
+        <view class="m-kind k-{{item.type}}">{{item.type === 'sell' ? '🛍️ 闲置' : (item.type === 'found' ? '📦 招领' : '🔍 寻物')}}</view>
+        <view wx:if="{{item.done}}" class="m-done">已解决</view>
+        <view wx:elif="{{item.isMine}}" class="m-mine">我发布的</view>
+      </view>
+
+      <view class="m-title">{{item.title}}</view>
+      <!-- 教材按课程名挂，搜「微积分」就能找到对应的书 -->
+      <view wx:if="{{item.courseName}}" class="m-course">📚 {{item.courseName}}</view>
+      <view wx:if="{{item.desc}}" class="m-desc">{{item.desc}}</view>
+
+      <view wx:if="{{item.images.length}}" class="m-imgs">
+        <image
+          wx:for="{{item.images}}"
+          wx:for-item="src"
+          wx:key="*this"
+          class="m-img tap"
+          src="{{src}}"
+          mode="aspectFill"
+          data-imgs="{{item.images}}"
+          catchtap="previewImages"
+        ></image>
+      </view>
+
+      <view class="m-foot">
+        <text class="m-loc">{{item.location ? '📍' + item.location : ''}}</text>
+        <text wx:if="{{item.price}}" class="m-price">¥{{item.price}}</text>
+        <text class="muted m-time">{{item.time}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{noMore}}" class="load-end">— 到底了 —</view>
+  </view>
+
+  <view class="fab tap" bindtap="goEdit">＋</view>
+</view>

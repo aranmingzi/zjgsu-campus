@@ -1,0 +1,38 @@
+<view class="container">
+  <view class="card">
+    <view class="label">课程名<text class="req">*</text></view>
+    <input class="field" placeholder="如：中级财务会计" value="{{name}}" bindinput="onName" maxlength="30" />
+  </view>
+
+  <view class="card">
+    <view class="label">所属学院</view>
+    <picker mode="selector" range="{{colleges}}" value="{{collegeIndex}}" bindchange="onCollege">
+      <view class="picker">{{college}}</view>
+    </picker>
+  </view>
+
+  <view class="card">
+    <view class="label">课程类型</view>
+    <picker mode="selector" range="{{ctypes}}" value="{{ctypeIndex}}" bindchange="onCtype">
+      <view class="picker">{{ctype}}</view>
+    </picker>
+    <view class="hint">填了课名会自动猜一个，不对的话自己改一下</view>
+  </view>
+
+  <view class="card">
+    <view class="label">所属专业（可不填）</view>
+    <input class="field" placeholder="如：会计学" value="{{major}}" bindinput="onMajor" maxlength="20" />
+  </view>
+
+  <view class="card">
+    <view class="label">学分</view>
+    <input class="field" placeholder="3" value="{{credit}}" bindinput="onCredit" type="digit" />
+  </view>
+
+  <view class="tip-card">
+    <view class="tip-title">为什么要同学自己添加？</view>
+    <view class="tip-text">官方课程目录收录的是全校各专业核心课，部分专业选修课还不在里面。你添加后会同步到云端，全校同学都能看到、都能评价，课程库会越用越全。</view>
+  </view>
+
+  <button class="btn-primary tap" bindtap="submit">添加课程</button>
+</view>

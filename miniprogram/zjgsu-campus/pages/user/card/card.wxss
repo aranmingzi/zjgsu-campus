@@ -1,0 +1,69 @@
+.profile { position: relative; display: flex; align-items: center; padding-top: 40rpx; }
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a5fb4, #4a86d6);
+  color: #fff;
+  font-size: 52rpx;
+  line-height: 140rpx;
+  text-align: center;
+  margin-right: 28rpx;
+}
+.avatar-img {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  margin-right: 28rpx;
+  flex-shrink: 0;
+}
+
+.profile-info { flex: 1; min-width: 0; }
+
+.section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
+
+.contact-card { border-left: 8rpx solid #1a5fb4; }
+.contact-row {
+  display: flex;
+  align-items: center;
+  background: #f7f8fa;
+  border-radius: 12rpx;
+  padding: 24rpx 24rpx;
+}
+.contact-label { font-size: 26rpx; color: #8a9099; margin-right: 20rpx; }
+.contact-value { flex: 1; font-size: 32rpx; color: #1a5fb4; font-weight: 600; }
+
+.copy-btn { margin-top: 20rpx; width: 100%; line-height: 1.6; }
+
+.tip {
+  margin-top: 18rpx;
+  font-size: 22rpx;
+  color: #8a9099;
+  line-height: 1.6;
+}
+
+.waiting {
+  background: #fff7e6;
+  color: #a8641b;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.danger-ghost {
+  color: #d9534f;
+  border-color: #f0c9c7;
+  margin-top: 20rpx;
+}
+.msg-box { margin: 20rpx 0 24rpx; }
+.msg-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #f7f8fa;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  min-height: 120rpx;
+}

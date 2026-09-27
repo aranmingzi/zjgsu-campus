@@ -1,0 +1,115 @@
+.next-card {
+  background: linear-gradient(135deg, #1a5fb4, #3b82d6);
+  color: #fff;
+  padding: 32rpx 28rpx;
+}
+.next-label {
+  font-size: 24rpx;
+  opacity: 0.85;
+}
+.next-text {
+  margin-top: 10rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+.cal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #f0f1f3;
+}
+.cal-item:last-child {
+  border-bottom: none;
+}
+.cal-left {
+  display: flex;
+  align-items: flex-start;
+}
+.cal-icon {
+  font-size: 36rpx;
+  margin-right: 18rpx;
+}
+.cal-name {
+  font-size: 28rpx;
+  color: #1f2329;
+}
+.cal-date {
+  font-size: 22rpx;
+  margin-top: 4rpx;
+}
+.cal-note {
+  font-size: 22rpx;
+  margin-top: 4rpx;
+}
+.cal-right {
+  text-align: right;
+}
+.cal-days {
+  font-size: 26rpx;
+  color: #1a5fb4;
+  font-weight: 600;
+}
+.past-days {
+  color: #9aa0a6;
+  font-weight: 400;
+}
+.cal-item.past .cal-name {
+  color: #9aa0a6;
+}
+.cal-del {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #d9534f;
+}
+.mod-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8rpx 0 16rpx;
+}
+.mod-title {
+  font-size: 26rpx;
+  color: #1a5fb4;
+}
+.field {
+  width: 100%;
+  box-sizing: border-box;
+  /* 定高修复：input 只给 padding 不给高度会截字 */
+  height: 88rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  background: #f7f8fa;
+  border-radius: 12rpx;
+  margin-top: 16rpx;
+}
+.picker-field {
+  color: #1f2329;
+}
+.type-row {
+  display: flex;
+  margin: 20rpx 0;
+}
+.type {
+  padding: 10rpx 22rpx;
+  margin-right: 14rpx;
+  font-size: 24rpx;
+  color: #5f6368;
+  background: #f7f8fa;
+  border-radius: 28rpx;
+}
+.type.on {
+  color: #fff;
+  background: #1a5fb4;
+}
+.tip-box {
+  margin: 24rpx 28rpx;
+  font-size: 22rpx;
+  color: #8a9099;
+  line-height: 1.7;
+}

@@ -1,0 +1,58 @@
+.tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 10rpx;
+  margin-bottom: 24rpx;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #6b7280;
+  padding: 14rpx 0;
+  border-radius: 12rpx;
+}
+.tab.on {
+  background: #1a5fb4;
+  color: #fff;
+}
+
+.count { font-size: 22rpx; color: #b0b6be; margin: 0 8rpx 12rpx; }
+
+.f-item { padding-bottom: 20rpx; }
+.f-top { display: flex; align-items: center; margin-bottom: 12rpx; }
+.f-tag {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+.t-course { color: #185fa5; background: #e6f1fb; }
+.t-post { color: #854f0b; background: #faeeda; }
+.t-review { color: #0f6e56; background: #e1f5ee; }
+.t-market { color: #c2410c; background: #fff1e8; }
+
+.f-unstar {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: #b0b6be;
+  padding: 4rpx 12rpx;
+}
+.f-title { font-size: 30rpx; font-weight: 600; color: #1f2329; line-height: 1.5; }
+.f-desc {
+  font-size: 26rpx;
+  color: #5f6672;
+  margin-top: 8rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.empty-icon { font-size: 70rpx; }
+.empty-hint {
+  font-size: 24rpx;
+  color: #c4c9d0;
+  margin-top: 16rpx;
+  padding: 0 60rpx;
+}

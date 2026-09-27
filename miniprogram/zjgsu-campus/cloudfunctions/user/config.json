@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "openapi": [
+      "security.msgSecCheck",
+      "subscribeMessage.send"
+    ]
+  },
+  "triggers": [
+    {
+      "name": "dailyWebSync",
+      "type": "timer",
+      "config": "0 30 7 * * * *"
+    }
+  ]
+}

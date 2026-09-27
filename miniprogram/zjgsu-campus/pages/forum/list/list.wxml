@@ -1,0 +1,167 @@
+<view class="container">
+  <view wx:if="{{offline}}" class="net-bar">当前处于离线状态，下面显示的是本地缓存</view>
+
+  <!-- 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置，自动缓慢切换，触摸即停 -->
+  <include src="/utils/banner.wxml"/>
+
+  <view wx:if="{{loading}}" class="sk-wrap">
+    <view class="sk-card">
+      <view class="sk-line sk-title"></view>
+      <view class="sk-line sk-mid"></view>
+      <view class="sk-line sk-short"></view>
+    </view>
+    <view class="sk-card">
+      <view class="sk-line sk-title"></view>
+      <view class="sk-line sk-short"></view>
+    </view>
+  </view>
+
+  <block wx:else>
+  <view class="search-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜标题 / 内容 / 作者" value="{{keyword}}"
+        confirm-type="search" bindinput="onSearchInput" bindconfirm="onSearchConfirm" />
+      <view wx:if="{{keyword}}" class="search-clear tap" catchtap="onClearSearch">×</view>
+    </view>
+    <view wx:if="{{keyword}}" class="search-go tap" catchtap="onSearchConfirm">搜索</view>
+  </view>
+
+  <view wx:if="{{!searching}}" class="search-panel">
+    <view wx:if="{{searchHistory.length}}" class="panel-row">
+      <text class="panel-label">最近搜索</text>
+      <text class="panel-more tap" catchtap="onClearHistory">清空</text>
+    </view>
+    <view wx:if="{{searchHistory.length}}" class="filters">
+      <view wx:for="{{searchHistory}}" wx:key="*this" class="chip tap" data-k="{{item}}" catchtap="onTapHistory">{{item}}</view>
+    </view>
+    <view class="panel-row">
+      <text class="panel-label">大家都在搜</text>
+    </view>
+    <view class="filters">
+      <view wx:for="{{hotKeywords}}" wx:key="*this" class="chip tap" data-k="{{item}}" catchtap="onTapHistory">{{item}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{searching}}" class="result-bar">
+    <text class="result-text">「{{keyword}}」找到 {{resultCount}} 条</text>
+    <text class="result-reset tap" catchtap="onClearSearch">退出搜索</text>
+  </view>
+
+  <scroll-view wx:if="{{!searching}}" class="filters" scroll-x="true">
+    <view wx:for="{{boards}}" wx:key="*this" class="chip {{board === item ? 'chip-on' : ''}} tap" data-b="{{item}}" bindtap="onBoard">{{item}}</view>
+  </scroll-view>
+
+  <!-- 树洞独立入口：匿名内容只在树洞页出现，主论坛不混排 -->
+  <view wx:if="{{!searching}}" class="hole-entry tap" bindtap="goHole">
+    <text class="hole-emoji">🎭</text>
+    <view class="hole-main">
+      <view class="hole-title">匿名树洞</view>
+      <view class="hole-sub">没人知道你是谁，说点不敢说的</view>
+    </view>
+    <text class="hole-go">›</text>
+  </view>
+
+  <!-- 校园盲盒 / 漂流瓶入口：匿名捞一句同学的悄悄话，每天 3 次。
+       跟树洞并排放：都是「匿名说心里话」的场景，同学在这类内容里才想得到它 -->
+  <view wx:if="{{!searching}}" class="bb-entry tap" bindtap="goBlindbox">
+    <text class="bb-emoji">🫙</text>
+    <view class="bb-main">
+      <view class="bb-title">校园盲盒 · 漂流瓶</view>
+      <view class="bb-sub">捞一个同学的匿名心里话，每天 3 次</view>
+    </view>
+    <text class="bb-go">›</text>
+  </view>
+
+  <!-- 被举报暂停展示的内容：不进主列表，但要留一个能补举报的口子。
+       少了这块，第 4、5 票就永远收不到，5 人自动删除等于没配 -->
+  <view wx:if="{{!searching && hiddenCount > 0}}" class="muted-entry tap" bindtap="goHidden">
+    <text class="muted-emoji">🔒</text>
+    <view class="muted-main">
+      <view class="muted-title">有 {{hiddenCount}} 条内容因举报暂停展示</view>
+      <view class="muted-sub">觉得处理错了可以申诉，新收到的举报也会继续记录</view>
+    </view>
+    <text class="muted-go">›</text>
+  </view>
+
+  <!-- 排序：最新 / 热门 / 最多赞 / 最多踩 / 最多评论，横着排可滑 -->
+  <scroll-view wx:if="{{!searching}}" class="sort-bar-wrap" scroll-x="true">
+    <view class="sort-bar">
+      <view wx:for="{{sortOptions}}" wx:key="k"
+            class="sort-item {{sort === item.k ? 'on' : ''}} tap"
+            data-s="{{item.k}}" bindtap="onSortPick">{{item.icon}} {{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <scroll-view wx:if="{{!searching && isCourseBoard && courseFilter.length}}" class="filters course-filter" scroll-x="true">
+    <view class="chip {{courseId === '' ? 'chip-on' : ''}} tap" data-c="" bindtap="onCourseFilter">全部课程</view>
+    <view wx:for="{{courseFilter}}" wx:key="courseId" class="chip {{courseId === item.courseId ? 'chip-on' : ''}} tap" data-c="{{item.courseId}}" bindtap="onCourseFilter">{{item.courseName}} · {{item.count}}</view>
+  </scroll-view>
+
+  <view wx:if="{{posts.length === 0 && !searched}}" class="empty">{{courseId ? '这门课还没有讨论，来发第一条吧～' : '这个板块还没有帖子，去发一条吧～'}}</view>
+  <view wx:if="{{searched && posts.length === 0}}" class="empty">没有找到相关帖子，换个词或者删掉几个字再试试～</view>
+
+  <!-- 卡片入场动效：往下翻 / 触底加载新页时，新出现的卡片淡入 + 轻缩放上浮。
+       滑动浏览本身保持纯手动（页面没有任何自动滚动），动效只给「刚出现的卡片」，
+       已在屏幕里的卡片不重播，翻起来不会晃眼 -->
+  <view
+    wx:for="{{posts}}"
+    wx:key="id"
+    wx:for-item="p"
+    wx:for-index="i"
+    class="card post tap post-anim"
+    style="animation-delay: {{(i % 10) * 30}}ms"
+    data-id="{{p.id}}"
+    bindtap="goDetail"
+  >
+    <view class="post-head">
+      <view wx:if="{{p.pinned}}" class="pin-badge">置顶</view>
+      <view class="post-board">{{p.board}}</view>
+      <!-- 信息墙标记：正文区是空的，不打这个标，列表里看着就像条没写完的帖 -->
+      <view wx:if="{{p.kind === 'topic'}}" class="topic-badge">📌 信息墙</view>
+      <!-- 热榜前三给个序号：从众效应，大家更愿意点「排第一的那条」 -->
+      <view wx:if="{{sort === 'hot' && i < 3}}" class="hot-rank hot-{{i + 1}}">{{i + 1}}</view>
+      <view wx:if="{{sort === 'hot' && i >= 3}}" class="hot-score">🔥 {{p.hotScore}}</view>
+      <view wx:if="{{p.anonymous}}" class="anon-badge">🎭 匿名</view>
+    </view>
+    <view wx:if="{{p.courseName}}" class="post-course tap" data-id="{{p.courseId}}" catchtap="goCourse">📖 {{p.courseName}} ›</view>
+    <view class="title-md post-title">
+      <block wx:if="{{p.titleParts}}">
+        <text wx:for="{{p.titleParts}}" wx:key="idx" wx:for-item="sp" class="{{sp.hit ? 'hit' : ''}}">{{sp.t}}</text>
+      </block>
+      <text wx:else>{{p.title}}</text>
+    </view>
+    <!-- 信息墙没有正文，这里留白的话，列表看上去就是一条没写完的帖，
+         没人会点进去。补一句「信息收在评论区」，顺带告诉他去哪儿看 -->
+    <view wx:if="{{p.kind === 'topic'}}" class="post-content topic-hint">📌 只有主题，信息收在评论区</view>
+    <view wx:else class="post-content">
+      <block wx:if="{{p.contentParts}}">
+        <text wx:for="{{p.contentParts}}" wx:key="idx" wx:for-item="cp" class="{{cp.hit ? 'hit' : ''}}">{{cp.t}}</text>
+      </block>
+      <text wx:else>{{p.content}}</text>
+    </view>
+    <view wx:if="{{p.images.length}}" class="post-images">
+      <image wx:for="{{p.images}}" wx:for-item="img" wx:key="*this" class="post-img tap" src="{{img}}" mode="aspectFill" data-imgs="{{p.images}}" catchtap="previewImages"></image>
+    </view>
+    <view class="post-foot">
+      <text class="muted post-time">{{p.showAuthor}} · {{p.time}}</text>
+      <view class="foot-right">
+        <!-- 赞 / 踩直接聚合在操作区：catchtap 挡住卡片的跳转，点按钮不会误进详情 -->
+        <view class="vote tap {{p.liked ? 'v-on' : ''}}" data-id="{{p.id}}" data-v="like" catchtap="onPostVote">👍 {{p.likes}}</view>
+        <view class="vote tap {{p.disliked ? 'v-no' : ''}}" data-id="{{p.id}}" data-v="dislike" catchtap="onPostVote">👎 {{p.dislikes}}</view>
+        <text wx:if="{{p.kind === 'topic'}}" class="muted stat">📌 {{p.comments.length}} 条信息</text>
+        <text wx:else class="muted stat">💬 {{p.comments.length}}</text>
+        <view class="vote tap {{p.reported ? 'v-done' : ''}}"
+              data-id="{{p.id}}" data-openid="{{p.authorOpenid}}"
+              catchtap="onReportPost">{{p.reported ? '✓ 已举报' : '⚑ 举报'}}</view>
+        <button class="foot-share tap" open-type="share" catchtap="onSharePost" data-id="{{p.id}}">↗ 分享</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{posts.length && !noMore}}" class="load-more">加载中…</view>
+  <view wx:elif="{{posts.length && noMore}}" class="load-more">已经到底啦，没有更多了</view>
+  </block>
+
+  <view class="fab tap" bindtap="goPost">＋</view>
+</view>

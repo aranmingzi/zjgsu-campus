@@ -1,0 +1,190 @@
+<view class="container">
+
+  <!-- 顶部 Banner：全站最热树洞 / 最急寻物 / 最火闲置，自动缓慢切换，触摸即停 -->
+  <include src="/utils/banner.wxml"/>
+
+  <!-- 顶部分段：一个位置装三块内容 -->
+  <view class="seg">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="seg-item {{tabMap[item.key] ? 'on' : ''}} tap"
+      data-k="{{item.key}}"
+      bindtap="onTab"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- ============ 活动信息 ============ -->
+  <block wx:if="{{tab === 'events'}}">
+    <view class="notice tap" bindtap="goAddEvent">
+      <text class="notice-txt">有讲座、比赛、组队？自己发一条，同学就能报名</text>
+      <text class="notice-go">发布 ›</text>
+    </view>
+
+    <!-- 官网同步条：同学最想知道的就是「官方那批有多新」 -->
+    <view class="sync-bar">
+      <view class="sync-left">
+        <view class="sync-title">🏛️ 官网活动 {{officialCount}} 条</view>
+        <view class="sync-sub">{{lastSync ? ('上次更新 ' + lastSync) : '还没同步过，点右边抓一次'}}</view>
+      </view>
+      <view class="sync-btn tap {{syncing ? 'on' : ''}}" bindtap="onSync">{{syncing ? '同步中…' : '更新'}}</view>
+    </view>
+
+    <view wx:if="{{eventLoading}}" class="sk-wrap">
+      <view class="sk-card">
+        <view class="sk-line sk-title"></view>
+        <view class="sk-line sk-mid"></view>
+      </view>
+      <view class="sk-card">
+        <view class="sk-line sk-title"></view>
+        <view class="sk-line sk-short"></view>
+      </view>
+    </view>
+
+    <view wx:elif="{{events.length === 0}}" class="empty">
+      <view class="empty-icon">🎪</view>
+      <view>还没有人发起活动，你可以是第一个</view>
+      <view class="empty-hint">讲座、竞赛、组队、社团活动都发这里</view>
+    </view>
+
+    <view wx:else class="ev-wrap">
+      <view wx:if="{{events.length}}" class="filt-row">
+        <view class="filt-chip {{evFilter === 'all' ? 'on' : ''}} tap" data-f="all" bindtap="onEvFilter">全部 {{eventCount}}</view>
+        <view class="filt-chip {{evFilter === 'official' ? 'on' : ''}} tap" data-f="official" bindtap="onEvFilter">🏛️ 官网发布 {{officialCount}}</view>
+        <view class="filt-chip {{evFilter === 'student' ? 'on' : ''}} tap" data-f="student" bindtap="onEvFilter">🙋 同学发起 {{studentCount}}</view>
+      </view>
+
+      <view wx:if="{{events.length && !shownOfficial.length && !shownStudent.length}}" class="filt-empty">
+        这一类还没有内容，换个分类看看
+      </view>
+
+      <view wx:if="{{shownOfficial.length}}" class="sec-head">—— 学校官网发布 ——</view>
+      <view
+        wx:for="{{shownOfficial}}"
+        wx:key="id"
+        class="card ev-item tap-card"
+        data-id="{{item.id}}"
+        bindtap="goEvent"
+      >
+        <view class="ev-top">
+          <view class="ev-type">{{item.typeIcon}} {{item.typeLabel}}</view>
+          <view wx:if="{{item.source}}" class="ev-src">{{item.source}}</view>
+          <view class="ev-link tap" data-i="{{index}}" catchtap="onOfficial">原文 ›</view>
+        </view>
+
+        <view class="ev-title">{{item.title}}</view>
+        <view wx:if="{{item.start}}" class="ev-row">🕘 {{item.start}}</view>
+        <view wx:if="{{item.location}}" class="ev-row">📍 {{item.location}}</view>
+        <view wx:if="{{item.desc && item.desc.length < 60}}" class="ev-desc">{{item.desc}}</view>
+      </view>
+
+      <view wx:if="{{shownStudent.length}}" class="sec-head">—— 同学发起 ——</view>
+      <view
+        wx:for="{{shownStudent}}"
+        wx:key="id"
+        class="card ev-item tap-card"
+        data-id="{{item.id}}"
+        bindtap="goEvent"
+      >
+        <view class="ev-top">
+          <view class="ev-type">{{item.typeIcon}} {{item.typeLabel}}</view>
+          <view wx:if="{{item.joined}}" class="ev-joined">已报名</view>
+          <view wx:elif="{{item.isMine}}" class="ev-mine">我发布的</view>
+        </view>
+
+        <view class="ev-title">{{item.title}}</view>
+        <view wx:if="{{item.start}}" class="ev-row">🕘 {{item.start}}</view>
+        <view wx:if="{{item.location}}" class="ev-row">📍 {{item.location}}</view>
+        <view wx:if="{{item.desc}}" class="ev-desc">{{item.desc}}</view>
+
+        <view class="ev-foot">
+          <text class="muted">{{item.countText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="fab tap" bindtap="goAddEvent">＋</view>
+  </block>
+
+  <!-- ============ 校历 ============ -->
+  <block wx:elif="{{tab === 'calendar'}}">
+    <view class="next-card">
+      <view class="next-label">最近一个节点</view>
+      <view class="next-text">{{calNext}}</view>
+    </view>
+
+    <view wx:if="{{calList.length === 0}}" class="empty">
+      <view class="empty-icon">📅</view>
+      <view>校历还没取到，进来一次就会自动同步</view>
+    </view>
+
+    <view wx:else>
+      <view
+        wx:for="{{calList}}"
+        wx:key="id"
+        class="card cal-item {{item.past ? 'past' : ''}}"
+      >
+        <view class="cal-left">
+          <view class="cal-date">{{item.date}}</view>
+          <view class="cal-days">{{item.daysText}}</view>
+        </view>
+        <view class="cal-right">
+          <view class="cal-name">{{item.typeIcon}} {{item.name}}</view>
+          <view wx:if="{{item.note}}" class="cal-note">{{item.note}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="more-row tap" bindtap="goCalendarFull">
+      <text>编辑校历 / 导入官方校历</text>
+      <text class="more-go">›</text>
+    </view>
+  </block>
+
+  <!-- ============ 地点地图 ============ -->
+  <block wx:elif="{{tab === 'places'}}">
+    <view class="cat-row">
+      <view
+        wx:for="{{placeCats}}"
+        wx:for-item="c"
+        wx:key="*this"
+        class="cat-chip {{placeCatMap[c] ? 'on' : ''}} tap"
+        data-c="{{c}}"
+        bindtap="onPlaceCat"
+      >{{c}}</view>
+    </view>
+
+    <view wx:if="{{placeLoading && placeList.length === 0}}" class="empty">
+      <view class="empty-icon">📍</view>
+      <view>地点加载中…</view>
+    </view>
+
+    <view wx:elif="{{placeList.length === 0}}" class="empty">
+      <view class="empty-icon">📍</view>
+      <view>这个分类下还没有地点</view>
+    </view>
+
+    <view wx:else>
+      <view
+        wx:for="{{placeList}}"
+        wx:key="id"
+        class="card pl-item tap"
+        data-i="{{index}}"
+        bindtap="onPlaceOpen"
+      >
+        <view class="pl-icon">{{item.catIcon}}</view>
+        <view class="pl-body">
+          <view class="pl-name">{{item.name}}</view>
+          <view wx:if="{{item.desc}}" class="pl-desc">{{item.desc}}</view>
+        </view>
+        <text class="pl-go">导航 ›</text>
+      </view>
+    </view>
+
+    <view class="more-row tap" bindtap="goPlacesFull">
+      <text>添加一个地点 / 校准坐标</text>
+      <text class="more-go">›</text>
+    </view>
+  </block>
+
+</view>

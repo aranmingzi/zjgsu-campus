@@ -1,0 +1,114 @@
+<view class="container">
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input
+      class="search-input"
+      placeholder="搜课程名 / 资料名"
+      value="{{keyword}}"
+      confirm-type="search"
+      bindinput="onSearch"
+      bindconfirm="onSearch"
+    />
+  </view>
+
+  <view class="cat-row">
+    <view
+      wx:for="{{cats}}"
+      wx:for-item="c"
+      wx:key="*this"
+      class="cat-chip {{catMap[c] ? 'on' : ''}} tap"
+      data-c="{{c}}"
+      bindtap="onCategory"
+    >{{c}}</view>
+  </view>
+
+  <view class="card share-entry tap" bindtap="onToggleForm">
+    <text class="share-icon">📤</text>
+    <view class="share-main">
+      <view class="share-title">{{showForm ? '收起上传' : '我也有资料要分享'}}</view>
+      <view class="muted share-sub">笔记、真题、讲义都行，帮同学省一次打印钱</view>
+    </view>
+    <text class="share-go">{{showForm ? '▲' : '▼'}}</text>
+  </view>
+
+  <view wx:if="{{showForm}}" class="card form-card">
+    <view class="file-row tap" bindtap="chooseFile">
+      <text class="file-icon">📎</text>
+      <view class="file-main">
+        <view wx:if="{{form.fileID}}" class="file-name">{{form.fileName || '已选好文件'}}</view>
+        <view wx:else class="file-name">从聊天记录里选文件（PDF / Word / PPT）</view>
+        <view class="muted file-sub">{{uploading ? '上传中…' : '单个文件 20MB 以内'}}</view>
+      </view>
+    </view>
+    <input
+      class="field"
+      placeholder="如「中级财务会计期末重点」"
+      value="{{form.title}}"
+      data-k="title"
+      bindinput="onInput"
+      maxlength="40"
+    />
+    <input
+      class="field"
+      placeholder="对应课程名（选填）"
+      value="{{form.courseName}}"
+      data-k="courseName"
+      bindinput="onInput"
+      maxlength="30"
+    />
+    <input
+      class="field"
+      placeholder="选填，如「含近三年真题」"
+      value="{{form.desc}}"
+      data-k="desc"
+      bindinput="onInput"
+      maxlength="200"
+    />
+    <view class="type-row">
+      <view
+        wx:for="{{['笔记','真题','讲义','其他']}}"
+        wx:for-item="t"
+        wx:key="*this"
+        class="type {{catFormMap[t] ? 'on' : ''}} tap"
+        data-c="{{t}}"
+        bindtap="onFormCategory"
+      >{{t}}</view>
+    </view>
+    <button class="btn-primary tap" bindtap="onSubmit" disabled="{{uploading}}">发布资料</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中…</view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <view class="empty-icon">📚</view>
+    <view>还没有人分享资料</view>
+    <view class="empty-hint">你手里的笔记或真题，可能正是别人在找的</view>
+  </view>
+
+  <view wx:else>
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="card res-item"
+    >
+      <view class="res-head">
+        <text class="res-icon">{{item.catIcon}}</text>
+        <view class="res-main">
+          <view class="res-title">{{item.title}}</view>
+          <view class="muted res-meta">{{item.courseName ? '📖 ' + item.courseName + ' · ' : ''}}{{item.ext}} · {{item.sizeText}}</view>
+          <view wx:if="{{item.desc}}" class="muted res-desc">{{item.desc}}</view>
+        </view>
+      </view>
+      <view class="res-foot">
+        <text class="muted res-by">{{item.author}} · {{item.time}}</text>
+        <view class="res-ops">
+          <view class="res-op {{item.thanked ? 'on' : ''}} tap" data-i="{{index}}" catchtap="onThanks">
+            🙏 {{item.thanksCount > 0 ? item.thanksCount : '感谢'}}
+          </view>
+          <view class="res-op primary tap" data-i="{{index}}" catchtap="onOpen">打开</view>
+          <view wx:if="{{item.isMine}}" class="res-op del tap" data-id="{{item.id}}" catchtap="onRemove">删除</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
