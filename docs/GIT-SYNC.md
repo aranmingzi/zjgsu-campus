@@ -33,12 +33,12 @@ pnpm dev
 powershell -ExecutionPolicy Bypass -File scripts/create-sync-bundle.ps1
 ```
 
-脚本会在 `release/` 下生成 `商砖小站-campus-full.bundle` 和对应 SHA256 文件。只需要把 bundle 文件发给对方。
+脚本会在 `release/` 下生成 `zjgsu-campus-full.bundle` 和对应 SHA256 文件。只需要把 bundle 文件发给对方。
 
 接收方执行：
 
 ```bash
-git clone 商砖小站-campus-full.bundle campus
+git clone zjgsu-campus-full.bundle campus
 cd campus
 pnpm install
 pnpm dev
@@ -86,4 +86,3 @@ pnpm typecheck
 - 提交源码、文档、配置和锁文件。
 - 不提交 `node_modules`、`dist`、`.vite`、`test-results`、本机环境文件和个人路径。
 - 大型二进制素材需要单独评估；当前项目截图属于可再生成内容。
-
