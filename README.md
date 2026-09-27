@@ -55,6 +55,7 @@ git clone 商砖小站-campus-full.bundle campus
 - Mock 数据集中在 `src/data/mock.ts`，后续可按后端接口逐项替换。
 - 事件投票的前端请求、10 秒轮询和后端防刷约定见 `src/services/vote.ts` 与 `docs/vote-api.md`。
 - 匿名树洞三套内联 SVG 图标的切换方式见 `docs/treehole-icons.md`。
+- App Logo 的矢量源文件、多尺寸 PNG 与使用规范见 `public/logo/` 和 `docs/logo-guidelines.md`。
 
 ## 重点页面
 
